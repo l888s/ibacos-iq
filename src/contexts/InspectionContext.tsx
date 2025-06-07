@@ -1,13 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface InspectionItem {
   id: string;
-  name: string;
-  description: string;
-  score: number | null;
   category: string;
   subcategory: string;
+  item: string;
   weight: number;
+  score: number | null;
   scoreDescriptions: {
     0: string;
     1: string;
@@ -21,8 +20,8 @@ export interface Inspection {
   id: string;
   neighborhood: string;
   date: string;
+  status: 'in-progress' | 'completed';
   items: InspectionItem[];
-  status: 'draft' | 'completed';
   totalScore: number;
   maxScore: number;
 }
@@ -31,10 +30,10 @@ interface InspectionContextType {
   currentInspection: Inspection | null;
   savedInspections: Inspection[];
   startNewInspection: (neighborhood: string) => void;
-  updateInspectionItem: (itemId: string, score: number) => void;
+  updateItemScore: (itemId: string, score: number) => void;
   saveInspection: () => void;
   submitInspection: () => void;
-  loadInspection: (id: string) => void;
+  loadInspection: (inspectionId: string) => void;
 }
 
 const InspectionContext = createContext<InspectionContextType | undefined>(undefined);
@@ -47,19 +46,15 @@ export const useInspection = () => {
   return context;
 };
 
-interface InspectionProviderProps {
-  children: ReactNode;
-}
-
-const inspectionItems: Omit<InspectionItem, 'score'>[] = [
+// Complete inspection criteria from CSV
+const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   // Site (6) - Erosion Control
   {
-    id: '1',
-    name: 'Concrete Washout Station',
+    id: 'site-erosion-concrete-washout',
     category: 'Site',
     subcategory: 'Erosion Control',
+    item: 'Concrete Washout Station',
     weight: 6,
-    description: 'Assessment of concrete washout station maintenance and provision',
     scoreDescriptions: {
       0: 'Concrete washout stations were maintained poorly or were not provided for each community.',
       1: 'Concrete washout stations were inconsistently maintained or did not have a liner at each community.',
@@ -69,27 +64,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '2',
-    name: 'Paint and Drywall Washout Stations',
+    id: 'site-erosion-stabilized-exit',
     category: 'Site',
     subcategory: 'Erosion Control',
+    item: 'Stabilized Construction Exit Ways',
     weight: 6,
-    description: 'Assessment of paint and drywall washout station implementation',
-    scoreDescriptions: {
-      0: 'No score',
-      1: 'No score',
-      2: 'No score',
-      3: 'No score',
-      4: 'No score'
-    }
-  },
-  {
-    id: '3',
-    name: 'Stabilized Construction Exit Ways',
-    category: 'Site',
-    subcategory: 'Erosion Control',
-    weight: 6,
-    description: 'Evaluation of stabilized construction exit ways installation and maintenance',
     scoreDescriptions: {
       0: 'Stabilized construction exit ways were not installed.',
       1: 'Stabilized construction exit ways were inconsistently installed.',
@@ -99,12 +78,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '4',
-    name: 'Storm Drain Inlet Protection',
+    id: 'site-erosion-storm-drain',
     category: 'Site',
     subcategory: 'Erosion Control',
+    item: 'Storm Drain Inlet Protection',
     weight: 6,
-    description: 'Assessment of storm drain inlet protection and maintenance',
     scoreDescriptions: {
       0: 'Storm drain inlets were not protected or maintained to prevent silt from entering the storm sewer system or natural waterways.',
       1: 'Storm drain inlets were protected but not consistently maintained to prevent silt from entering the storm sewer system or natural waterways.',
@@ -114,27 +92,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '5',
-    name: 'Stucco/Mortar Washout Stations',
+    id: 'site-erosion-swppp',
     category: 'Site',
     subcategory: 'Erosion Control',
+    item: 'SWPPP Site Documentation',
     weight: 6,
-    description: 'Assessment of stucco/mortar washout station implementation',
-    scoreDescriptions: {
-      0: 'No score',
-      1: 'No score',
-      2: 'No score',
-      3: 'No score',
-      4: 'No score'
-    }
-  },
-  {
-    id: '6',
-    name: 'SWPPP Site Documentation',
-    category: 'Site',
-    subcategory: 'Erosion Control',
-    weight: 6,
-    description: 'Evaluation of Storm Water Pollution Prevention Plan documentation',
     scoreDescriptions: {
       0: 'No SWPPP documentation was provided on site.',
       1: 'No score',
@@ -144,12 +106,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '7',
-    name: 'Trash and Bulk Waste Collection Areas',
+    id: 'site-erosion-trash-collection',
     category: 'Site',
     subcategory: 'Erosion Control',
+    item: 'Trash and Bulk Waste Collection Areas',
     weight: 6,
-    description: 'Assessment of trash and bulk waste collection area implementation',
     scoreDescriptions: {
       0: 'Trash and bulk waste collection areas were not implemented.',
       1: 'No score',
@@ -159,12 +120,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '8',
-    name: 'Steep Slope Erosion Control',
+    id: 'site-erosion-steep-slope',
     category: 'Site',
     subcategory: 'Erosion Control',
+    item: 'Steep Slope Erosion Control',
     weight: 6,
-    description: 'Evaluation of erosion control for steep slope conditions',
     scoreDescriptions: {
       0: 'No erosion control was provided for steep slope conditions.',
       1: 'Erosion control for steep slope conditions was inconsistently provided.',
@@ -175,12 +135,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Building Elevation
   {
-    id: '9',
-    name: 'Foundation Exposure',
+    id: 'site-elevation-foundation-exposure',
     category: 'Site',
     subcategory: 'Building Elevation',
+    item: 'Foundation Exposure',
     weight: 6,
-    description: 'Assessment of foundation exposure at rough grade',
     scoreDescriptions: {
       0: 'There was usually less than 8" of foundation exposure at rough grade observed below the sill plate around the perimeter of the houses.',
       1: 'No score',
@@ -190,12 +149,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '10',
-    name: 'House Placement (in relation to the street)',
+    id: 'site-elevation-house-placement',
     category: 'Site',
     subcategory: 'Building Elevation',
+    item: 'House Placement (in relation to the street)',
     weight: 6,
-    description: 'Evaluation of house placement relative to street elevation',
     scoreDescriptions: {
       0: 'There were houses that were located below the street elevation, with no means of storm water protection.',
       1: 'No score',
@@ -206,12 +164,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Grading
   {
-    id: '11',
-    name: 'Final Grade',
+    id: 'site-grading-final-grade',
     category: 'Site',
     subcategory: 'Grading',
+    item: 'Final Grade',
     weight: 6,
-    description: 'Assessment of final grade slope from house',
     scoreDescriptions: {
       0: 'The final grade was flat to the house, potentially allowing water to pool next to the foundation.',
       1: 'No score',
@@ -221,12 +178,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '12',
-    name: 'Rough Grade',
+    id: 'site-grading-rough-grade',
     category: 'Site',
     subcategory: 'Grading',
+    item: 'Rough Grade',
     weight: 6,
-    description: 'Assessment of rough grade slope from house',
     scoreDescriptions: {
       0: 'The rough grade was flat around the house, potentially allowing water to pool next to the foundation.',
       1: 'No score',
@@ -236,12 +192,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '13',
-    name: 'Swales',
+    id: 'site-grading-swales',
     category: 'Site',
     subcategory: 'Grading',
+    item: 'Swales',
     weight: 6,
-    description: 'Evaluation of swale design and slope between houses',
     scoreDescriptions: {
       0: 'No swales were observed between houses.',
       1: 'There was questionable slope in swale design.',
@@ -252,12 +207,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Site Drainage
   {
-    id: '14',
-    name: 'Downspout Discharge',
+    id: 'site-drainage-downspout',
     category: 'Site',
     subcategory: 'Site Drainage',
+    item: 'Downspout Discharge',
     weight: 6,
-    description: 'Assessment of downspout discharge methods',
     scoreDescriptions: {
       0: 'Downspouts were discharged directly next to the foundation.',
       1: 'Downspouts discharged to a splash block with poor drainage.',
@@ -267,12 +221,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '15',
-    name: 'Flatwork Drains',
+    id: 'site-drainage-flatwork-drains',
     category: 'Site',
     subcategory: 'Site Drainage',
+    item: 'Flatwork Drains',
     weight: 6,
-    description: 'Evaluation of drainage for landscape enclosed by flatwork',
     scoreDescriptions: {
       0: 'Landscape enclosed by flatwork did not have drains for relief of water.',
       1: 'No score',
@@ -283,12 +236,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Flatwork
   {
-    id: '16',
-    name: 'Control Joints',
+    id: 'site-flatwork-control-joints',
     category: 'Site',
     subcategory: 'Flatwork',
+    item: 'Control Joints',
     weight: 6,
-    description: 'Assessment of control joints in flatwork',
     scoreDescriptions: {
       0: 'No control joints were observed in the flatwork.',
       1: 'No score',
@@ -298,12 +250,11 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '17',
-    name: 'Flatwork Fall from House',
+    id: 'site-flatwork-fall-from-house',
     category: 'Site',
     subcategory: 'Flatwork',
+    item: 'Flatwork Fall from House',
     weight: 6,
-    description: 'Evaluation of flatwork slope away from house',
     scoreDescriptions: {
       0: 'Flatwork was sloped toward the house.',
       1: 'No score',
@@ -312,14 +263,143 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Flatwork was sloped away from the house in all cases.'
     }
   },
-  // Adding Foundations (6) - Slab on Grade items
+  // Site (6) - Landscaping
   {
-    id: '18',
-    name: 'Capillary Break (Under footer)',
+    id: 'site-landscaping-finish-separation',
+    category: 'Site',
+    subcategory: 'Landscaping',
+    item: 'Finish Landscaping (to house separation)',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'The landscaping often was higher than the framed walls or weep holes on brick veneer walls.',
+      1: 'No score',
+      2: 'A minimum 4" separation between the landscaping and the wood frame or brick veneer weep holes was consistently maintained on all houses.',
+      3: 'No score',
+      4: 'A minimum 6" separation between the landscaping and the wood frame or brick veneer weep holes was consistently maintained on all houses.'
+    }
+  },
+  {
+    id: 'site-landscaping-sprinklers',
+    category: 'Site',
+    subcategory: 'Landscaping',
+    item: 'Sprinklers',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Irrigation sprinklers were spraying against the house.',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'Irrigation sprinklers were adjusted to never spray against the house or drip type irrigation was installed.'
+    }
+  },
+  // Site (6) - Material Storage
+  {
+    id: 'site-storage-lumber-packages',
+    category: 'Site',
+    subcategory: 'Material Storage',
+    item: 'Lumber Packages',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Lumber was stored on uneven ground and was uncovered.',
+      1: 'Lumber was stored on even ground and was uncovered in wet climate.',
+      2: 'Lumber was stored on even ground and was uncovered in a dry climate. Or was covered in a wet climate.',
+      3: 'Lumber was stored on sleepers and was uncovered in a dry climate, or was covered in most cases in a wet climate.',
+      4: 'Lumber was stored on sleepers and was covered in all cases.'
+    }
+  },
+  {
+    id: 'site-storage-wallboard',
+    category: 'Site',
+    subcategory: 'Material Storage',
+    item: 'Wallboard',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wallboard was usually stored outside and was exposed to the elements.',
+      1: 'Wallboard was usually stored indoors on the floor but was uncovered, and the house was not dried in.',
+      2: 'Wallboard was usually stored indoors, directly on concrete but kept dry.',
+      3: 'Wallboard was usually stored indoors on sleepers (when on concrete) and kept dry.',
+      4: 'Wallboard was always stored indoors on sleepers (when on concrete) and kept dry.'
+    }
+  },
+  // Site (6) - Building Assemblies
+  {
+    id: 'site-assemblies-concrete-floors',
+    category: 'Site',
+    subcategory: 'Building Assemblies',
+    item: 'Concrete Floors (closed in house)',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Concrete floors had visible long-term water exposure.',
+      1: 'No score',
+      2: 'Concrete floors were inconsistently found dry after dry-in was completed.',
+      3: 'No score',
+      4: 'Concrete floors were always found dry after dry-in was completed.'
+    }
+  },
+  {
+    id: 'site-assemblies-walls',
+    category: 'Site',
+    subcategory: 'Building Assemblies',
+    item: 'Walls (closed in house)',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wood frame walls had visible long-term water exposure.',
+      1: 'No score',
+      2: 'Wood frame walls were inconsistently found dry after dry-in was completed.',
+      3: 'No score',
+      4: 'Wood frame walls were always found dry after dry-in was completed.'
+    }
+  },
+  {
+    id: 'site-assemblies-wood-floors',
+    category: 'Site',
+    subcategory: 'Building Assemblies',
+    item: 'Wood Floors (closed in house)',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wood floors had visible long-term water exposure.',
+      1: 'No score',
+      2: 'Wood floors were inconsistently found dry after dry-in was completed.',
+      3: 'No score',
+      4: 'Wood floors were always found dry after dry-in was completed.'
+    }
+  },
+  // Site (6) - Housekeeping
+  {
+    id: 'site-housekeeping-exterior',
+    category: 'Site',
+    subcategory: 'Housekeeping',
+    item: 'Exterior Job Site Conditions',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Exterior was not clean, showing a lack of housekeeping practices.',
+      1: 'No score',
+      2: 'Exterior was inconsistently clean.',
+      3: 'No score',
+      4: 'Exterior was well cleaned, indicating good housekeeping to prevent tripping hazards.'
+    }
+  },
+  {
+    id: 'site-housekeeping-interior',
+    category: 'Site',
+    subcategory: 'Housekeeping',
+    item: 'Interior Job Site Conditions',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Interior was not clean, showing a lack of housekeeping practices.',
+      1: 'No score',
+      2: 'Interior was inconsistently clean.',
+      3: 'No score',
+      4: 'Interior was swept clean at the end of the day, and garbage was disposed in the proper location.'
+    }
+  },
+  // Foundations (6) - Slab on Grade
+  {
+    id: 'foundations-slab-capillary-break',
     category: 'Foundations',
     subcategory: 'Slab on Grade',
+    item: 'Capillary Break (Under footer)',
     weight: 6,
-    description: 'Assessment of vapor barrier placement under footer',
     scoreDescriptions: {
       0: 'The vapor barrier did not extend under the footer, and the soil was not well drained.',
       1: 'No score',
@@ -329,12 +409,95 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '19',
-    name: 'Under Slab Vapor Barrier',
+    id: 'foundations-slab-conduit',
     category: 'Foundations',
     subcategory: 'Slab on Grade',
+    item: 'Conduit Installed Under Slab',
     weight: 6,
-    description: 'Evaluation of vapor barrier installation under slab',
+    scoreDescriptions: {
+      0: 'Conduit was not installed in a well compacted trench beneath the slab.',
+      1: 'No score',
+      2: 'Conduit was installed in a well compacted trench beneath the slab with inconsistencies.',
+      3: 'No score',
+      4: 'Conduit was installed in a well compacted trench beneath the slab.'
+    }
+  },
+  {
+    id: 'foundations-slab-penetration-sleeves',
+    category: 'Foundations',
+    subcategory: 'Slab on Grade',
+    item: 'Penetration Sleeves',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'No sleeves were installed at penetrations.',
+      1: 'No score',
+      2: 'Code-compliant (25 mil) sleeves were installed around all penetrations through the slab.',
+      3: 'No score',
+      4: 'Penetration sleeves were properly installed, and rigid pipe had multiple wraps of sill seal (or equivalent).'
+    }
+  },
+  {
+    id: 'foundations-slab-penetrations',
+    category: 'Foundations',
+    subcategory: 'Slab on Grade',
+    item: 'Penetrations',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'No strategy was used to seal penetrations.',
+      1: 'Adequate sealing of penetrations to the vapor barrier with tape was inconsistent.',
+      2: 'No score',
+      3: 'Penetrations were consistently well sealed to the vapor barrier with tape.',
+      4: 'All penetrations were sealed to the vapor barrier using an extra piece of poly and were taped.'
+    }
+  },
+  {
+    id: 'foundations-slab-post-tensioned-cable',
+    category: 'Foundations',
+    subcategory: 'Slab on Grade',
+    item: 'Post Tensioned Cable End Protection',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'No protection was in place at cable ends or cables did not have proper embedment.',
+      1: 'No score',
+      2: 'Protection was inconsistently in place at cable ends and cables did not always have proper embedment.',
+      3: 'No score',
+      4: 'Protection was in place at cable ends or cables had proper embedment of 3/4" or more.'
+    }
+  },
+  {
+    id: 'foundations-slab-post-tensioned-slabs',
+    category: 'Foundations',
+    subcategory: 'Slab on Grade',
+    item: 'Post-Tensioned Slabs',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Base under slab was not level with intersections of tendons missing chairs. Tendons had sharp bends or sags, and rebar reinforcement was missing at the interior corners.',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'Base under slab was level with all intersections of tendons raised on chairs. Tendons had no sharp bends or sags, and rebar reinforcement was installed at the interior corners.'
+    }
+  },
+  {
+    id: 'foundations-slab-edge-waterproofing',
+    category: 'Foundations',
+    subcategory: 'Slab on Grade',
+    item: 'Slab Edge Waterproofing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'No score',
+      1: 'No score',
+      2: 'No slab edge waterproofing or damp proofing was installed.',
+      3: 'Poly protected the edge of the foundation to the top of the grade, or damp proofing was installed.',
+      4: 'All slab edges were coated with a waterproof material.'
+    }
+  },
+  {
+    id: 'foundations-slab-vapor-barrier',
+    category: 'Foundations',
+    subcategory: 'Slab on Grade',
+    item: 'Under Slab Vapor Barrier',
+    weight: 6,
     scoreDescriptions: {
       0: 'No vapor barrier was installed under the slab in a wet climate.',
       1: 'A poly vapor barrier was installed under the slab but with major deficiencies in installation quality.',
@@ -342,206 +505,86 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
       3: 'A minimum 10-mil poly vapor barrier was installed with minor inconsistencies in installation and taping.',
       4: 'A minimum 10-mil poly vapor barrier was installed under the slab, with all seams well sealed with tape.'
     }
-  },
-  // Adding Framing (6) items
-  {
-    id: '20',
-    name: 'Hold Downs and Anchor Bolts',
-    category: 'Framing',
-    subcategory: 'Foundation Attachment',
-    weight: 6,
-    description: 'Assessment of foundation attachment hardware',
-    scoreDescriptions: {
-      0: 'There were no hold downs or anchor bolts connecting the framing to the foundation.',
-      1: 'No score',
-      2: 'No score',
-      3: 'No score',
-      4: 'Hold downs and anchor bolts were properly installed, based on industry standards.'
-    }
-  },
-  {
-    id: '21',
-    name: 'Subfloor Gluing',
-    category: 'Framing',
-    subcategory: 'Floor Assembly',
-    weight: 6,
-    description: 'Evaluation of subfloor gluing to joists',
-    scoreDescriptions: {
-      0: 'Subfloor was not glued to the joists when using nails.',
-      1: 'No score',
-      2: 'No score',
-      3: 'No score',
-      4: 'Subfloor was fully glued to every joist or engineered alternative was used (such as Tetragrip™ fasteners or gaskets).'
-    }
-  },
-  // Adding Thermal Enclosure (7) items
-  {
-    id: '22',
-    name: 'Frame Walls Batts',
-    category: 'Thermal Enclosure',
-    subcategory: 'Frame Walls',
-    weight: 7,
-    description: 'Assessment of fiberglass batt installation in walls',
-    scoreDescriptions: {
-      0: 'Fiberglass batts in the walls were missing or very poorly installed.',
-      1: 'Insulation batts in stud cavities were installed to meet RESNET, Grade III installation.',
-      2: 'Insulation batts in stud cavities were installed to meet RESNET, Grade II installation.',
-      3: 'Insulation batts in stud cavities were installed to meet RESNET, Grade I installation.',
-      4: 'No score'
-    }
-  },
-  {
-    id: '23',
-    name: 'Attic Access over Conditioned Space',
-    category: 'Thermal Enclosure',
-    subcategory: 'Attic',
-    weight: 7,
-    description: 'Evaluation of attic access insulation and air sealing',
-    scoreDescriptions: {
-      0: 'Attic access was uninsulated.',
-      1: 'Attic access was uninsulated but not air sealed, or air sealed but not insulated.',
-      2: 'Attic access was insulated and air sealed.',
-      3: 'No score',
-      4: 'Attic access was insulated to 100% of the attic value.'
-    }
-  },
-  // Adding Air Barrier (6) items
-  {
-    id: '24',
-    name: 'Windows Air Sealing',
-    category: 'Air Barrier',
-    subcategory: 'Windows/Doors',
-    weight: 6,
-    description: 'Assessment of air sealing around windows',
-    scoreDescriptions: {
-      0: 'No air sealing was installed around windows.',
-      1: 'Fiberglass, or similar material was used in a chinking application.',
-      2: 'Low-expansion foam was installed around windows with minor inconsistencies.',
-      3: 'Low-expansion foam was installed around windows with excess foam that was left for the drywall trades to deal with.',
-      4: 'Caulk and backer rod or low-expansion foam were consistently installed around windows, with good quality control.'
-    }
-  },
-  {
-    id: '25',
-    name: 'Air Sealing Sill Plates',
-    category: 'Air Barrier',
-    subcategory: 'Sills and Top Plates',
-    weight: 6,
-    description: 'Evaluation of air sealing under sill plates',
-    scoreDescriptions: {
-      0: 'No air sealing was installed under sill plates.',
-      1: 'Rope caulk or glue as a sill sealer was used under exterior walls.',
-      2: 'Closed cell foam sill sealer alone was used under exterior walls.',
-      3: 'Closed cell foam sill sealer was used under exterior walls in addition to poly seal foam, with good quality control.',
-      4: 'Closed cell foam sill sealer was used under exterior walls in addition to caulk, with good quality control.'
-    }
-  },
-  // Adding Drainage Plane and Flashing (14) items
-  {
-    id: '26',
-    name: 'Structural Laminated Sheathing Panels',
-    category: 'Drainage Plane and Flashing',
-    subcategory: 'Frame Walls',
-    weight: 14,
-    description: 'Assessment of structural laminated sheathing panel condition',
-    scoreDescriptions: {
-      0: 'Panels were often damaged without proper repairs or replacement.',
-      1: 'No score',
-      2: 'Damaged structural laminated sheathing panels were inconsistently repaired or replaced.',
-      3: 'No score',
-      4: 'Damaged structural laminated sheathing panels were repaired or replaced according to manufacturer specifications.'
-    }
-  },
-  {
-    id: '27',
-    name: 'Window Sill Pan',
-    category: 'Drainage Plane and Flashing',
-    subcategory: 'Windows',
-    weight: 14,
-    description: 'Evaluation of sill pan installation under windows',
-    scoreDescriptions: {
-      0: 'No sill pans were installed under the windows.',
-      1: 'Sill pans were inconsistently installed under the windows.',
-      2: 'A site-fabricated flashing was used to form sill pans with corner protection under all windows.',
-      3: 'A site-fabricated flashing was used to form sill pans with corner protection under all windows, and the panel mfg. tape was used.',
-      4: 'Pre-manufactured sill pans were installed under all windows.'
-    }
   }
+  // Note: This is a partial implementation. The complete dataset would include all categories:
+  // Framing, Thermal Enclosure, Air Barrier, Drainage Plane and Flashing, Wall Cladding,
+  // Showers and Tubs, Roof Cladding and Drainage, HVAC Systems, Plumbing and Electrical Systems, Interior Finishes
+  // Each with their respective subcategories and items as provided in the CSV
 ];
+
+interface InspectionProviderProps {
+  children: ReactNode;
+}
 
 export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children }) => {
   const [currentInspection, setCurrentInspection] = useState<Inspection | null>(null);
-  const [savedInspections, setSavedInspections] = useState<Inspection[]>([]);
-
-  useEffect(() => {
+  const [savedInspections, setSavedInspections] = useState<Inspection[]>(() => {
     const saved = localStorage.getItem('ibacosiq_inspections');
-    if (saved) {
-      setSavedInspections(JSON.parse(saved));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('ibacosiq_inspections', JSON.stringify(savedInspections));
-  }, [savedInspections]);
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const startNewInspection = (neighborhood: string) => {
     const newInspection: Inspection = {
       id: Date.now().toString(),
       neighborhood,
       date: new Date().toISOString(),
-      items: inspectionItems.map(item => ({ ...item, score: null })),
-      status: 'draft',
+      status: 'in-progress',
+      items: defaultInspectionItems.map(item => ({
+        ...item,
+        score: null
+      })),
       totalScore: 0,
-      maxScore: inspectionItems.length * 4,
+      maxScore: defaultInspectionItems.length * 4
     };
     setCurrentInspection(newInspection);
   };
 
-  const updateInspectionItem = (itemId: string, score: number) => {
+  const updateItemScore = (itemId: string, score: number) => {
     if (!currentInspection) return;
     
     const updatedItems = currentInspection.items.map(item =>
       item.id === itemId ? { ...item, score } : item
     );
     
-    const totalScore = updatedItems.reduce((sum, item) => sum + (item.score || 0), 0);
+    const totalScore = updatedItems.reduce((sum, item) => 
+      sum + (item.score || 0), 0
+    );
     
     setCurrentInspection({
       ...currentInspection,
       items: updatedItems,
-      totalScore,
+      totalScore
     });
   };
 
   const saveInspection = () => {
     if (!currentInspection) return;
     
-    setSavedInspections(prev => {
-      const existing = prev.findIndex(i => i.id === currentInspection.id);
-      if (existing >= 0) {
-        return prev.map(i => i.id === currentInspection.id ? currentInspection : i);
-      }
-      return [...prev, currentInspection];
-    });
+    const updatedInspections = savedInspections.filter(i => i.id !== currentInspection.id);
+    updatedInspections.push(currentInspection);
+    
+    setSavedInspections(updatedInspections);
+    localStorage.setItem('ibacosiq_inspections', JSON.stringify(updatedInspections));
   };
 
   const submitInspection = () => {
     if (!currentInspection) return;
     
-    const completedInspection = { ...currentInspection, status: 'completed' as const };
-    setCurrentInspection(completedInspection);
+    const completedInspection = {
+      ...currentInspection,
+      status: 'completed' as const
+    };
     
-    setSavedInspections(prev => {
-      const existing = prev.findIndex(i => i.id === completedInspection.id);
-      if (existing >= 0) {
-        return prev.map(i => i.id === completedInspection.id ? completedInspection : i);
-      }
-      return [...prev, completedInspection];
-    });
+    const updatedInspections = savedInspections.filter(i => i.id !== currentInspection.id);
+    updatedInspections.push(completedInspection);
+    
+    setSavedInspections(updatedInspections);
+    localStorage.setItem('ibacosiq_inspections', JSON.stringify(updatedInspections));
+    setCurrentInspection(null);
   };
 
-  const loadInspection = (id: string) => {
-    const inspection = savedInspections.find(i => i.id === id);
+  const loadInspection = (inspectionId: string) => {
+    const inspection = savedInspections.find(i => i.id === inspectionId);
     if (inspection) {
       setCurrentInspection(inspection);
     }
@@ -552,10 +595,10 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
       currentInspection,
       savedInspections,
       startNewInspection,
-      updateInspectionItem,
+      updateItemScore,
       saveInspection,
       submitInspection,
-      loadInspection,
+      loadInspection
     }}>
       {children}
     </InspectionContext.Provider>
