@@ -21,7 +21,7 @@ const scoreColors = {
 };
 
 const InspectionForm = () => {
-  const { currentInspection, updateInspectionItem } = useInspection();
+  const { currentInspection, updateItemScore } = useInspection();
 
   if (!currentInspection) return null;
 
@@ -65,11 +65,10 @@ const InspectionForm = () => {
                       <h3 className="text-lg font-semibold text-gray-800 mb-4">{subcategory}</h3>
                       
                       <div className="space-y-6">
-                        {subcategoryItems.map((item) => (
-                          <div key={item.id} className="border rounded-lg p-4 bg-gray-50">
+                        {subcategoryItems.map((inspectionItem) => (
+                          <div key={inspectionItem.id} className="border rounded-lg p-4 bg-gray-50">
                             <div className="mb-4">
-                              <h4 className="font-medium text-gray-900 mb-2">{item.name}</h4>
-                              <p className="text-sm text-gray-600 mb-3">{item.description}</p>
+                              <h4 className="font-medium text-gray-900 mb-2">{inspectionItem.item}</h4>
                             </div>
                             
                             <div className="space-y-3">
@@ -77,11 +76,11 @@ const InspectionForm = () => {
                                 {[0, 1, 2, 3, 4].map((score) => (
                                   <Button
                                     key={score}
-                                    variant={item.score === score ? "default" : "outline"}
+                                    variant={inspectionItem.score === score ? "default" : "outline"}
                                     size="sm"
-                                    onClick={() => updateInspectionItem(item.id, score)}
-                                    className={`text-xs h-auto py-2 px-3 ${item.score === score ? scoreColors[score as keyof typeof scoreColors] : ""}`}
-                                    disabled={item.scoreDescriptions[score as keyof typeof item.scoreDescriptions] === 'No score'}
+                                    onClick={() => updateItemScore(inspectionItem.id, score)}
+                                    className={`text-xs h-auto py-2 px-3 ${inspectionItem.score === score ? scoreColors[score as keyof typeof scoreColors] : ""}`}
+                                    disabled={inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions] === 'No score'}
                                   >
                                     <div className="text-center">
                                       <div className="font-semibold">{scoreLabels[score as keyof typeof scoreLabels]}</div>
@@ -93,7 +92,7 @@ const InspectionForm = () => {
                               {/* Score descriptions */}
                               <div className="mt-3 space-y-1 text-xs">
                                 {[0, 1, 2, 3, 4].map((score) => {
-                                  const description = item.scoreDescriptions[score as keyof typeof item.scoreDescriptions];
+                                  const description = inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions];
                                   if (description === 'No score') return null;
                                   
                                   return (
@@ -113,13 +112,13 @@ const InspectionForm = () => {
                                 })}
                               </div>
                               
-                              {item.score !== null && (
+                              {inspectionItem.score !== null && (
                                 <div className="mt-3">
                                   <Badge 
                                     variant="secondary"
-                                    className={`${scoreColors[item.score as keyof typeof scoreColors].replace('hover:', '')} text-white`}
+                                    className={`${scoreColors[inspectionItem.score as keyof typeof scoreColors].replace('hover:', '')} text-white`}
                                   >
-                                    Score: {item.score} - {scoreLabels[item.score as keyof typeof scoreLabels]}
+                                    Score: {inspectionItem.score} - {scoreLabels[inspectionItem.score as keyof typeof scoreLabels]}
                                   </Badge>
                                 </div>
                               )}
