@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export interface InspectionItem {
@@ -71,6 +70,21 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: '2',
+    name: 'Paint and Drywall Washout Stations',
+    category: 'Site',
+    subcategory: 'Erosion Control',
+    weight: 6,
+    description: 'Assessment of paint and drywall washout station implementation',
+    scoreDescriptions: {
+      0: 'No score',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'No score'
+    }
+  },
+  {
+    id: '3',
     name: 'Stabilized Construction Exit Ways',
     category: 'Site',
     subcategory: 'Erosion Control',
@@ -85,7 +99,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '3',
+    id: '4',
     name: 'Storm Drain Inlet Protection',
     category: 'Site',
     subcategory: 'Erosion Control',
@@ -100,7 +114,22 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '4',
+    id: '5',
+    name: 'Stucco/Mortar Washout Stations',
+    category: 'Site',
+    subcategory: 'Erosion Control',
+    weight: 6,
+    description: 'Assessment of stucco/mortar washout station implementation',
+    scoreDescriptions: {
+      0: 'No score',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'No score'
+    }
+  },
+  {
+    id: '6',
     name: 'SWPPP Site Documentation',
     category: 'Site',
     subcategory: 'Erosion Control',
@@ -115,7 +144,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '5',
+    id: '7',
     name: 'Trash and Bulk Waste Collection Areas',
     category: 'Site',
     subcategory: 'Erosion Control',
@@ -130,7 +159,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '6',
+    id: '8',
     name: 'Steep Slope Erosion Control',
     category: 'Site',
     subcategory: 'Erosion Control',
@@ -146,7 +175,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Building Elevation
   {
-    id: '7',
+    id: '9',
     name: 'Foundation Exposure',
     category: 'Site',
     subcategory: 'Building Elevation',
@@ -161,7 +190,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '8',
+    id: '10',
     name: 'House Placement (in relation to the street)',
     category: 'Site',
     subcategory: 'Building Elevation',
@@ -177,7 +206,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Grading
   {
-    id: '9',
+    id: '11',
     name: 'Final Grade',
     category: 'Site',
     subcategory: 'Grading',
@@ -192,7 +221,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '10',
+    id: '12',
     name: 'Rough Grade',
     category: 'Site',
     subcategory: 'Grading',
@@ -207,7 +236,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '11',
+    id: '13',
     name: 'Swales',
     category: 'Site',
     subcategory: 'Grading',
@@ -223,7 +252,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Site Drainage
   {
-    id: '12',
+    id: '14',
     name: 'Downspout Discharge',
     category: 'Site',
     subcategory: 'Site Drainage',
@@ -238,7 +267,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '13',
+    id: '15',
     name: 'Flatwork Drains',
     category: 'Site',
     subcategory: 'Site Drainage',
@@ -254,7 +283,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Site (6) - Flatwork
   {
-    id: '14',
+    id: '16',
     name: 'Control Joints',
     category: 'Site',
     subcategory: 'Flatwork',
@@ -269,7 +298,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '15',
+    id: '17',
     name: 'Flatwork Fall from House',
     category: 'Site',
     subcategory: 'Flatwork',
@@ -283,10 +312,9 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Flatwork was sloped away from the house in all cases.'
     }
   },
-  // Continue with more items...
   // Adding Foundations (6) - Slab on Grade items
   {
-    id: '16',
+    id: '18',
     name: 'Capillary Break (Under footer)',
     category: 'Foundations',
     subcategory: 'Slab on Grade',
@@ -301,7 +329,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '17',
+    id: '19',
     name: 'Under Slab Vapor Barrier',
     category: 'Foundations',
     subcategory: 'Slab on Grade',
@@ -317,7 +345,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Adding Framing (6) items
   {
-    id: '18',
+    id: '20',
     name: 'Hold Downs and Anchor Bolts',
     category: 'Framing',
     subcategory: 'Foundation Attachment',
@@ -332,7 +360,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '19',
+    id: '21',
     name: 'Subfloor Gluing',
     category: 'Framing',
     subcategory: 'Floor Assembly',
@@ -348,7 +376,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Adding Thermal Enclosure (7) items
   {
-    id: '20',
+    id: '22',
     name: 'Frame Walls Batts',
     category: 'Thermal Enclosure',
     subcategory: 'Frame Walls',
@@ -363,7 +391,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '21',
+    id: '23',
     name: 'Attic Access over Conditioned Space',
     category: 'Thermal Enclosure',
     subcategory: 'Attic',
@@ -379,7 +407,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Adding Air Barrier (6) items
   {
-    id: '22',
+    id: '24',
     name: 'Windows Air Sealing',
     category: 'Air Barrier',
     subcategory: 'Windows/Doors',
@@ -394,7 +422,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '23',
+    id: '25',
     name: 'Air Sealing Sill Plates',
     category: 'Air Barrier',
     subcategory: 'Sills and Top Plates',
@@ -410,7 +438,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
   },
   // Adding Drainage Plane and Flashing (14) items
   {
-    id: '24',
+    id: '26',
     name: 'Structural Laminated Sheathing Panels',
     category: 'Drainage Plane and Flashing',
     subcategory: 'Frame Walls',
@@ -425,7 +453,7 @@ const inspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: '25',
+    id: '27',
     name: 'Window Sill Pan',
     category: 'Drainage Plane and Flashing',
     subcategory: 'Windows',
