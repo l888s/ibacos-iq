@@ -6,11 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { Save, Send, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
-import InspectionForm from '@/components/InspectionForm';
+import InspectionCategoryForm from '@/components/InspectionCategoryForm';
 
 const neighborhoods = [
   'Downtown',
@@ -152,11 +153,14 @@ const Inspection = () => {
     );
   }
 
+  // Get unique categories from the inspection items
+  const categories = [...new Set(currentInspection.items.map(item => item.category))];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <Button 
             variant="ghost" 
@@ -183,7 +187,7 @@ const Inspection = () => {
 
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Progress</span>
+              <span className="text-sm font-medium text-gray-700">Overall Progress</span>
               <span className="text-sm text-gray-600">{getProgress()}%</span>
             </div>
             <Progress value={getProgress()} className="w-full" />
@@ -206,7 +210,30 @@ const Inspection = () => {
           </div>
         </div>
 
-        <InspectionForm />
+        <Tabs defaultValue={categories[0]} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-6">
+            {categories.map((category) => {
+              const categoryItems = currentInspection.items.filter(item => item.category === category);
+              const completedItems = categoryItems.filter(item => item.score !== null).length;
+              const categoryProgress = Math.round((completedItems / categoryItems.length) * 100);
+              
+              return (
+                <TabsTrigger key={category} value={category} className="text-sm">
+                  <div className="flex flex-col items-center">
+                    <span>{category}</span>
+                    <span className="text-xs text-gray-500">{categoryProgress}%</span>
+                  </div>
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+          
+          {categories.map((category) => (
+            <TabsContent key={category} value={category}>
+              <InspectionCategoryForm category={category} />
+            </TabsContent>
+          ))}
+        </Tabs>
       </div>
     </div>
   );
