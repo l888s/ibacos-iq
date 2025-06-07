@@ -1,31 +1,14 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useInspection } from '@/contexts/InspectionContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from '@/hooks/use-toast';
-import { Save, Send, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
-import InspectionCategoryForm from '@/components/InspectionCategoryForm';
-
-const neighborhoods = [
-  'Downtown',
-  'Riverside', 
-  'Hillcrest',
-  'Oakwood',
-  'Maple Grove',
-  'Pine Valley',
-  'Cedar Heights',
-  'Sunset Ridge'
-];
+import NeighborhoodSelection from '@/components/NeighborhoodSelection';
+import InspectionHeader from '@/components/InspectionHeader';
+import InspectionTabs from '@/components/InspectionTabs';
 
 const Inspection = () => {
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const { currentInspection, startNewInspection, saveInspection, submitInspection } = useInspection();
   const navigate = useNavigate();
@@ -41,22 +24,6 @@ const Inspection = () => {
 
     return () => clearInterval(autoSaveInterval);
   }, [currentInspection, autoSaveEnabled, saveInspection]);
-
-  const handleStartInspection = () => {
-    if (!selectedNeighborhood) {
-      toast({
-        title: "Error",
-        description: "Please select a neighborhood first",
-        variant: "destructive",
-      });
-      return;
-    }
-    startNewInspection(selectedNeighborhood);
-    toast({
-      title: "Inspection Started",
-      description: `New inspection for ${selectedNeighborhood} has been created`,
-    });
-  };
 
   const handleManualSave = () => {
     saveInspection();
@@ -95,145 +62,28 @@ const Inspection = () => {
 
   if (!currentInspection) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
+      <>
         <Navigation />
-        
-        <div className="container mx-auto px-4 py-8 max-w-2xl">
-          <div className="mb-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')}
-              className="mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">New Inspection</h1>
-            <p className="text-gray-600">Select a neighborhood to begin your inspection</p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Neighborhood Selection</CardTitle>
-              <CardDescription>
-                Choose the neighborhood you'll be inspecting today
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Neighborhood
-                </label>
-                <Select value={selectedNeighborhood} onValueChange={setSelectedNeighborhood}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a neighborhood" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {neighborhoods.map((neighborhood) => (
-                      <SelectItem key={neighborhood} value={neighborhood}>
-                        {neighborhood}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <Button 
-                onClick={handleStartInspection}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                size="lg"
-                disabled={!selectedNeighborhood}
-              >
-                Start Inspection
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+        <NeighborhoodSelection onStartInspection={startNewInspection} />
+      </>
     );
   }
-
-  // Get unique categories from the inspection items
-  const categories = [...new Set(currentInspection.items.map(item => item.category))];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
       <Navigation />
       
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-          
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                {currentInspection.neighborhood} Inspection
-              </h1>
-              <p className="text-gray-600">
-                {new Date(currentInspection.date).toLocaleDateString()}
-              </p>
-            </div>
-            <Badge variant={currentInspection.status === 'completed' ? 'default' : 'secondary'}>
-              {currentInspection.status === 'completed' ? 'Completed' : 'In Progress'}
-            </Badge>
-          </div>
+        <InspectionHeader
+          neighborhood={currentInspection.neighborhood}
+          date={currentInspection.date}
+          status={currentInspection.status}
+          progress={getProgress()}
+          onSave={handleManualSave}
+          onSubmit={handleSubmit}
+        />
 
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Overall Progress</span>
-              <span className="text-sm text-gray-600">{getProgress()}%</span>
-            </div>
-            <Progress value={getProgress()} className="w-full" />
-          </div>
-
-          <div className="flex flex-wrap gap-4 mb-6">
-            <Button onClick={handleManualSave} variant="outline">
-              <Save className="h-4 w-4 mr-2" />
-              Save Progress
-            </Button>
-            
-            <Button 
-              onClick={handleSubmit}
-              className="bg-green-600 hover:bg-green-700"
-              disabled={currentInspection.status === 'completed'}
-            >
-              <Send className="h-4 w-4 mr-2" />
-              Submit Inspection
-            </Button>
-          </div>
-        </div>
-
-        <Tabs defaultValue={categories[0]} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-6">
-            {categories.map((category) => {
-              const categoryItems = currentInspection.items.filter(item => item.category === category);
-              const completedItems = categoryItems.filter(item => item.score !== null).length;
-              const categoryProgress = Math.round((completedItems / categoryItems.length) * 100);
-              
-              return (
-                <TabsTrigger key={category} value={category} className="text-sm">
-                  <div className="flex flex-col items-center">
-                    <span>{category}</span>
-                    <span className="text-xs text-gray-500">{categoryProgress}%</span>
-                  </div>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-          
-          {categories.map((category) => (
-            <TabsContent key={category} value={category}>
-              <InspectionCategoryForm category={category} />
-            </TabsContent>
-          ))}
-        </Tabs>
+        <InspectionTabs inspection={currentInspection} />
       </div>
     </div>
   );
