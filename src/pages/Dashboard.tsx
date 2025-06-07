@@ -13,13 +13,13 @@ const Dashboard = () => {
   const { savedInspections } = useInspection();
   const navigate = useNavigate();
 
-  // Mock data for neighborhood scores (last 90 days)
+  // Mock data for neighborhood scores (last 90 days) - using 0-4 scale
   const neighborhoodData = [
-    { neighborhood: 'Downtown', avgScore: 85, userScore: 88 },
-    { neighborhood: 'Riverside', avgScore: 78, userScore: 82 },
-    { neighborhood: 'Hillcrest', avgScore: 92, userScore: 90 },
-    { neighborhood: 'Oakwood', avgScore: 81, userScore: 85 },
-    { neighborhood: 'Maple Grove', avgScore: 87, userScore: 89 },
+    { neighborhood: 'Downtown', avgScore: 2.1, userScore: 2.4 },
+    { neighborhood: 'Riverside', avgScore: 1.9, userScore: 2.2 },
+    { neighborhood: 'Hillcrest', avgScore: 2.8, userScore: 2.7 },
+    { neighborhood: 'Oakwood', avgScore: 2.3, userScore: 2.6 },
+    { neighborhood: 'Maple Grove', avgScore: 2.5, userScore: 2.8 },
   ];
 
   const recentInspections = savedInspections
@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   const totalInspections = savedInspections.filter(i => i.status === 'completed').length;
   const avgScore = savedInspections.length > 0 
-    ? Math.round(savedInspections.reduce((sum, i) => sum + (i.totalScore / i.maxScore * 100), 0) / savedInspections.length)
+    ? Number((savedInspections.reduce((sum, i) => sum + i.averageScore, 0) / savedInspections.length).toFixed(2))
     : 0;
 
   return (
@@ -63,7 +63,8 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Average Score</p>
-                  <p className="text-3xl font-bold text-gray-900">{avgScore}%</p>
+                  <p className="text-3xl font-bold text-gray-900">{avgScore}</p>
+                  <p className="text-xs text-gray-500">out of 4.0</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-600" />
               </div>
@@ -88,7 +89,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle>Neighborhood Performance Comparison</CardTitle>
             <CardDescription>
-              Average scores across neighborhoods (last 90 days) vs your performance
+              Average scores across neighborhoods (last 90 days) vs your performance (Scale: 0-4.0)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -96,10 +97,10 @@ const Dashboard = () => {
               <BarChart data={neighborhoodData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="neighborhood" />
-                <YAxis domain={[0, 100]} />
+                <YAxis domain={[0, 4]} />
                 <Tooltip 
                   formatter={(value, name) => [
-                    `${value}%`, 
+                    Number(value).toFixed(2), 
                     name === 'avgScore' ? 'Neighborhood Average' : 'Your Score'
                   ]}
                 />
@@ -133,10 +134,10 @@ const Dashboard = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-lg">
-                          {Math.round(inspection.totalScore / inspection.maxScore * 100)}%
+                          {inspection.averageScore.toFixed(2)}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {inspection.totalScore}/{inspection.maxScore}
+                          out of 4.0
                         </p>
                       </div>
                     </div>

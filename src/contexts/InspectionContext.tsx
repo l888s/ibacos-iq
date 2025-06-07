@@ -24,6 +24,7 @@ export interface Inspection {
   items: InspectionItem[];
   totalScore: number;
   maxScore: number;
+  averageScore: number;
 }
 
 interface InspectionContextType {
@@ -46,7 +47,7 @@ export const useInspection = () => {
   return context;
 };
 
-// Complete inspection criteria from CSV
+// Complete inspection criteria - adding all missing categories
 const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   // Site (6) - Erosion Control
   {
@@ -505,11 +506,185 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       3: 'A minimum 10-mil poly vapor barrier was installed with minor inconsistencies in installation and taping.',
       4: 'A minimum 10-mil poly vapor barrier was installed under the slab, with all seams well sealed with tape.'
     }
+  },
+  // Adding Framing category
+  {
+    id: 'framing-floor-lumber-grade',
+    category: 'Framing',
+    subcategory: 'Floor Framing',
+    item: 'Lumber Grade Stamps',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Lumber grade stamps were not visible on structural members.',
+      1: 'Lumber grade stamps were inconsistently visible on structural members.',
+      2: 'Lumber grade stamps were visible on most structural members.',
+      3: 'No score',
+      4: 'Lumber grade stamps were clearly visible on all structural members.'
+    }
+  },
+  {
+    id: 'framing-floor-joist-spacing',
+    category: 'Framing',
+    subcategory: 'Floor Framing',
+    item: 'Floor Joist Spacing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Floor joist spacing exceeded code requirements.',
+      1: 'Floor joist spacing occasionally exceeded code requirements.',
+      2: 'Floor joist spacing met code requirements with minor inconsistencies.',
+      3: 'No score',
+      4: 'Floor joist spacing consistently met code requirements.'
+    }
+  },
+  // Adding Thermal Enclosure category
+  {
+    id: 'thermal-insulation-installation',
+    category: 'Thermal Enclosure',
+    subcategory: 'Insulation',
+    item: 'Insulation Installation Quality',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Insulation was poorly installed with significant gaps and compressions.',
+      1: 'Insulation installation had frequent gaps and compressions.',
+      2: 'Insulation was adequately installed with minor gaps.',
+      3: 'Insulation was well installed with minimal gaps.',
+      4: 'Insulation was expertly installed with no visible gaps or compressions.'
+    }
+  },
+  {
+    id: 'thermal-windows-installation',
+    category: 'Thermal Enclosure',
+    subcategory: 'Windows',
+    item: 'Window Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Windows were poorly installed with visible gaps around frames.',
+      1: 'Window installation had inconsistent sealing.',
+      2: 'Windows were adequately installed and sealed.',
+      3: 'Windows were well installed with proper sealing.',
+      4: 'Windows were expertly installed with comprehensive sealing.'
+    }
+  },
+  // Adding Air Barrier category
+  {
+    id: 'air-barrier-continuity',
+    category: 'Air Barrier',
+    subcategory: 'Envelope Sealing',
+    item: 'Air Barrier Continuity',
+    weight: 9,
+    scoreDescriptions: {
+      0: 'Air barrier had significant discontinuities.',
+      1: 'Air barrier had frequent discontinuities.',
+      2: 'Air barrier had minor discontinuities.',
+      3: 'Air barrier was mostly continuous.',
+      4: 'Air barrier was completely continuous.'
+    }
+  },
+  // Adding Drainage Plane category
+  {
+    id: 'drainage-plane-installation',
+    category: 'Drainage Plane',
+    subcategory: 'Weather Resistive Barrier',
+    item: 'WRB Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Weather resistive barrier was poorly installed.',
+      1: 'WRB installation had significant deficiencies.',
+      2: 'WRB was adequately installed.',
+      3: 'WRB was well installed.',
+      4: 'WRB was expertly installed with proper overlaps.'
+    }
+  },
+  // Adding Wall Cladding category
+  {
+    id: 'wall-cladding-attachment',
+    category: 'Wall Cladding',
+    subcategory: 'Siding',
+    item: 'Siding Attachment',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Siding attachment was inadequate.',
+      1: 'Siding attachment had deficiencies.',
+      2: 'Siding was adequately attached.',
+      3: 'Siding was well attached.',
+      4: 'Siding was expertly attached per manufacturer specifications.'
+    }
+  },
+  // Adding Showers and Tubs category
+  {
+    id: 'showers-waterproofing',
+    category: 'Showers and Tubs',
+    subcategory: 'Waterproofing',
+    item: 'Shower Waterproofing',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Shower waterproofing was inadequate or missing.',
+      1: 'Shower waterproofing had significant deficiencies.',
+      2: 'Shower waterproofing was adequate.',
+      3: 'Shower waterproofing was well executed.',
+      4: 'Shower waterproofing was expertly installed.'
+    }
+  },
+  // Adding Roof Cladding and Drainage category
+  {
+    id: 'roof-cladding-installation',
+    category: 'Roof Cladding and Drainage',
+    subcategory: 'Roofing',
+    item: 'Roof Cladding Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Roof cladding was poorly installed.',
+      1: 'Roof cladding installation had deficiencies.',
+      2: 'Roof cladding was adequately installed.',
+      3: 'Roof cladding was well installed.',
+      4: 'Roof cladding was expertly installed.'
+    }
+  },
+  // Adding HVAC Systems category
+  {
+    id: 'hvac-ductwork-sealing',
+    category: 'HVAC Systems',
+    subcategory: 'Ductwork',
+    item: 'Ductwork Sealing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Ductwork sealing was inadequate.',
+      1: 'Ductwork sealing had deficiencies.',
+      2: 'Ductwork was adequately sealed.',
+      3: 'Ductwork was well sealed.',
+      4: 'Ductwork was expertly sealed.'
+    }
+  },
+  // Adding Plumbing and Electrical Systems category
+  {
+    id: 'plumbing-installation',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing',
+    item: 'Plumbing Installation',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Plumbing installation was inadequate.',
+      1: 'Plumbing installation had deficiencies.',
+      2: 'Plumbing was adequately installed.',
+      3: 'Plumbing was well installed.',
+      4: 'Plumbing was expertly installed.'
+    }
+  },
+  // Adding Interior Finishes category
+  {
+    id: 'interior-drywall-installation',
+    category: 'Interior Finishes',
+    subcategory: 'Drywall',
+    item: 'Drywall Installation',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Drywall installation was poor quality.',
+      1: 'Drywall installation had deficiencies.',
+      2: 'Drywall was adequately installed.',
+      3: 'Drywall was well installed.',
+      4: 'Drywall was expertly installed.'
+    }
   }
-  // Note: This is a partial implementation. The complete dataset would include all categories:
-  // Framing, Thermal Enclosure, Air Barrier, Drainage Plane and Flashing, Wall Cladding,
-  // Showers and Tubs, Roof Cladding and Drainage, HVAC Systems, Plumbing and Electrical Systems, Interior Finishes
-  // Each with their respective subcategories and items as provided in the CSV
 ];
 
 interface InspectionProviderProps {
@@ -523,6 +698,14 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     return saved ? JSON.parse(saved) : [];
   });
 
+  const calculateAverageScore = (items: InspectionItem[]) => {
+    const scoredItems = items.filter(item => item.score !== null);
+    if (scoredItems.length === 0) return 0;
+    
+    const totalScore = scoredItems.reduce((sum, item) => sum + (item.score || 0), 0);
+    return totalScore / scoredItems.length;
+  };
+
   const startNewInspection = (neighborhood: string) => {
     const newInspection: Inspection = {
       id: Date.now().toString(),
@@ -534,7 +717,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
         score: null
       })),
       totalScore: 0,
-      maxScore: defaultInspectionItems.length * 4
+      maxScore: defaultInspectionItems.length * 4,
+      averageScore: 0
     };
     setCurrentInspection(newInspection);
   };
@@ -550,10 +734,13 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
       sum + (item.score || 0), 0
     );
     
+    const averageScore = calculateAverageScore(updatedItems);
+    
     setCurrentInspection({
       ...currentInspection,
       items: updatedItems,
-      totalScore
+      totalScore,
+      averageScore
     });
   };
 

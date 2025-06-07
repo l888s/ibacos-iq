@@ -27,19 +27,19 @@ const Reports = () => {
     });
   };
 
-  const getScoreColor = (percentage: number) => {
-    if (percentage >= 90) return 'text-green-600';
-    if (percentage >= 80) return 'text-blue-600';
-    if (percentage >= 70) return 'text-yellow-600';
-    if (percentage >= 60) return 'text-orange-600';
+  const getScoreColor = (score: number) => {
+    if (score >= 3.5) return 'text-green-600';
+    if (score >= 3.0) return 'text-blue-600';
+    if (score >= 2.5) return 'text-yellow-600';
+    if (score >= 2.0) return 'text-orange-600';
     return 'text-red-600';
   };
 
-  const getScoreBadgeColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-green-100 text-green-800';
-    if (percentage >= 80) return 'bg-blue-100 text-blue-800';
-    if (percentage >= 70) return 'bg-yellow-100 text-yellow-800';
-    if (percentage >= 60) return 'bg-orange-100 text-orange-800';
+  const getScoreBadgeColor = (score: number) => {
+    if (score >= 3.5) return 'bg-green-100 text-green-800';
+    if (score >= 3.0) return 'bg-blue-100 text-blue-800';
+    if (score >= 2.5) return 'bg-yellow-100 text-yellow-800';
+    if (score >= 2.0) return 'bg-orange-100 text-orange-800';
     return 'bg-red-100 text-red-800';
   };
 
@@ -76,15 +76,15 @@ const Reports = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {completedInspections.map((inspection) => {
-              const percentage = Math.round((inspection.totalScore / inspection.maxScore) * 100);
+              const averageScore = inspection.averageScore || 0;
               
               return (
                 <Card key={inspection.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{inspection.neighborhood}</CardTitle>
-                      <Badge className={getScoreBadgeColor(percentage)}>
-                        {percentage}%
+                      <Badge className={getScoreBadgeColor(averageScore)}>
+                        {averageScore.toFixed(2)}
                       </Badge>
                     </div>
                     <CardDescription className="flex items-center space-x-4 text-sm">
@@ -98,9 +98,9 @@ const Reports = () => {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Total Score</span>
-                        <span className={`font-bold text-lg ${getScoreColor(percentage)}`}>
-                          {inspection.totalScore}/{inspection.maxScore}
+                        <span className="text-sm text-gray-600">Average Score</span>
+                        <span className={`font-bold text-lg ${getScoreColor(averageScore)}`}>
+                          {averageScore.toFixed(2)}/4.0
                         </span>
                       </div>
                       
