@@ -30,11 +30,26 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
   if (!currentInspection) return null;
 
   const categoryItems = currentInspection.items.filter(item => item.category === category);
+  console.log(`=== CATEGORY FORM DEBUG for ${category} ===`);
+  console.log('Category items:', categoryItems);
+  console.log('Total category items:', categoryItems.length);
+  
   const completedItems = categoryItems.filter(item => item.score !== null).length;
   const categoryWeight = categoryItems[0]?.weight || 0;
   
   // Group by subcategory
   const subcategories = [...new Set(categoryItems.map(item => item.subcategory))];
+  console.log('Subcategories in category:', subcategories);
+  
+  // Debug each subcategory
+  subcategories.forEach(subcategory => {
+    const subcategoryItems = categoryItems.filter(item => item.subcategory === subcategory);
+    console.log(`Subcategory ${subcategory}: ${subcategoryItems.length} items`);
+    subcategoryItems.forEach(item => {
+      console.log(`  - ${item.item} (ID: ${item.id})`);
+    });
+  });
+  console.log('=== END CATEGORY FORM DEBUG ===');
 
   return (
     <div className="space-y-6">
@@ -67,12 +82,16 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
             <Card key={subcategory} className="border-l-4 border-blue-500">
               <CardHeader>
                 <CardTitle className="text-xl text-blue-700">{subcategory}</CardTitle>
+                <CardDescription className="text-sm">
+                  {subcategoryItems.length} items in this subcategory
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {subcategoryItems.map((inspectionItem) => (
                   <div key={inspectionItem.id} className="border rounded-lg p-6 bg-gray-50">
                     <div className="mb-4">
                       <h4 className="font-semibold text-lg text-gray-900 mb-2">{inspectionItem.item}</h4>
+                      <p className="text-sm text-gray-600">ID: {inspectionItem.id} | Weight: {inspectionItem.weight}</p>
                     </div>
                     
                     <div className="space-y-4">
