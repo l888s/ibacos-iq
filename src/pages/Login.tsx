@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -173,11 +172,6 @@ const Login = () => {
                   )}
                 </button>
               </div>
-              {!isSignUp && (
-                <p className="text-xs text-gray-500 mt-1">
-                  First time users: Use "starlighthomes" as your initial password
-                </p>
-              )}
             </div>
             <Button
               type="submit"
