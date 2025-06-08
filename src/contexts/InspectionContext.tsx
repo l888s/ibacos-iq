@@ -42,16 +42,18 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     getInspectionById
   });
 
+  const contextValue: InspectionContextType = {
+    currentInspection,
+    savedInspections,
+    startNewInspection,
+    updateItemScore,
+    saveInspection,
+    submitInspection,
+    loadInspection
+  };
+
   return (
-    <InspectionContext.Provider value={{
-      currentInspection,
-      savedInspections,
-      startNewInspection,
-      updateItemScore,
-      saveInspection,
-      submitInspection,
-      loadInspection
-    }}>
+    <InspectionContext.Provider value={contextValue}>
       {children}
     </InspectionContext.Provider>
   );
