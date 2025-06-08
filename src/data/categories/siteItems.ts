@@ -215,5 +215,48 @@ export const siteItems: Omit<InspectionItem, 'score'>[] = [
       3: 'No score',
       4: 'All landscape enclosed by flatwork had a means for drainage.'
     }
+  },
+  // Site (6) - Site Preparation
+  {
+    id: 'site-preparation-clearing',
+    category: 'Site',
+    subcategory: 'Site Preparation',
+    item: 'Site Clearing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Site clearing was poorly executed.',
+      1: 'Site clearing was executed with minor issues.',
+      2: 'Site clearing was properly executed.',
+      3: 'No score',
+      4: 'Site clearing was executed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'site-preparation-excavation',
+    category: 'Site',
+    subcategory: 'Site Preparation',
+    item: 'Excavation',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Excavation was poorly executed.',
+      1: 'Excavation was executed with minor deviations from specifications.',
+      2: 'Excavation was executed per specifications.',
+      3: 'No score',
+      4: 'Excavation was executed better than specifications.'
+    }
+  },
+  {
+    id: 'site-preparation-soil-compaction',
+    category: 'Site',
+    subcategory: 'Site Preparation',
+    item: 'Soil Compaction',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Soil compaction was not performed or was inadequate.',
+      1: 'Soil compaction was performed with minor issues.',
+      2: 'Soil compaction was properly performed per specifications.',
+      3: 'No score',
+      4: 'Soil compaction exceeded minimum specifications.'
+    }
   }
 ];
