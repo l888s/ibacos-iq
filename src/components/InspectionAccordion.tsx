@@ -32,9 +32,20 @@ interface InspectionAccordionProps {
 const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
   const { updateItemScore } = useInspection();
 
-  if (!inspection) return null;
+  if (!inspection) {
+    console.log('No inspection provided to InspectionAccordion');
+    return null;
+  }
+
+  console.log('InspectionAccordion rendering with inspection:', inspection);
+  console.log('Total items in inspection:', inspection.items.length);
+  console.log('Items by category:', inspection.items.reduce((acc, item) => {
+    acc[item.category] = (acc[item.category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>));
 
   const categories = [...new Set(inspection.items.map(item => item.category))];
+  console.log('Categories found:', categories);
 
   const getCategoryProgress = (category: string) => {
     const categoryItems = inspection.items.filter(item => item.category === category);
@@ -50,6 +61,8 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
           const completedItems = categoryItems.filter(item => item.score !== null).length;
           const categoryProgress = getCategoryProgress(category);
           const categoryWeight = categoryItems[0]?.weight || 0;
+          
+          console.log(`Category ${category}: ${categoryItems.length} items, weight: ${categoryWeight}`);
           
           // Group by subcategory
           const subcategories = [...new Set(categoryItems.map(item => item.subcategory))];

@@ -47,9 +47,14 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
   };
 
   const getNeighborhoodStatus = (neighborhood: string) => {
+    console.log('Checking status for neighborhood:', neighborhood);
+    console.log('Saved inspections:', savedInspections);
+    
     const existingInspection = savedInspections.find(
       inspection => inspection.neighborhood === neighborhood && inspection.status === 'in-progress'
     );
+    
+    console.log('Existing in-progress inspection found:', existingInspection);
     return existingInspection ? 'in-progress' : 'available';
   };
 
@@ -64,6 +69,8 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     }
 
     const status = getNeighborhoodStatus(selectedNeighborhood);
+    console.log('Neighborhood status:', status);
+    
     if (status === 'in-progress') {
       toast({
         title: "Inspection Resumed",

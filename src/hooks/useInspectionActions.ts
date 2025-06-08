@@ -21,12 +21,18 @@ export const useInspectionActions = ({
 }: UseInspectionActionsProps) => {
   
   const startNewInspection = useCallback((neighborhood: string) => {
+    console.log('Starting new inspection for neighborhood:', neighborhood);
+    console.log('Default inspection items available:', defaultInspectionItems.length);
+    
     const existingInspection = findExistingInspection(neighborhood);
     
     if (existingInspection) {
+      console.log('Found existing inspection, loading it:', existingInspection);
       setCurrentInspection(existingInspection);
       return;
     }
+
+    console.log('Creating new inspection with items from categories:', [...new Set(defaultInspectionItems.map(item => item.category))]);
 
     const newInspection: Inspection = {
       id: Date.now().toString(),
@@ -41,6 +47,10 @@ export const useInspectionActions = ({
       maxScore: defaultInspectionItems.length * 4,
       averageScore: 0
     };
+    
+    console.log('New inspection created with items:', newInspection.items.length);
+    console.log('Categories in new inspection:', [...new Set(newInspection.items.map(item => item.category))]);
+    
     setCurrentInspection(newInspection);
   }, [findExistingInspection, setCurrentInspection]);
 

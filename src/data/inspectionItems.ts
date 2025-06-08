@@ -22,3 +22,6 @@ export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   ...electricalItems,
   ...interiorItems
 ];
+
+console.log('Total inspection items loaded:', defaultInspectionItems.length);
+console.log('Categories loaded:', [...new Set(defaultInspectionItems.map(item => item.category))]);
