@@ -30,6 +30,7 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
 
   const {
     startNewInspection,
+    continueExistingInspection,
     updateItemScore,
     saveInspection,
     submitInspection,
@@ -46,6 +47,7 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     currentInspection,
     savedInspections,
     startNewInspection,
+    continueExistingInspection,
     updateItemScore,
     saveInspection,
     submitInspection,

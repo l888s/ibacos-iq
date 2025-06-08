@@ -20,18 +20,20 @@ export const useInspectionActions = ({
   getInspectionById
 }: UseInspectionActionsProps) => {
   
-  const startNewInspection = useCallback((neighborhood: string) => {
-    console.log('Starting new inspection for neighborhood:', neighborhood);
+  const startNewInspection = useCallback((neighborhood: string, forceNew: boolean = false) => {
+    console.log('Starting inspection for neighborhood:', neighborhood, 'forceNew:', forceNew);
     console.log('Default inspection items available:', defaultInspectionItems.length);
     
     const existingInspection = findExistingInspection(neighborhood);
     
-    if (existingInspection) {
-      console.log('Found existing inspection, loading it:', existingInspection);
-      setCurrentInspection(existingInspection);
-      return;
+    // If there's an existing inspection and we're not forcing a new one, don't automatically load it
+    if (existingInspection && !forceNew) {
+      console.log('Found existing inspection, but not auto-loading:', existingInspection);
+      // Don't automatically load - let the user choose
+      return { hasExisting: true, existingInspection };
     }
 
+    // If forcing new or no existing inspection, create a new one
     console.log('Creating new inspection with items from categories:', [...new Set(defaultInspectionItems.map(item => item.category))]);
 
     const newInspection: Inspection = {
@@ -52,6 +54,17 @@ export const useInspectionActions = ({
     console.log('Categories in new inspection:', [...new Set(newInspection.items.map(item => item.category))]);
     
     setCurrentInspection(newInspection);
+    return { hasExisting: false, newInspection };
+  }, [findExistingInspection, setCurrentInspection]);
+
+  const continueExistingInspection = useCallback((neighborhood: string) => {
+    const existingInspection = findExistingInspection(neighborhood);
+    if (existingInspection) {
+      console.log('Loading existing inspection:', existingInspection);
+      setCurrentInspection(existingInspection);
+      return true;
+    }
+    return false;
   }, [findExistingInspection, setCurrentInspection]);
 
   const updateItemScore = useCallback((itemId: string, score: number | string) => {
@@ -98,6 +111,7 @@ export const useInspectionActions = ({
 
   return {
     startNewInspection,
+    continueExistingInspection,
     updateItemScore,
     saveInspection,
     submitInspection,

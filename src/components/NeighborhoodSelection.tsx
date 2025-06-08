@@ -15,14 +15,14 @@ interface Neighborhood {
 }
 
 interface NeighborhoodSelectionProps {
-  onStartInspection: (neighborhood: string) => void;
+  onStartInspection: (neighborhood: string, forceNew?: boolean) => any;
 }
 
 const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps) => {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const navigate = useNavigate();
-  const { savedInspections } = useInspection();
+  const { savedInspections, continueExistingInspection } = useInspection();
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -58,7 +58,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     return existingInspection ? 'in-progress' : 'available';
   };
 
-  const handleStartInspection = () => {
+  const handleStartNewInspection = () => {
     if (!selectedNeighborhood) {
       toast({
         title: "Error",
@@ -69,21 +69,41 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     }
 
     const status = getNeighborhoodStatus(selectedNeighborhood);
-    console.log('Neighborhood status:', status);
+    console.log('Starting new inspection for neighborhood status:', status);
     
-    if (status === 'in-progress') {
+    // Always start a new inspection, regardless of existing ones
+    const result = onStartInspection(selectedNeighborhood, true);
+    
+    toast({
+      title: "New Inspection Started",
+      description: `New inspection for ${selectedNeighborhood} has been created`,
+    });
+  };
+
+  const handleContinueInspection = () => {
+    if (!selectedNeighborhood) {
+      toast({
+        title: "Error",
+        description: "Please select a neighborhood first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const success = continueExistingInspection(selectedNeighborhood);
+    
+    if (success) {
       toast({
         title: "Inspection Resumed",
         description: `Continuing existing inspection for ${selectedNeighborhood}`,
       });
     } else {
       toast({
-        title: "Inspection Started",
-        description: `New inspection for ${selectedNeighborhood} has been created`,
+        title: "Error",
+        description: "No existing inspection found for this neighborhood",
+        variant: "destructive",
       });
     }
-    
-    onStartInspection(selectedNeighborhood);
   };
 
   return (
@@ -145,23 +165,42 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
                     <span className="text-sm font-medium">Existing Inspection Found</span>
                   </div>
                   <p className="text-sm text-orange-700 mt-1">
-                    This neighborhood has an unfinished inspection. Clicking "Continue Inspection" will resume the existing inspection.
+                    This neighborhood has an unfinished inspection. You can continue the existing inspection or start a new one.
                   </p>
                 </div>
               )}
             </div>
             
-            <Button 
-              onClick={handleStartInspection}
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              size="lg"
-              disabled={!selectedNeighborhood}
-            >
-              {selectedNeighborhood && getNeighborhoodStatus(selectedNeighborhood) === 'in-progress' 
-                ? 'Continue Inspection' 
-                : 'Start Inspection'
-              }
-            </Button>
+            <div className="space-y-3">
+              {selectedNeighborhood && getNeighborhoodStatus(selectedNeighborhood) === 'in-progress' ? (
+                <>
+                  <Button 
+                    onClick={handleContinueInspection}
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                    size="lg"
+                  >
+                    Continue Existing Inspection
+                  </Button>
+                  <Button 
+                    onClick={handleStartNewInspection}
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                  >
+                    Start New Inspection
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  onClick={handleStartNewInspection}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  size="lg"
+                  disabled={!selectedNeighborhood}
+                >
+                  Start New Inspection
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
