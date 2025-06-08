@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { AuthContextType } from '@/types/auth';
+import { AuthContextType, UserProfile } from '@/types/auth';
 import { authService } from '@/services/authService';
 import { useProfile } from '@/hooks/useProfile';
 
