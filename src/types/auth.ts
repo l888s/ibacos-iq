@@ -13,8 +13,8 @@ export interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   session: Session | null;
-  login: (email: string, password: string) => Promise<{ error?: any }>;
-  signUp: (email: string, password: string, name: string) => Promise<{ error?: any }>;
+  login: (email: string, password: string, captchaToken?: string) => Promise<{ error?: any }>;
+  signUp: (email: string, password: string, name: string, captchaToken?: string) => Promise<{ error?: any }>;
   logout: () => Promise<void>;
   updatePassword: (newPassword: string) => Promise<{ error?: any }>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<{ error?: any }>;

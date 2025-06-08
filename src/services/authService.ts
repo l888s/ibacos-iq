@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from '@/types/auth';
 
@@ -23,12 +22,21 @@ export const authService = {
     }
   },
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, captchaToken?: string) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const authOptions: any = {
         email,
         password,
-      });
+      };
+
+      // Add captcha token if provided
+      if (captchaToken) {
+        authOptions.options = {
+          captchaToken: captchaToken
+        };
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword(authOptions);
       
       if (error) {
         return { error };
@@ -40,9 +48,9 @@ export const authService = {
     }
   },
 
-  async signUp(email: string, password: string, name: string) {
+  async signUp(email: string, password: string, name: string, captchaToken?: string) {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const authOptions: any = {
         email,
         password,
         options: {
@@ -51,7 +59,14 @@ export const authService = {
           },
           emailRedirectTo: `${window.location.origin}/`,
         },
-      });
+      };
+
+      // Add captcha token if provided
+      if (captchaToken) {
+        authOptions.options.captchaToken = captchaToken;
+      }
+
+      const { data, error } = await supabase.auth.signUp(authOptions);
       
       if (error) {
         return { error };
