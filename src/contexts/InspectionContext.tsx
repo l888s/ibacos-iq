@@ -47,7 +47,7 @@ export const useInspection = () => {
   return context;
 };
 
-// Complete inspection criteria - adding all missing categories
+// Complete inspection criteria with all categories and items
 const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   // Site (6) - Erosion Control
   {
@@ -507,7 +507,7 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'A minimum 10-mil poly vapor barrier was installed under the slab, with all seams well sealed with tape.'
     }
   },
-  // Adding Framing category
+  // Framing (7) - Floor Framing
   {
     id: 'framing-floor-lumber-grade',
     category: 'Framing',
@@ -536,7 +536,93 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Floor joist spacing consistently met code requirements.'
     }
   },
-  // Adding Thermal Enclosure category
+  {
+    id: 'framing-floor-blocking',
+    category: 'Framing',
+    subcategory: 'Floor Framing',
+    item: 'Floor Joist Blocking',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Floor joist blocking was missing or inadequately installed.',
+      1: 'Floor joist blocking was inconsistently installed.',
+      2: 'Floor joist blocking was adequately installed with minor gaps.',
+      3: 'Floor joist blocking was well installed.',
+      4: 'Floor joist blocking was expertly installed per code requirements.'
+    }
+  },
+  // Framing (7) - Wall Framing
+  {
+    id: 'framing-wall-stud-spacing',
+    category: 'Framing',
+    subcategory: 'Wall Framing',
+    item: 'Wall Stud Spacing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Wall stud spacing exceeded code requirements.',
+      1: 'Wall stud spacing occasionally exceeded code requirements.',
+      2: 'Wall stud spacing met code requirements with minor inconsistencies.',
+      3: 'No score',
+      4: 'Wall stud spacing consistently met code requirements.'
+    }
+  },
+  {
+    id: 'framing-wall-headers',
+    category: 'Framing',
+    subcategory: 'Wall Framing',
+    item: 'Headers and Beams',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Headers and beams were undersized or missing.',
+      1: 'Headers and beams occasionally did not meet requirements.',
+      2: 'Headers and beams met code requirements with minor inconsistencies.',
+      3: 'Headers and beams were well sized and installed.',
+      4: 'Headers and beams consistently exceeded code requirements.'
+    }
+  },
+  {
+    id: 'framing-wall-bracing',
+    category: 'Framing',
+    subcategory: 'Wall Framing',
+    item: 'Wall Bracing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Wall bracing was inadequate or missing.',
+      1: 'Wall bracing was inconsistently installed.',
+      2: 'Wall bracing met code requirements.',
+      3: 'Wall bracing was well installed.',
+      4: 'Wall bracing exceeded code requirements.'
+    }
+  },
+  // Framing (7) - Roof Framing
+  {
+    id: 'framing-roof-rafters',
+    category: 'Framing',
+    subcategory: 'Roof Framing',
+    item: 'Rafter Spacing and Sizing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Rafter spacing or sizing did not meet code requirements.',
+      1: 'Rafter spacing or sizing occasionally did not meet requirements.',
+      2: 'Rafter spacing and sizing met code requirements with minor inconsistencies.',
+      3: 'Rafter spacing and sizing were well designed.',
+      4: 'Rafter spacing and sizing consistently exceeded requirements.'
+    }
+  },
+  {
+    id: 'framing-roof-connections',
+    category: 'Framing',
+    subcategory: 'Roof Framing',
+    item: 'Roof Connections',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Roof connections were inadequate.',
+      1: 'Roof connections had deficiencies.',
+      2: 'Roof connections met code requirements.',
+      3: 'Roof connections were well executed.',
+      4: 'Roof connections exceeded code requirements.'
+    }
+  },
+  // Thermal Enclosure (8) - Insulation
   {
     id: 'thermal-insulation-installation',
     category: 'Thermal Enclosure',
@@ -552,6 +638,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
+    id: 'thermal-insulation-coverage',
+    category: 'Thermal Enclosure',
+    subcategory: 'Insulation',
+    item: 'Insulation Coverage',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Insulation coverage was incomplete with significant bare areas.',
+      1: 'Insulation coverage had noticeable gaps.',
+      2: 'Insulation coverage was adequate with minor gaps.',
+      3: 'Insulation coverage was thorough.',
+      4: 'Insulation coverage was complete with no gaps.'
+    }
+  },
+  {
+    id: 'thermal-insulation-r-value',
+    category: 'Thermal Enclosure',
+    subcategory: 'Insulation',
+    item: 'Insulation R-Value Compliance',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Insulation R-values did not meet code requirements.',
+      1: 'Insulation R-values occasionally did not meet requirements.',
+      2: 'Insulation R-values met code requirements.',
+      3: 'Insulation R-values exceeded code requirements.',
+      4: 'Insulation R-values significantly exceeded code requirements.'
+    }
+  },
+  // Thermal Enclosure (8) - Windows
+  {
     id: 'thermal-windows-installation',
     category: 'Thermal Enclosure',
     subcategory: 'Windows',
@@ -565,7 +680,21 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Windows were expertly installed with comprehensive sealing.'
     }
   },
-  // Adding Air Barrier category
+  {
+    id: 'thermal-windows-flashing',
+    category: 'Thermal Enclosure',
+    subcategory: 'Windows',
+    item: 'Window Flashing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Window flashing was missing or improperly installed.',
+      1: 'Window flashing had significant deficiencies.',
+      2: 'Window flashing was adequately installed.',
+      3: 'Window flashing was well installed.',
+      4: 'Window flashing was expertly installed per best practices.'
+    }
+  },
+  // Air Barrier (9) - Envelope Sealing
   {
     id: 'air-barrier-continuity',
     category: 'Air Barrier',
@@ -580,7 +709,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Air barrier was completely continuous.'
     }
   },
-  // Adding Drainage Plane category
+  {
+    id: 'air-barrier-penetrations',
+    category: 'Air Barrier',
+    subcategory: 'Envelope Sealing',
+    item: 'Penetration Sealing',
+    weight: 9,
+    scoreDescriptions: {
+      0: 'Penetrations through the air barrier were not sealed.',
+      1: 'Penetration sealing was inconsistent.',
+      2: 'Penetrations were adequately sealed.',
+      3: 'Penetrations were well sealed.',
+      4: 'All penetrations were expertly sealed.'
+    }
+  },
+  {
+    id: 'air-barrier-joints',
+    category: 'Air Barrier',
+    subcategory: 'Envelope Sealing',
+    item: 'Joint Sealing',
+    weight: 9,
+    scoreDescriptions: {
+      0: 'Joints in the air barrier were not sealed.',
+      1: 'Joint sealing was inconsistent.',
+      2: 'Joints were adequately sealed.',
+      3: 'Joints were well sealed.',
+      4: 'All joints were expertly sealed.'
+    }
+  },
+  // Drainage Plane (8) - Weather Resistive Barrier
   {
     id: 'drainage-plane-installation',
     category: 'Drainage Plane',
@@ -595,7 +752,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'WRB was expertly installed with proper overlaps.'
     }
   },
-  // Adding Wall Cladding category
+  {
+    id: 'drainage-plane-overlaps',
+    category: 'Drainage Plane',
+    subcategory: 'Weather Resistive Barrier',
+    item: 'WRB Overlaps',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'WRB overlaps were inadequate or missing.',
+      1: 'WRB overlaps were inconsistent.',
+      2: 'WRB overlaps met minimum requirements.',
+      3: 'WRB overlaps were well executed.',
+      4: 'WRB overlaps exceeded requirements.'
+    }
+  },
+  {
+    id: 'drainage-plane-flashing',
+    category: 'Drainage Plane',
+    subcategory: 'Weather Resistive Barrier',
+    item: 'Flashing Integration',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Flashing was not integrated with WRB.',
+      1: 'Flashing integration was poor.',
+      2: 'Flashing was adequately integrated.',
+      3: 'Flashing was well integrated.',
+      4: 'Flashing integration was expertly executed.'
+    }
+  },
+  // Wall Cladding (7) - Siding
   {
     id: 'wall-cladding-attachment',
     category: 'Wall Cladding',
@@ -610,7 +795,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Siding was expertly attached per manufacturer specifications.'
     }
   },
-  // Adding Showers and Tubs category
+  {
+    id: 'wall-cladding-joints',
+    category: 'Wall Cladding',
+    subcategory: 'Siding',
+    item: 'Siding Joints',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Siding joints were poorly executed.',
+      1: 'Siding joints had deficiencies.',
+      2: 'Siding joints were adequate.',
+      3: 'Siding joints were well executed.',
+      4: 'Siding joints were expertly crafted.'
+    }
+  },
+  {
+    id: 'wall-cladding-ventilation',
+    category: 'Wall Cladding',
+    subcategory: 'Siding',
+    item: 'Ventilation Behind Cladding',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'No ventilation space behind cladding.',
+      1: 'Inadequate ventilation space.',
+      2: 'Adequate ventilation space provided.',
+      3: 'Good ventilation space provided.',
+      4: 'Excellent ventilation space with proper detailing.'
+    }
+  },
+  // Showers and Tubs (10) - Waterproofing
   {
     id: 'showers-waterproofing',
     category: 'Showers and Tubs',
@@ -625,7 +838,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Shower waterproofing was expertly installed.'
     }
   },
-  // Adding Roof Cladding and Drainage category
+  {
+    id: 'showers-pan-installation',
+    category: 'Showers and Tubs',
+    subcategory: 'Waterproofing',
+    item: 'Shower Pan Installation',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Shower pan was improperly installed.',
+      1: 'Shower pan installation had deficiencies.',
+      2: 'Shower pan was adequately installed.',
+      3: 'Shower pan was well installed.',
+      4: 'Shower pan was expertly installed.'
+    }
+  },
+  {
+    id: 'showers-tile-installation',
+    category: 'Showers and Tubs',
+    subcategory: 'Waterproofing',
+    item: 'Tile Installation in Wet Areas',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Tile installation in wet areas was poor.',
+      1: 'Tile installation had deficiencies.',
+      2: 'Tile installation was adequate.',
+      3: 'Tile installation was well executed.',
+      4: 'Tile installation was expertly crafted.'
+    }
+  },
+  // Roof Cladding and Drainage (8) - Roofing
   {
     id: 'roof-cladding-installation',
     category: 'Roof Cladding and Drainage',
@@ -640,7 +881,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Roof cladding was expertly installed.'
     }
   },
-  // Adding HVAC Systems category
+  {
+    id: 'roof-drainage-gutters',
+    category: 'Roof Cladding and Drainage',
+    subcategory: 'Drainage',
+    item: 'Gutter Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Gutters were poorly installed or missing.',
+      1: 'Gutter installation had deficiencies.',
+      2: 'Gutters were adequately installed.',
+      3: 'Gutters were well installed.',
+      4: 'Gutters were expertly installed with proper slope.'
+    }
+  },
+  {
+    id: 'roof-flashing',
+    category: 'Roof Cladding and Drainage',
+    subcategory: 'Roofing',
+    item: 'Roof Flashing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Roof flashing was missing or improperly installed.',
+      1: 'Roof flashing had significant deficiencies.',
+      2: 'Roof flashing was adequately installed.',
+      3: 'Roof flashing was well installed.',
+      4: 'Roof flashing was expertly installed.'
+    }
+  },
+  // HVAC Systems (8) - Ductwork
   {
     id: 'hvac-ductwork-sealing',
     category: 'HVAC Systems',
@@ -655,7 +924,35 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Ductwork was expertly sealed.'
     }
   },
-  // Adding Plumbing and Electrical Systems category
+  {
+    id: 'hvac-ductwork-support',
+    category: 'HVAC Systems',
+    subcategory: 'Ductwork',
+    item: 'Ductwork Support',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Ductwork support was inadequate.',
+      1: 'Ductwork support had deficiencies.',
+      2: 'Ductwork was adequately supported.',
+      3: 'Ductwork was well supported.',
+      4: 'Ductwork was expertly supported.'
+    }
+  },
+  {
+    id: 'hvac-equipment-installation',
+    category: 'HVAC Systems',
+    subcategory: 'Equipment',
+    item: 'HVAC Equipment Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'HVAC equipment installation was poor.',
+      1: 'Equipment installation had deficiencies.',
+      2: 'Equipment was adequately installed.',
+      3: 'Equipment was well installed.',
+      4: 'Equipment was expertly installed.'
+    }
+  },
+  // Plumbing and Electrical Systems (7) - Plumbing
   {
     id: 'plumbing-installation',
     category: 'Plumbing and Electrical Systems',
@@ -670,7 +967,50 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Plumbing was expertly installed.'
     }
   },
-  // Adding Interior Finishes category
+  {
+    id: 'plumbing-rough-in',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing',
+    item: 'Plumbing Rough-in',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Plumbing rough-in was poor.',
+      1: 'Plumbing rough-in had deficiencies.',
+      2: 'Plumbing rough-in was adequate.',
+      3: 'Plumbing rough-in was well executed.',
+      4: 'Plumbing rough-in was expertly executed.'
+    }
+  },
+  // Plumbing and Electrical Systems (7) - Electrical
+  {
+    id: 'electrical-installation',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical',
+    item: 'Electrical Installation',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Electrical installation was inadequate.',
+      1: 'Electrical installation had deficiencies.',
+      2: 'Electrical was adequately installed.',
+      3: 'Electrical was well installed.',
+      4: 'Electrical was expertly installed.'
+    }
+  },
+  {
+    id: 'electrical-rough-in',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical',
+    item: 'Electrical Rough-in',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Electrical rough-in was poor.',
+      1: 'Electrical rough-in had deficiencies.',
+      2: 'Electrical rough-in was adequate.',
+      3: 'Electrical rough-in was well executed.',
+      4: 'Electrical rough-in was expertly executed.'
+    }
+  },
+  // Interior Finishes (6) - Drywall
   {
     id: 'interior-drywall-installation',
     category: 'Interior Finishes',
@@ -683,6 +1023,49 @@ const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       2: 'Drywall was adequately installed.',
       3: 'Drywall was well installed.',
       4: 'Drywall was expertly installed.'
+    }
+  },
+  {
+    id: 'interior-drywall-finishing',
+    category: 'Interior Finishes',
+    subcategory: 'Drywall',
+    item: 'Drywall Finishing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Drywall finishing was poor quality.',
+      1: 'Drywall finishing had deficiencies.',
+      2: 'Drywall finishing was adequate.',
+      3: 'Drywall finishing was well executed.',
+      4: 'Drywall finishing was expertly crafted.'
+    }
+  },
+  // Interior Finishes (6) - Flooring
+  {
+    id: 'interior-flooring-installation',
+    category: 'Interior Finishes',
+    subcategory: 'Flooring',
+    item: 'Flooring Installation',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Flooring installation was poor quality.',
+      1: 'Flooring installation had deficiencies.',
+      2: 'Flooring was adequately installed.',
+      3: 'Flooring was well installed.',
+      4: 'Flooring was expertly installed.'
+    }
+  },
+  {
+    id: 'interior-trim-installation',
+    category: 'Interior Finishes',
+    subcategory: 'Trim',
+    item: 'Trim Installation',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Trim installation was poor quality.',
+      1: 'Trim installation had deficiencies.',
+      2: 'Trim was adequately installed.',
+      3: 'Trim was well installed.',
+      4: 'Trim was expertly installed.'
     }
   }
 ];
@@ -707,6 +1090,17 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
   };
 
   const startNewInspection = (neighborhood: string) => {
+    // Check if there's already an in-progress inspection for this neighborhood
+    const existingInspection = savedInspections.find(
+      inspection => inspection.neighborhood === neighborhood && inspection.status === 'in-progress'
+    );
+    
+    if (existingInspection) {
+      // Load the existing inspection instead of creating a new one
+      setCurrentInspection(existingInspection);
+      return;
+    }
+
     const newInspection: Inspection = {
       id: Date.now().toString(),
       neighborhood,
