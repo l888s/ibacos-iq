@@ -1,10 +1,11 @@
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useInspection } from '@/contexts/InspectionContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Inspection } from '@/types/inspection';
 
 const scoreLabels = {
   'N/O': 'Not Observed',
@@ -25,7 +26,7 @@ const scoreColors = {
 };
 
 interface InspectionAccordionProps {
-  inspection: any;
+  inspection: Inspection;
 }
 
 const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
@@ -33,11 +34,11 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
 
   if (!inspection) return null;
 
-  const categories = [...new Set(inspection.items.map((item: any) => item.category))];
+  const categories = [...new Set(inspection.items.map(item => item.category))];
 
   const getCategoryProgress = (category: string) => {
-    const categoryItems = inspection.items.filter((item: any) => item.category === category);
-    const completedItems = categoryItems.filter((item: any) => item.score !== null).length;
+    const categoryItems = inspection.items.filter(item => item.category === category);
+    const completedItems = categoryItems.filter(item => item.score !== null).length;
     return Math.round((completedItems / categoryItems.length) * 100);
   };
 
@@ -45,13 +46,13 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
     <div className="space-y-4">
       <Accordion type="multiple" className="w-full space-y-4">
         {categories.map((category) => {
-          const categoryItems = inspection.items.filter((item: any) => item.category === category);
-          const completedItems = categoryItems.filter((item: any) => item.score !== null).length;
+          const categoryItems = inspection.items.filter(item => item.category === category);
+          const completedItems = categoryItems.filter(item => item.score !== null).length;
           const categoryProgress = getCategoryProgress(category);
           const categoryWeight = categoryItems[0]?.weight || 0;
           
           // Group by subcategory
-          const subcategories = [...new Set(categoryItems.map((item: any) => item.subcategory))];
+          const subcategories = [...new Set(categoryItems.map(item => item.subcategory))];
 
           return (
             <AccordionItem key={category} value={category} className="border rounded-lg">
@@ -77,7 +78,7 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
               <AccordionContent className="px-6 pb-6">
                 <div className="space-y-6">
                   {subcategories.map((subcategory) => {
-                    const subcategoryItems = categoryItems.filter((item: any) => item.subcategory === subcategory);
+                    const subcategoryItems = categoryItems.filter(item => item.subcategory === subcategory);
                     
                     return (
                       <Card key={subcategory} className="border-l-4 border-blue-500">
@@ -85,7 +86,7 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
                           <CardTitle className="text-xl text-blue-700">{subcategory}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                          {subcategoryItems.map((inspectionItem: any) => (
+                          {subcategoryItems.map((inspectionItem) => (
                             <div key={inspectionItem.id} className="border rounded-lg p-6 bg-gray-50">
                               <div className="mb-4">
                                 <h4 className="font-semibold text-lg text-gray-900 mb-2">{inspectionItem.item}</h4>
@@ -94,17 +95,17 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
                               <div className="space-y-4">
                                 {/* Score Buttons */}
                                 <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-                                  {['N/O', 0, 1, 2, 3, 4].map((score) => (
+                                  {(['N/O', 0, 1, 2, 3, 4] as const).map((score) => (
                                     <Button
                                       key={score}
                                       variant={inspectionItem.score === score ? "default" : "outline"}
                                       size="sm"
                                       onClick={() => updateItemScore(inspectionItem.id, score)}
-                                      className={`text-sm h-auto py-3 px-4 ${inspectionItem.score === score ? scoreColors[score as keyof typeof scoreColors] : ""}`}
-                                      disabled={score !== 'N/O' && inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions] === 'No score'}
+                                      className={`text-sm h-auto py-3 px-4 ${inspectionItem.score === score ? scoreColors[score] : ""}`}
+                                      disabled={score !== 'N/O' && inspectionItem.scoreDescriptions[score] === 'No score'}
                                     >
                                       <div className="text-center">
-                                        <div className="font-semibold">{scoreLabels[score as keyof typeof scoreLabels]}</div>
+                                        <div className="font-semibold">{scoreLabels[score]}</div>
                                       </div>
                                     </Button>
                                   ))}
@@ -115,8 +116,8 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
                                   <div className="p-3 rounded border-l-4 border-gray-400 bg-gray-50">
                                     <span className="font-medium">N/O:</span> Not Observed - Use when item cannot be inspected
                                   </div>
-                                  {[0, 1, 2, 3, 4].map((score) => {
-                                    const description = inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions];
+                                  {([0, 1, 2, 3, 4] as const).map((score) => {
+                                    const description = inspectionItem.scoreDescriptions[score];
                                     if (description === 'No score') return null;
                                     
                                     return (
