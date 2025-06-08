@@ -4,7 +4,7 @@ import { useInspection } from '@/contexts/InspectionContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Calendar, FileText, TrendingUp, MapPin } from 'lucide-react';
+import { Calendar, FileText, TrendingUp, MapPin, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 
@@ -13,13 +13,16 @@ const Dashboard = () => {
   const { savedInspections } = useInspection();
   const navigate = useNavigate();
 
-  // Mock data for neighborhood scores (last 90 days) - using 0-4 scale
+  // Check if user is admin
+  const isAdmin = user?.email === 'lewis.bedford@starlighthomes.com';
+
+  // Mock data for neighborhood scores (last 90 days) - using 0-3.52 scale
   const neighborhoodData = [
-    { neighborhood: 'Downtown', avgScore: 2.1, userScore: 2.4 },
-    { neighborhood: 'Riverside', avgScore: 1.9, userScore: 2.2 },
-    { neighborhood: 'Hillcrest', avgScore: 2.8, userScore: 2.7 },
-    { neighborhood: 'Oakwood', avgScore: 2.3, userScore: 2.6 },
-    { neighborhood: 'Maple Grove', avgScore: 2.5, userScore: 2.8 },
+    { neighborhood: 'Starlight Ridge', avgScore: 1.85 },
+    { neighborhood: 'Sunset Meadows', avgScore: 1.67 },
+    { neighborhood: 'Heritage Oaks', avgScore: 2.46 },
+    { neighborhood: 'Pine Valley', avgScore: 2.02 },
+    { neighborhood: 'Cedar Heights', avgScore: 2.20 },
   ];
 
   const recentInspections = savedInspections
@@ -38,10 +41,24 @@ const Dashboard = () => {
       
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {user?.name}
-          </h1>
-          <p className="text-gray-600">Here's your inspection overview for the last 90 days</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Welcome back, {user?.name}
+              </h1>
+              <p className="text-gray-600">Here's your inspection overview for the last 90 days</p>
+            </div>
+            {isAdmin && (
+              <Button 
+                onClick={() => navigate('/admin')} 
+                variant="outline"
+                className="flex items-center space-x-2"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Admin Settings</span>
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Quick Stats */}
@@ -64,7 +81,7 @@ const Dashboard = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Average Score</p>
                   <p className="text-3xl font-bold text-gray-900">{avgScore}</p>
-                  <p className="text-xs text-gray-500">out of 4.0</p>
+                  <p className="text-xs text-gray-500">out of 3.52</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-600" />
               </div>
@@ -87,9 +104,9 @@ const Dashboard = () => {
         {/* Chart */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Neighborhood Performance Comparison</CardTitle>
+            <CardTitle>Neighborhood Performance</CardTitle>
             <CardDescription>
-              Average scores across neighborhoods (last 90 days) vs your performance (Scale: 0-4.0)
+              Average scores across neighborhoods (last 90 days) - Scale: 0-3.52
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -97,15 +114,14 @@ const Dashboard = () => {
               <BarChart data={neighborhoodData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="neighborhood" />
-                <YAxis domain={[0, 4]} />
+                <YAxis domain={[0, 3.52]} />
                 <Tooltip 
-                  formatter={(value, name) => [
+                  formatter={(value) => [
                     Number(value).toFixed(2), 
-                    name === 'avgScore' ? 'Neighborhood Average' : 'Your Score'
+                    'Average Score'
                   ]}
                 />
                 <Bar dataKey="avgScore" fill="#3b82f6" name="avgScore" />
-                <Bar dataKey="userScore" fill="#10b981" name="userScore" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -137,7 +153,7 @@ const Dashboard = () => {
                           {inspection.averageScore.toFixed(2)}
                         </p>
                         <p className="text-sm text-gray-500">
-                          out of 4.0
+                          out of 3.52
                         </p>
                       </div>
                     </div>

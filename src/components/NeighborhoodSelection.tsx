@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -7,17 +7,12 @@ import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useInspection } from '@/contexts/InspectionContext';
+import { supabase } from '@/integrations/supabase/client';
 
-const neighborhoods = [
-  'Downtown',
-  'Riverside', 
-  'Hillcrest',
-  'Oakwood',
-  'Maple Grove',
-  'Pine Valley',
-  'Cedar Heights',
-  'Sunset Ridge'
-];
+interface Neighborhood {
+  id: string;
+  name: string;
+}
 
 interface NeighborhoodSelectionProps {
   onStartInspection: (neighborhood: string) => void;
@@ -25,8 +20,31 @@ interface NeighborhoodSelectionProps {
 
 const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps) => {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
+  const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const navigate = useNavigate();
   const { savedInspections } = useInspection();
+
+  useEffect(() => {
+    fetchNeighborhoods();
+  }, []);
+
+  const fetchNeighborhoods = async () => {
+    const { data, error } = await supabase
+      .from('neighborhoods')
+      .select('*')
+      .order('name');
+    
+    if (error) {
+      console.error('Failed to load neighborhoods:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load neighborhoods",
+        variant: "destructive",
+      });
+    } else {
+      setNeighborhoods(data || []);
+    }
+  };
 
   const getNeighborhoodStatus = (neighborhood: string) => {
     const existingInspection = savedInspections.find(
@@ -95,11 +113,11 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   {neighborhoods.map((neighborhood) => {
-                    const status = getNeighborhoodStatus(neighborhood);
+                    const status = getNeighborhoodStatus(neighborhood.name);
                     return (
-                      <SelectItem key={neighborhood} value={neighborhood}>
+                      <SelectItem key={neighborhood.id} value={neighborhood.name}>
                         <div className="flex items-center gap-2">
-                          <span>{neighborhood}</span>
+                          <span>{neighborhood.name}</span>
                           {status === 'in-progress' && (
                             <div className="flex items-center gap-1 text-orange-600">
                               <AlertTriangle className="h-3 w-3" />

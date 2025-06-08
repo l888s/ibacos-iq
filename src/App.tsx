@@ -9,6 +9,7 @@ import { InspectionProvider } from "./contexts/InspectionContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
 import Inspection from "./pages/Inspection";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,11 @@ const App = () => (
               <Route path="/" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <ProtectedRoute>
+                  <Admin />
                 </ProtectedRoute>
               } />
               <Route path="/inspection" element={

@@ -28,18 +28,18 @@ const Reports = () => {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 3.5) return 'text-green-600';
-    if (score >= 3.0) return 'text-blue-600';
-    if (score >= 2.5) return 'text-yellow-600';
-    if (score >= 2.0) return 'text-orange-600';
+    if (score >= 3.1) return 'text-green-600';
+    if (score >= 2.6) return 'text-blue-600';
+    if (score >= 2.2) return 'text-yellow-600';
+    if (score >= 1.8) return 'text-orange-600';
     return 'text-red-600';
   };
 
   const getScoreBadgeColor = (score: number) => {
-    if (score >= 3.5) return 'bg-green-100 text-green-800';
-    if (score >= 3.0) return 'bg-blue-100 text-blue-800';
-    if (score >= 2.5) return 'bg-yellow-100 text-yellow-800';
-    if (score >= 2.0) return 'bg-orange-100 text-orange-800';
+    if (score >= 3.1) return 'bg-green-100 text-green-800';
+    if (score >= 2.6) return 'bg-blue-100 text-blue-800';
+    if (score >= 2.2) return 'bg-yellow-100 text-yellow-800';
+    if (score >= 1.8) return 'bg-orange-100 text-orange-800';
     return 'bg-red-100 text-red-800';
   };
 
@@ -100,7 +100,7 @@ const Reports = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">Average Score</span>
                         <span className={`font-bold text-lg ${getScoreColor(averageScore)}`}>
-                          {averageScore.toFixed(2)}/4.0
+                          {averageScore.toFixed(2)}/3.52
                         </span>
                       </div>
                       
