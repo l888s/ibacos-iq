@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { savedInspections, setCurrentInspection } = useInspection();
   const navigate = useNavigate();
 
@@ -62,7 +62,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome back, {user?.name}
+                Welcome back, {profile?.name || user?.email}
               </h1>
               <p className="text-gray-600">Here's your inspection overview for the last 90 days</p>
             </div>

@@ -12,7 +12,7 @@ import { Home, FileText, User, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
   const { setCurrentInspection } = useInspection();
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,7 +69,7 @@ const Navigation = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center space-x-2">
                 <User className="h-4 w-4" />
-                <span className="hidden md:inline">{user?.name}</span>
+                <span className="hidden md:inline">{profile?.name || user?.email}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-white">
