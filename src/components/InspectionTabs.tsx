@@ -8,7 +8,13 @@ interface InspectionTabsProps {
 }
 
 const InspectionTabs = ({ inspection }: InspectionTabsProps) => {
+  console.log('=== INSPECTION TABS DEBUG ===');
+  console.log('InspectionTabs rendering with inspection:', inspection);
+  console.log('Total items in inspection:', inspection.items.length);
+  
   const categories = [...new Set(inspection.items.map(item => item.category))];
+  console.log('Categories found:', categories);
+  console.log('=== END TABS DEBUG ===');
 
   return (
     <Tabs defaultValue={categories[0]} className="w-full">
@@ -18,6 +24,8 @@ const InspectionTabs = ({ inspection }: InspectionTabsProps) => {
             const categoryItems = inspection.items.filter(item => item.category === category);
             const completedItems = categoryItems.filter(item => item.score !== null).length;
             const categoryProgress = Math.round((completedItems / categoryItems.length) * 100);
+            
+            console.log(`Category ${category}: ${categoryItems.length} items, ${completedItems} completed (${categoryProgress}%)`);
             
             return (
               <TabsTrigger 

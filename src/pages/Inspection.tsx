@@ -6,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import NeighborhoodSelection from '@/components/NeighborhoodSelection';
 import InspectionHeader from '@/components/InspectionHeader';
-import InspectionAccordion from '@/components/InspectionAccordion';
+import InspectionTabs from '@/components/InspectionTabs';
 import { Button } from '@/components/ui/button';
 import { Save, Send } from 'lucide-react';
 
@@ -101,7 +101,7 @@ const Inspection = () => {
           isComplete={isComplete()}
         />
 
-        <InspectionAccordion inspection={currentInspection} />
+        <InspectionTabs inspection={currentInspection} />
 
         {/* Bottom Action Buttons */}
         <div className="mt-8 pt-6 border-t bg-white rounded-lg p-6 shadow-sm">
