@@ -1,4 +1,3 @@
-
 import { InspectionItem } from '@/types/inspection';
 
 export const siteItems: Omit<InspectionItem, 'score'>[] = [
@@ -257,6 +256,21 @@ export const siteItems: Omit<InspectionItem, 'score'>[] = [
       2: 'Soil compaction was properly performed per specifications.',
       3: 'No score',
       4: 'Soil compaction exceeded minimum specifications.'
+    }
+  },
+  // Site (6) - Housekeeping
+  {
+    id: 'site-housekeeping-wallboard-moisture',
+    category: 'Site',
+    subcategory: 'Housekeeping',
+    item: 'Wallboard Moisture',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wallboard was visibly wet while it was being installed.',
+      1: 'No score',
+      2: 'Wallboard was inconsistently found wet while being installed.',
+      3: 'No score',
+      4: 'Wallboard was installed and kept dry throughout the finishing phase.'
     }
   }
 ];

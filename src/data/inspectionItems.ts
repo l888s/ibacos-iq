@@ -3,11 +3,14 @@ import { InspectionItem } from '@/types/inspection';
 import { siteItems } from './categories/siteItems';
 import { foundationItems } from './categories/foundationItems';
 import { framingItems } from './categories/framingItems';
+import { thermalEnclosureItems } from './categories/thermalEnclosureItems';
+import { airBarrierItems } from './categories/airBarrierItems';
+import { drainagePlaneItems } from './categories/drainagePlaneItems';
+import { wallCladdingItems } from './categories/wallCladdingItems';
+import { showersAndTubsItems } from './categories/showersAndTubsItems';
 import { roofingItems } from './categories/roofingItems';
-import { exteriorItems } from './categories/exteriorItems';
 import { hvacItems } from './categories/hvacItems';
-import { plumbingItems } from './categories/plumbingItems';
-import { electricalItems } from './categories/electricalItems';
+import { plumbingElectricalItems } from './categories/plumbingElectricalItems';
 import { interiorItems } from './categories/interiorItems';
 
 // Complete inspection criteria with all categories and items
@@ -15,11 +18,14 @@ export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   ...siteItems,
   ...foundationItems,
   ...framingItems,
+  ...thermalEnclosureItems,
+  ...airBarrierItems,
+  ...drainagePlaneItems,
+  ...wallCladdingItems,
+  ...showersAndTubsItems,
   ...roofingItems,
-  ...exteriorItems,
   ...hvacItems,
-  ...plumbingItems,
-  ...electricalItems,
+  ...plumbingElectricalItems,
   ...interiorItems
 ];
 
