@@ -10,7 +10,7 @@ import Navigation from '@/components/Navigation';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { savedInspections } = useInspection();
+  const { savedInspections, setCurrentInspection } = useInspection();
   const navigate = useNavigate();
 
   // Check if user is admin
@@ -46,6 +46,12 @@ const Dashboard = () => {
         .filter(i => i.status === 'completed')
         .reduce((sum, i) => sum + i.averageScore, 0) / totalInspections).toFixed(2))
     : 0;
+
+  const handleStartNewInspection = () => {
+    // Clear any current inspection before navigating
+    setCurrentInspection(null);
+    navigate('/inspection');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
@@ -194,7 +200,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <Button 
-                onClick={() => navigate('/inspection')} 
+                onClick={handleStartNewInspection} 
                 className="w-full bg-blue-600 hover:bg-blue-700"
                 size="lg"
               >

@@ -1,5 +1,6 @@
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useInspection } from '@/contexts/InspectionContext';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -12,6 +13,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const { user, logout } = useAuth();
+  const { setCurrentInspection } = useInspection();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,10 +22,16 @@ const Navigation = () => {
     navigate('/login');
   };
 
+  const handleInspectionClick = () => {
+    // Clear any current inspection when navigating to inspection page
+    setCurrentInspection(null);
+    navigate('/inspection');
+  };
+
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: Home },
-    { path: '/inspection', label: 'Inspection', icon: FileText },
-    { path: '/reports', label: 'Reports', icon: FileText },
+    { path: '/', label: 'Dashboard', icon: Home, onClick: () => navigate('/') },
+    { path: '/inspection', label: 'Inspection', icon: FileText, onClick: handleInspectionClick },
+    { path: '/reports', label: 'Reports', icon: FileText, onClick: () => navigate('/reports') },
   ];
 
   return (
@@ -46,7 +54,7 @@ const Navigation = () => {
                   <Button
                     key={item.path}
                     variant={isActive ? "default" : "ghost"}
-                    onClick={() => navigate(item.path)}
+                    onClick={item.onClick}
                     className={isActive ? "bg-blue-600 hover:bg-blue-700" : ""}
                   >
                     <Icon className="h-4 w-4 mr-2" />

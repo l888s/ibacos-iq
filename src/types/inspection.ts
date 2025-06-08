@@ -29,6 +29,7 @@ export interface Inspection {
 export interface InspectionContextType {
   currentInspection: Inspection | null;
   savedInspections: Inspection[];
+  setCurrentInspection: (inspection: Inspection | null) => void;
   startNewInspection: (neighborhood: string, forceNew?: boolean) => any;
   continueExistingInspection: (neighborhood: string) => boolean;
   updateItemScore: (itemId: string, score: number | string) => void;

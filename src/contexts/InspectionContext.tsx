@@ -49,6 +49,7 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
   const contextValue: InspectionContextType = {
     currentInspection,
     savedInspections,
+    setCurrentInspection,
     startNewInspection,
     continueExistingInspection,
     updateItemScore,
