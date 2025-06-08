@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useInspection } from '@/contexts/InspectionContext';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +7,8 @@ import Navigation from '@/components/Navigation';
 import NeighborhoodSelection from '@/components/NeighborhoodSelection';
 import InspectionHeader from '@/components/InspectionHeader';
 import InspectionAccordion from '@/components/InspectionAccordion';
+import { Button } from '@/components/ui/button';
+import { Save, Send } from 'lucide-react';
 
 const Inspection = () => {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
@@ -68,6 +71,11 @@ const Inspection = () => {
     return Math.round((completedItems / currentInspection.items.length) * 100);
   };
 
+  const isComplete = () => {
+    if (!currentInspection) return false;
+    return currentInspection.items.every(item => item.score !== null);
+  };
+
   if (!currentInspection) {
     return (
       <>
@@ -90,9 +98,36 @@ const Inspection = () => {
           onSave={handleManualSave}
           onSubmit={handleSubmit}
           onDelete={handleDelete}
+          isComplete={isComplete()}
         />
 
         <InspectionAccordion inspection={currentInspection} />
+
+        {/* Bottom Action Buttons */}
+        <div className="mt-8 pt-6 border-t bg-white rounded-lg p-6 shadow-sm">
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Button onClick={handleManualSave} variant="outline" size="lg">
+              <Save className="h-4 w-4 mr-2" />
+              Save Progress
+            </Button>
+            
+            <Button 
+              onClick={handleSubmit}
+              className={`${isComplete() ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
+              disabled={!isComplete() || currentInspection.status === 'completed'}
+              size="lg"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Submit Inspection
+            </Button>
+          </div>
+          
+          {!isComplete() && (
+            <p className="text-center text-sm text-gray-600 mt-4">
+              Complete all items to enable submission ({currentInspection.items.filter(item => item.score === null).length} items remaining)
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

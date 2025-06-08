@@ -16,14 +16,24 @@ const Dashboard = () => {
   // Check if user is admin
   const isAdmin = user?.email === 'lewis.bedford@starlighthomes.com';
 
-  // Mock data for neighborhood scores (last 90 days) - using 0-3.52 scale
-  const neighborhoodData = [
-    { neighborhood: 'Starlight Ridge', avgScore: 1.85 },
-    { neighborhood: 'Sunset Meadows', avgScore: 1.67 },
-    { neighborhood: 'Heritage Oaks', avgScore: 2.46 },
-    { neighborhood: 'Pine Valley', avgScore: 2.02 },
-    { neighborhood: 'Cedar Heights', avgScore: 2.20 },
-  ];
+  // Generate neighborhood data from actual completed inspections
+  const neighborhoodData = savedInspections
+    .filter(i => i.status === 'completed')
+    .reduce((acc, inspection) => {
+      const existing = acc.find(item => item.neighborhood === inspection.neighborhood);
+      if (existing) {
+        existing.avgScore = (existing.avgScore + inspection.averageScore) / 2;
+        existing.count++;
+      } else {
+        acc.push({
+          neighborhood: inspection.neighborhood,
+          avgScore: inspection.averageScore,
+          count: 1
+        });
+      }
+      return acc;
+    }, [] as { neighborhood: string; avgScore: number; count: number }[])
+    .slice(0, 10); // Show top 10 neighborhoods
 
   const recentInspections = savedInspections
     .filter(i => i.status === 'completed')
@@ -32,7 +42,9 @@ const Dashboard = () => {
 
   const totalInspections = savedInspections.filter(i => i.status === 'completed').length;
   const avgScore = savedInspections.length > 0 
-    ? Number((savedInspections.reduce((sum, i) => sum + i.averageScore, 0) / savedInspections.length).toFixed(2))
+    ? Number((savedInspections
+        .filter(i => i.status === 'completed')
+        .reduce((sum, i) => sum + i.averageScore, 0) / totalInspections).toFixed(2))
     : 0;
 
   return (
@@ -80,7 +92,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Average Score</p>
-                  <p className="text-3xl font-bold text-gray-900">{avgScore}</p>
+                  <p className="text-3xl font-bold text-gray-900">{avgScore || 0}</p>
                   <p className="text-xs text-gray-500">out of 3.52</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-600" />
@@ -102,30 +114,40 @@ const Dashboard = () => {
         </div>
 
         {/* Chart */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Neighborhood Performance</CardTitle>
-            <CardDescription>
-              Average scores across neighborhoods (last 90 days) - Scale: 0-3.52
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={neighborhoodData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="neighborhood" />
-                <YAxis domain={[0, 3.52]} />
-                <Tooltip 
-                  formatter={(value) => [
-                    Number(value).toFixed(2), 
-                    'Average Score'
-                  ]}
-                />
-                <Bar dataKey="avgScore" fill="#3b82f6" name="avgScore" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {neighborhoodData.length > 0 ? (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Neighborhood Performance</CardTitle>
+              <CardDescription>
+                Average scores across neighborhoods (completed inspections) - Scale: 0-3.52
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={neighborhoodData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="neighborhood" />
+                  <YAxis domain={[0, 3.52]} />
+                  <Tooltip 
+                    formatter={(value) => [
+                      Number(value).toFixed(2), 
+                      'Average Score'
+                    ]}
+                  />
+                  <Bar dataKey="avgScore" fill="#3b82f6" name="avgScore" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mb-8">
+            <CardContent className="text-center py-12">
+              <BarChart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Performance Data Yet</h3>
+              <p className="text-gray-600 mb-6">Complete inspections to see neighborhood performance metrics</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Inspections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

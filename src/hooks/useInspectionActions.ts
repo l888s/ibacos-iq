@@ -1,7 +1,9 @@
+
 import { useCallback } from 'react';
 import { Inspection, InspectionItem } from '@/types/inspection';
 import { defaultInspectionItems } from '@/data/inspectionItems';
-import { calculateAverageScore, calculateTotalScore } from '@/utils/inspectionCalculations';
+import { calculateWeightedAverageScore, calculateTotalScore } from '@/utils/inspectionCalculations';
+import { downloadPDF } from '@/utils/pdfGenerator';
 
 interface UseInspectionActionsProps {
   currentInspection: Inspection | null;
@@ -76,7 +78,7 @@ export const useInspectionActions = ({
     );
     
     const totalScore = calculateTotalScore(updatedItems);
-    const averageScore = calculateAverageScore(updatedItems);
+    const averageScore = calculateWeightedAverageScore(updatedItems);
     
     setCurrentInspection({
       ...currentInspection,
@@ -91,7 +93,7 @@ export const useInspectionActions = ({
     saveInspectionToStorage(currentInspection);
   }, [currentInspection, saveInspectionToStorage]);
 
-  const submitInspection = useCallback(() => {
+  const submitInspection = useCallback(async () => {
     if (!currentInspection) return;
     
     const completedInspection = {
@@ -100,6 +102,14 @@ export const useInspectionActions = ({
     };
     
     saveInspectionToStorage(completedInspection);
+    
+    // Generate and download PDF
+    try {
+      await downloadPDF(completedInspection);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+    
     setCurrentInspection(null);
   }, [currentInspection, saveInspectionToStorage, setCurrentInspection]);
 

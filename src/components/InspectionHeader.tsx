@@ -24,6 +24,7 @@ interface InspectionHeaderProps {
   onSave: () => void;
   onSubmit: () => void;
   onDelete: () => void;
+  isComplete: boolean;
 }
 
 const InspectionHeader = ({ 
@@ -33,7 +34,8 @@ const InspectionHeader = ({
   progress, 
   onSave, 
   onSubmit,
-  onDelete
+  onDelete,
+  isComplete
 }: InspectionHeaderProps) => {
   const navigate = useNavigate();
 
@@ -78,8 +80,8 @@ const InspectionHeader = ({
         
         <Button 
           onClick={onSubmit}
-          className="bg-green-600 hover:bg-green-700"
-          disabled={status === 'completed'}
+          className={`${isComplete ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
+          disabled={!isComplete || status === 'completed'}
         >
           <Send className="h-4 w-4 mr-2" />
           Submit Inspection

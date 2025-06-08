@@ -7,6 +7,8 @@ import { ArrowLeft, Download, Eye, Calendar, MapPin, FileText } from 'lucide-rea
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { toast } from '@/hooks/use-toast';
+import { downloadPDF } from '@/utils/pdfGenerator';
+import { getCategoryWeightedScores } from '@/utils/inspectionCalculations';
 
 const Reports = () => {
   const { savedInspections, loadInspection } = useInspection();
@@ -19,12 +21,20 @@ const Reports = () => {
     navigate('/inspection');
   };
 
-  const handleDownloadReport = (inspection: any) => {
-    // Simulate report download
-    toast({
-      title: "Download Started",
-      description: `Downloading report for ${inspection.neighborhood} inspection`,
-    });
+  const handleDownloadReport = async (inspection: any) => {
+    try {
+      await downloadPDF(inspection);
+      toast({
+        title: "Download Started",
+        description: `Downloading report for ${inspection.neighborhood} inspection`,
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "There was an error generating the PDF report",
+        variant: "destructive",
+      });
+    }
   };
 
   const getScoreColor = (score: number) => {
@@ -77,6 +87,7 @@ const Reports = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {completedInspections.map((inspection) => {
               const averageScore = inspection.averageScore || 0;
+              const categoryScores = getCategoryWeightedScores(inspection.items);
               
               return (
                 <Card key={inspection.id} className="hover:shadow-lg transition-shadow">
@@ -98,15 +109,30 @@ const Reports = () => {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Average Score</span>
+                        <span className="text-sm text-gray-600">Weighted Average Score</span>
                         <span className={`font-bold text-lg ${getScoreColor(averageScore)}`}>
                           {averageScore.toFixed(2)}/3.52
                         </span>
                       </div>
                       
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium text-gray-700">Category Scores:</h4>
+                        {Object.entries(categoryScores).slice(0, 3).map(([category, data]) => (
+                          <div key={category} className="flex justify-between text-xs">
+                            <span className="text-gray-600">{category}:</span>
+                            <span className="font-medium">{data.score.toFixed(2)}</span>
+                          </div>
+                        ))}
+                        {Object.keys(categoryScores).length > 3 && (
+                          <div className="text-xs text-gray-500">
+                            +{Object.keys(categoryScores).length - 3} more categories
+                          </div>
+                        )}
+                      </div>
+                      
                       <div className="flex items-center space-x-2 text-sm text-gray-600">
                         <MapPin className="h-4 w-4" />
-                        <span>{inspection.items.length} items inspected</span>
+                        <span>{inspection.items.filter(item => item.score !== null).length} items inspected</span>
                       </div>
                       
                       <div className="flex space-x-2">

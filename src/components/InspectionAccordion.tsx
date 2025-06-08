@@ -9,6 +9,15 @@ import { Inspection } from '@/types/inspection';
 
 const scoreLabels = {
   'N/O': 'Not Observed',
+  0: 'Poor',
+  1: 'Below Avg', 
+  2: 'Average',
+  3: 'Good',
+  4: 'Excellent'
+};
+
+const scoreFullLabels = {
+  'N/O': 'Not Observed',
   0: 'Poor (0)',
   1: 'Below Average (1)', 
   2: 'Average (2)',
@@ -106,7 +115,7 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
                               </div>
                               
                               <div className="space-y-4">
-                                {/* Score Buttons */}
+                                {/* Score Buttons - Fixed for better text display */}
                                 <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                                   {(['N/O', 0, 1, 2, 3, 4] as const).map((score) => (
                                     <Button
@@ -114,11 +123,12 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
                                       variant={inspectionItem.score === score ? "default" : "outline"}
                                       size="sm"
                                       onClick={() => updateItemScore(inspectionItem.id, score)}
-                                      className={`text-sm h-auto py-3 px-4 ${inspectionItem.score === score ? scoreColors[score] : ""}`}
+                                      className={`text-xs h-auto py-2 px-2 min-h-[3rem] whitespace-normal leading-tight ${inspectionItem.score === score ? scoreColors[score] : ""}`}
                                       disabled={score !== 'N/O' && inspectionItem.scoreDescriptions[score] === 'No score'}
                                     >
                                       <div className="text-center">
                                         <div className="font-semibold">{scoreLabels[score]}</div>
+                                        {score !== 'N/O' && <div className="text-xs opacity-75">({score})</div>}
                                       </div>
                                     </Button>
                                   ))}
@@ -150,14 +160,14 @@ const InspectionAccordion = ({ inspection }: InspectionAccordionProps) => {
                                   })}
                                 </div>
                                 
-                                {/* Current Score Display */}
+                                {/* Current Score Display - Fixed to show all scores including "Average (2)" */}
                                 {inspectionItem.score !== null && (
                                   <div className="mt-4">
                                     <Badge 
                                       variant="secondary"
                                       className={`${scoreColors[inspectionItem.score as keyof typeof scoreColors].replace('hover:', '')} text-white text-base px-4 py-2`}
                                     >
-                                      Score: {inspectionItem.score} - {scoreLabels[inspectionItem.score as keyof typeof scoreLabels]}
+                                      Score: {inspectionItem.score} - {scoreFullLabels[inspectionItem.score as keyof typeof scoreFullLabels]}
                                     </Badge>
                                   </div>
                                 )}
