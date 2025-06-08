@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import HCaptcha, { HCaptchaRef } from '@/components/HCaptcha';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -19,15 +18,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('login');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   
-  const captchaRef = useRef<HCaptchaRef>(null);
   const navigate = useNavigate();
   const { login, signUp, isAuthenticated } = useAuth();
-
-  // TODO: Replace this with your actual hCaptcha site key from your hCaptcha dashboard
-  // You can find this at: https://dashboard.hcaptcha.com/sites
-  const HCAPTCHA_SITE_KEY = 'YOUR_ACTUAL_HCAPTCHA_SITE_KEY_HERE';
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -35,41 +28,17 @@ const Login = () => {
     return null;
   }
 
-  const handleCaptchaVerify = (token: string) => {
-    setCaptchaToken(token);
-  };
-
-  const handleCaptchaError = () => {
-    setError('Captcha verification failed. Please try again.');
-    setCaptchaToken(null);
-  };
-
-  const handleCaptchaExpired = () => {
-    setCaptchaToken(null);
-    setError('Captcha expired. Please verify again.');
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!captchaToken) {
-      setError('Please complete the captcha verification.');
-      return;
-    }
 
     setLoading(true);
     setError('');
 
     try {
-      const { error } = await login(email, password, captchaToken);
+      const { error } = await login(email, password);
       
       if (error) {
         setError(error.message || 'Login failed');
-        // Reset captcha on error
-        if (captchaRef.current) {
-          captchaRef.current.reset();
-        }
-        setCaptchaToken(null);
       } else {
         toast({ title: "Success", description: "Logged in successfully" });
         navigate('/');
@@ -83,25 +52,15 @@ const Login = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!captchaToken) {
-      setError('Please complete the captcha verification.');
-      return;
-    }
 
     setLoading(true);
     setError('');
 
     try {
-      const { error } = await signUp(email, password, name, captchaToken);
+      const { error } = await signUp(email, password, name);
       
       if (error) {
         setError(error.message || 'Sign up failed');
-        // Reset captcha on error
-        if (captchaRef.current) {
-          captchaRef.current.reset();
-        }
-        setCaptchaToken(null);
       } else {
         toast({ 
           title: "Success", 
@@ -124,33 +83,7 @@ const Login = () => {
     setPassword('');
     setName('');
     setError('');
-    setCaptchaToken(null);
-    if (captchaRef.current) {
-      captchaRef.current.reset();
-    }
   };
-
-  // Show a warning if using placeholder site key
-  if (HCAPTCHA_SITE_KEY === 'YOUR_ACTUAL_HCAPTCHA_SITE_KEY_HERE') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-red-600">Configuration Required</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Alert variant="destructive">
-              <AlertDescription>
-                Please replace the placeholder hCaptcha site key in the Login component with your actual site key from your hCaptcha dashboard.
-                <br /><br />
-                You can find your site key at: <a href="https://dashboard.hcaptcha.com/sites" target="_blank" rel="noopener noreferrer" className="underline">https://dashboard.hcaptcha.com/sites</a>
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
@@ -198,16 +131,6 @@ const Login = () => {
                     disabled={loading}
                   />
                 </div>
-
-                <div className="flex justify-center">
-                  <HCaptcha
-                    ref={captchaRef}
-                    siteKey={HCAPTCHA_SITE_KEY}
-                    onVerify={handleCaptchaVerify}
-                    onError={handleCaptchaError}
-                    onExpired={handleCaptchaExpired}
-                  />
-                </div>
                 
                 {error && (
                   <Alert variant="destructive">
@@ -218,7 +141,7 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full" 
-                  disabled={loading || !captchaToken}
+                  disabled={loading}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Login
@@ -263,16 +186,6 @@ const Login = () => {
                     disabled={loading}
                   />
                 </div>
-
-                <div className="flex justify-center">
-                  <HCaptcha
-                    ref={captchaRef}
-                    siteKey={HCAPTCHA_SITE_KEY}
-                    onVerify={handleCaptchaVerify}
-                    onError={handleCaptchaError}
-                    onExpired={handleCaptchaExpired}
-                  />
-                </div>
                 
                 {error && (
                   <Alert variant="destructive">
@@ -283,7 +196,7 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full" 
-                  disabled={loading || !captchaToken}
+                  disabled={loading}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Sign Up

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { AuthContextType, UserProfile } from '@/types/auth';
@@ -64,12 +63,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => subscription.unsubscribe();
   }, [fetchProfile, clearProfile]);
 
-  const login = async (email: string, password: string, captchaToken?: string) => {
-    return await authService.login(email, password, captchaToken);
+  const login = async (email: string, password: string) => {
+    return await authService.login(email, password);
   };
 
-  const signUp = async (email: string, password: string, name: string, captchaToken?: string) => {
-    return await authService.signUp(email, password, name, captchaToken);
+  const signUp = async (email: string, password: string, name: string) => {
+    return await authService.signUp(email, password, name);
   };
 
   const logout = async () => {

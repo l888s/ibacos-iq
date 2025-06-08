@@ -22,21 +22,12 @@ export const authService = {
     }
   },
 
-  async login(email: string, password: string, captchaToken?: string) {
+  async login(email: string, password: string) {
     try {
-      const authOptions: any = {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      };
-
-      // Add captcha token if provided
-      if (captchaToken) {
-        authOptions.options = {
-          captchaToken: captchaToken
-        };
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword(authOptions);
+      });
       
       if (error) {
         return { error };
@@ -48,9 +39,9 @@ export const authService = {
     }
   },
 
-  async signUp(email: string, password: string, name: string, captchaToken?: string) {
+  async signUp(email: string, password: string, name: string) {
     try {
-      const authOptions: any = {
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -59,14 +50,7 @@ export const authService = {
           },
           emailRedirectTo: `${window.location.origin}/`,
         },
-      };
-
-      // Add captcha token if provided
-      if (captchaToken) {
-        authOptions.options.captchaToken = captchaToken;
-      }
-
-      const { data, error } = await supabase.auth.signUp(authOptions);
+      });
       
       if (error) {
         return { error };
