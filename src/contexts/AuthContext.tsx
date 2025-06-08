@@ -1,28 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
-
-interface UserProfile {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  first_login: boolean;
-}
-
-interface AuthContextType {
-  user: User | null;
-  profile: UserProfile | null;
-  session: Session | null;
-  login: (email: string, password: string) => Promise<{ error?: any }>;
-  signUp: (email: string, password: string, name: string) => Promise<{ error?: any }>;
-  logout: () => Promise<void>;
-  updatePassword: (newPassword: string) => Promise<{ error?: any }>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<{ error?: any }>;
-  isAuthenticated: boolean;
-  loading: boolean;
-}
+import { AuthContextType } from '@/types/auth';
+import { authService } from '@/services/authService';
+import { useProfile } from '@/hooks/useProfile';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -40,33 +21,14 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return null;
-      }
-      
-      return data;
-    } catch (error) {
-      console.error('Error in fetchProfile:', error);
-      return null;
-    }
-  };
+  
+  const { profile, fetchProfile, updateProfile: updateUserProfile, clearProfile } = useProfile();
 
   useEffect(() => {
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = authService.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
@@ -75,25 +37,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (session?.user) {
           // Defer profile fetching to avoid blocking auth state changes
           setTimeout(async () => {
-            const profileData = await fetchProfile(session.user.id);
-            setProfile(profileData);
+            await fetchProfile(session.user.id);
             setLoading(false);
           }, 0);
         } else {
-          setProfile(null);
+          clearProfile();
           setLoading(false);
         }
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    authService.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id).then(profileData => {
-          setProfile(profileData);
+        fetchProfile(session.user.id).then(() => {
           setLoading(false);
         });
       } else {
@@ -102,99 +62,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [fetchProfile, clearProfile]);
 
   const login = async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (error) {
-        return { error };
-      }
-      
-      return { error: null };
-    } catch (error) {
-      return { error };
-    }
+    return await authService.login(email, password);
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name,
-          },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
-      
-      if (error) {
-        return { error };
-      }
-      
-      return { error: null };
-    } catch (error) {
-      return { error };
-    }
+    return await authService.signUp(email, password, name);
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    await authService.logout();
     setUser(null);
-    setProfile(null);
+    clearProfile();
     setSession(null);
   };
 
   const updatePassword = async (newPassword: string) => {
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-      
-      if (error) {
-        return { error };
-      }
-      
-      // Update first_login status
-      if (profile) {
-        await updateProfile({ first_login: false });
-      }
-      
-      return { error: null };
-    } catch (error) {
-      return { error };
+    const { error } = await authService.updatePassword(newPassword);
+    
+    if (!error && profile) {
+      await updateUserProfile(user, { first_login: false });
     }
+    
+    return { error };
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
-    if (!user) return { error: 'Not authenticated' };
-    
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id);
-      
-      if (error) {
-        return { error };
-      }
-      
-      // Refresh profile data
-      const updatedProfile = await fetchProfile(user.id);
-      if (updatedProfile) {
-        setProfile(updatedProfile);
-      }
-      
-      return { error: null };
-    } catch (error) {
-      return { error };
-    }
+    return await updateUserProfile(user, updates);
   };
 
   const isAuthenticated = !!user && !!session;
