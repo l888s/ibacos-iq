@@ -37,101 +37,105 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
   const subcategories = [...new Set(categoryItems.map(item => item.subcategory))];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Category Header */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl">{category}</CardTitle>
-              <Badge variant="secondary" className="mt-1">
+              <CardTitle className="text-2xl">{category}</CardTitle>
+              <Badge variant="secondary" className="mt-2">
                 Weight: {categoryWeight}
               </Badge>
             </div>
-            <Badge variant="outline">
+            <Badge variant="outline" className="text-lg px-4 py-2">
               {completedItems}/{categoryItems.length} Complete
             </Badge>
           </div>
-          <CardDescription>
+          <CardDescription className="text-base">
             Score each item based on quality and workmanship (0-4 scale)
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-8">
-            {subcategories.map((subcategory) => {
-              const subcategoryItems = categoryItems.filter(item => item.subcategory === subcategory);
-              
-              return (
-                <div key={subcategory} className="border-l-4 border-gray-200 pl-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">{subcategory}</h3>
-                  
-                  <div className="space-y-6">
-                    {subcategoryItems.map((inspectionItem) => (
-                      <div key={inspectionItem.id} className="border rounded-lg p-4 bg-gray-50">
-                        <div className="mb-4">
-                          <h4 className="font-medium text-gray-900 mb-2">{inspectionItem.item}</h4>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
-                            {[0, 1, 2, 3, 4].map((score) => (
-                              <Button
-                                key={score}
-                                variant={inspectionItem.score === score ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => updateItemScore(inspectionItem.id, score)}
-                                className={`text-xs h-auto py-2 px-3 ${inspectionItem.score === score ? scoreColors[score as keyof typeof scoreColors] : ""}`}
-                                disabled={inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions] === 'No score'}
-                              >
-                                <div className="text-center">
-                                  <div className="font-semibold">{scoreLabels[score as keyof typeof scoreLabels]}</div>
-                                </div>
-                              </Button>
-                            ))}
-                          </div>
-                          
-                          {/* Score descriptions */}
-                          <div className="mt-3 space-y-1 text-xs">
-                            {[0, 1, 2, 3, 4].map((score) => {
-                              const description = inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions];
-                              if (description === 'No score') return null;
-                              
-                              return (
-                                <div 
-                                  key={score} 
-                                  className={`p-2 rounded border-l-4 ${
-                                    score === 0 ? 'border-red-400 bg-red-50' :
-                                    score === 1 ? 'border-orange-400 bg-orange-50' :
-                                    score === 2 ? 'border-yellow-400 bg-yellow-50' :
-                                    score === 3 ? 'border-blue-400 bg-blue-50' :
-                                    'border-green-400 bg-green-50'
-                                  }`}
-                                >
-                                  <span className="font-medium">{score}:</span> {description}
-                                </div>
-                              );
-                            })}
-                          </div>
-                          
-                          {inspectionItem.score !== null && (
-                            <div className="mt-3">
-                              <Badge 
-                                variant="secondary"
-                                className={`${scoreColors[inspectionItem.score as keyof typeof scoreColors].replace('hover:', '')} text-white`}
-                              >
-                                Score: {inspectionItem.score} - {scoreLabels[inspectionItem.score as keyof typeof scoreLabels]}
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
       </Card>
+
+      {/* Subcategories */}
+      <div className="space-y-8">
+        {subcategories.map((subcategory) => {
+          const subcategoryItems = categoryItems.filter(item => item.subcategory === subcategory);
+          
+          return (
+            <Card key={subcategory} className="border-l-4 border-blue-500">
+              <CardHeader>
+                <CardTitle className="text-xl text-blue-700">{subcategory}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {subcategoryItems.map((inspectionItem) => (
+                  <div key={inspectionItem.id} className="border rounded-lg p-6 bg-gray-50">
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-lg text-gray-900 mb-2">{inspectionItem.item}</h4>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {/* Score Buttons */}
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        {[0, 1, 2, 3, 4].map((score) => (
+                          <Button
+                            key={score}
+                            variant={inspectionItem.score === score ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => updateItemScore(inspectionItem.id, score)}
+                            className={`text-sm h-auto py-3 px-4 ${inspectionItem.score === score ? scoreColors[score as keyof typeof scoreColors] : ""}`}
+                            disabled={inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions] === 'No score'}
+                          >
+                            <div className="text-center">
+                              <div className="font-semibold">{scoreLabels[score as keyof typeof scoreLabels]}</div>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                      
+                      {/* Score Descriptions */}
+                      <div className="space-y-2 text-sm">
+                        {[0, 1, 2, 3, 4].map((score) => {
+                          const description = inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions];
+                          if (description === 'No score') return null;
+                          
+                          return (
+                            <div 
+                              key={score} 
+                              className={`p-3 rounded border-l-4 ${
+                                score === 0 ? 'border-red-400 bg-red-50' :
+                                score === 1 ? 'border-orange-400 bg-orange-50' :
+                                score === 2 ? 'border-yellow-400 bg-yellow-50' :
+                                score === 3 ? 'border-blue-400 bg-blue-50' :
+                                'border-green-400 bg-green-50'
+                              }`}
+                            >
+                              <span className="font-medium">{score}:</span> {description}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Current Score Display */}
+                      {inspectionItem.score !== null && (
+                        <div className="mt-4">
+                          <Badge 
+                            variant="secondary"
+                            className={`${scoreColors[inspectionItem.score as keyof typeof scoreColors].replace('hover:', '')} text-white text-base px-4 py-2`}
+                          >
+                            Score: {inspectionItem.score} - {scoreLabels[inspectionItem.score as keyof typeof scoreLabels]}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };
