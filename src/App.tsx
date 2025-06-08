@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { InspectionProvider } from "./contexts/InspectionContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
+import ChangePassword from "./pages/ChangePassword";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Inspection from "./pages/Inspection";
@@ -27,6 +28,11 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/change-password" element={
+                <ProtectedRoute>
+                  <ChangePassword />
+                </ProtectedRoute>
+              } />
               <Route path="/" element={
                 <ProtectedRoute>
                   <Dashboard />

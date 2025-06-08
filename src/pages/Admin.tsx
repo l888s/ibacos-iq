@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,7 @@ interface EmailSettings {
 }
 
 const Admin = () => {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const navigate = useNavigate();
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
@@ -40,7 +41,7 @@ const Admin = () => {
   const [newEmailRecipient, setNewEmailRecipient] = useState('');
 
   // Check if user is admin
-  if (user?.email !== 'lewis.bedford@starlighthomes.com') {
+  if (profile?.role !== 'admin') {
     navigate('/');
     return null;
   }
@@ -49,30 +50,7 @@ const Admin = () => {
     fetchNeighborhoods();
     fetchUsers();
     fetchEmailSettings();
-    // Add Jason Edwards to email recipients on component mount if not already there
-    addJasonEdwardsIfNeeded();
   }, []);
-
-  const addJasonEdwardsIfNeeded = async () => {
-    // Wait a bit for emailSettings to be loaded
-    setTimeout(async () => {
-      const { data } = await supabase
-        .from('email_settings')
-        .select('*')
-        .single();
-      
-      if (data && !data.report_recipients.includes('jason.edwards@starlighthomes.com')) {
-        const updatedRecipients = [...data.report_recipients, 'jason.edwards@starlighthomes.com'];
-        
-        await supabase
-          .from('email_settings')
-          .update({ report_recipients: updatedRecipients })
-          .eq('id', data.id);
-        
-        fetchEmailSettings();
-      }
-    }, 1000);
-  };
 
   const fetchNeighborhoods = async () => {
     const { data, error } = await supabase
@@ -88,15 +66,26 @@ const Admin = () => {
   };
 
   const fetchUsers = async () => {
-    const { data, error } = await supabase
+    // Fetch from both profiles and app_users tables
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('name');
+    
+    const { data: appUsersData, error: appUsersError } = await supabase
       .from('app_users')
       .select('*')
       .order('name');
     
-    if (error) {
+    if (profilesError && appUsersError) {
       toast({ title: "Error", description: "Failed to load users", variant: "destructive" });
     } else {
-      setUsers(data || []);
+      // Combine and deduplicate users
+      const allUsers = [...(profilesData || []), ...(appUsersData || [])];
+      const uniqueUsers = allUsers.filter((user, index, self) => 
+        index === self.findIndex(u => u.email === user.email)
+      );
+      setUsers(uniqueUsers);
     }
   };
 
@@ -104,27 +93,47 @@ const Admin = () => {
     const { data, error } = await supabase
       .from('email_settings')
       .select('*')
-      .single();
+      .maybeSingle();
     
-    if (error) {
-      // If no email settings exist, create default one
-      if (error.code === 'PGRST116') {
-        const { data: newSettings, error: createError } = await supabase
-          .from('email_settings')
-          .insert([{ report_recipients: [] }])
-          .select()
-          .single();
-        
-        if (createError) {
-          console.error('Failed to create email settings:', createError);
-        } else {
-          setEmailSettings(newSettings);
-        }
+    if (error && error.code !== 'PGRST116') {
+      console.error('Failed to load email settings:', error);
+      toast({ title: "Error", description: "Failed to load email settings", variant: "destructive" });
+    } else if (!data) {
+      // Create default email settings if none exist
+      const { data: newSettings, error: createError } = await supabase
+        .from('email_settings')
+        .insert([{ 
+          report_recipients: ['jason.edwards@starlighthomes.com'] 
+        }])
+        .select()
+        .single();
+      
+      if (createError) {
+        console.error('Failed to create email settings:', createError);
+        toast({ title: "Error", description: "Failed to create email settings", variant: "destructive" });
       } else {
-        console.error('Failed to load email settings:', error);
+        setEmailSettings(newSettings);
+        toast({ title: "Success", description: "Email settings created with Jason Edwards added", });
       }
     } else {
       setEmailSettings(data);
+      
+      // Check if Jason Edwards needs to be added
+      if (!data.report_recipients.includes('jason.edwards@starlighthomes.com')) {
+        const updatedRecipients = [...data.report_recipients, 'jason.edwards@starlighthomes.com'];
+        
+        const { error: updateError } = await supabase
+          .from('email_settings')
+          .update({ report_recipients: updatedRecipients })
+          .eq('id', data.id);
+        
+        if (updateError) {
+          console.error('Failed to add Jason Edwards:', updateError);
+        } else {
+          setEmailSettings({ ...data, report_recipients: updatedRecipients });
+          toast({ title: "Success", description: "Jason Edwards added to email recipients", });
+        }
+      }
     }
   };
 
@@ -161,6 +170,7 @@ const Admin = () => {
   const addUser = async () => {
     if (!newUserEmail.trim() || !newUserName.trim()) return;
 
+    // For now, just add to app_users table. In the future, this should create a Supabase auth user
     const { error } = await supabase
       .from('app_users')
       .insert([{ 
@@ -172,20 +182,29 @@ const Admin = () => {
     if (error) {
       toast({ title: "Error", description: "Failed to add user", variant: "destructive" });
     } else {
-      toast({ title: "Success", description: "User added successfully" });
+      toast({ 
+        title: "Success", 
+        description: "User added successfully. They can sign up with email: " + newUserEmail.trim() + " and password: starlighthomes" 
+      });
       setNewUserEmail('');
       setNewUserName('');
       fetchUsers();
     }
   };
 
-  const removeUser = async (id: string) => {
-    const { error } = await supabase
+  const removeUser = async (user: AppUser) => {
+    // Try to remove from both tables
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('email', user.email);
+
+    const { error: appUserError } = await supabase
       .from('app_users')
       .delete()
-      .eq('id', id);
+      .eq('id', user.id);
 
-    if (error) {
+    if (profileError && appUserError) {
       toast({ title: "Error", description: "Failed to remove user", variant: "destructive" });
     } else {
       toast({ title: "Success", description: "User removed successfully" });
@@ -215,6 +234,7 @@ const Admin = () => {
         .single();
 
       if (createError) {
+        console.error('Error creating email settings:', createError);
         toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
       } else {
         toast({ title: "Success", description: "Email recipient added successfully" });
@@ -348,6 +368,9 @@ const Admin = () => {
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
+                <p className="text-xs text-gray-500">
+                  New users can sign up with their email and the password "starlighthomes"
+                </p>
               </div>
               
               <div className="space-y-2">
@@ -369,7 +392,7 @@ const Admin = () => {
                       <Button 
                         variant="destructive" 
                         size="sm"
-                        onClick={() => removeUser(user.id)}
+                        onClick={() => removeUser(user)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
