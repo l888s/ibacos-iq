@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +49,30 @@ const Admin = () => {
     fetchNeighborhoods();
     fetchUsers();
     fetchEmailSettings();
+    // Add Jason Edwards to email recipients on component mount if not already there
+    addJasonEdwardsIfNeeded();
   }, []);
+
+  const addJasonEdwardsIfNeeded = async () => {
+    // Wait a bit for emailSettings to be loaded
+    setTimeout(async () => {
+      const { data } = await supabase
+        .from('email_settings')
+        .select('*')
+        .single();
+      
+      if (data && !data.report_recipients.includes('jason.edwards@starlighthomes.com')) {
+        const updatedRecipients = [...data.report_recipients, 'jason.edwards@starlighthomes.com'];
+        
+        await supabase
+          .from('email_settings')
+          .update({ report_recipients: updatedRecipients })
+          .eq('id', data.id);
+        
+        fetchEmailSettings();
+      }
+    }, 1000);
+  };
 
   const fetchNeighborhoods = async () => {
     const { data, error } = await supabase
@@ -85,7 +107,22 @@ const Admin = () => {
       .single();
     
     if (error) {
-      console.error('Failed to load email settings:', error);
+      // If no email settings exist, create default one
+      if (error.code === 'PGRST116') {
+        const { data: newSettings, error: createError } = await supabase
+          .from('email_settings')
+          .insert([{ report_recipients: [] }])
+          .select()
+          .single();
+        
+        if (createError) {
+          console.error('Failed to create email settings:', createError);
+        } else {
+          setEmailSettings(newSettings);
+        }
+      } else {
+        console.error('Failed to load email settings:', error);
+      }
     } else {
       setEmailSettings(data);
     }
@@ -157,7 +194,41 @@ const Admin = () => {
   };
 
   const addEmailRecipient = async () => {
-    if (!newEmailRecipient.trim() || !emailSettings) return;
+    if (!newEmailRecipient.trim()) {
+      toast({ title: "Error", description: "Please enter an email address", variant: "destructive" });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmailRecipient.trim())) {
+      toast({ title: "Error", description: "Please enter a valid email address", variant: "destructive" });
+      return;
+    }
+
+    if (!emailSettings) {
+      // Create email settings if it doesn't exist
+      const { data: newSettings, error: createError } = await supabase
+        .from('email_settings')
+        .insert([{ report_recipients: [newEmailRecipient.trim()] }])
+        .select()
+        .single();
+
+      if (createError) {
+        toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
+      } else {
+        toast({ title: "Success", description: "Email recipient added successfully" });
+        setNewEmailRecipient('');
+        setEmailSettings(newSettings);
+      }
+      return;
+    }
+
+    // Check if email already exists
+    if (emailSettings.report_recipients.includes(newEmailRecipient.trim())) {
+      toast({ title: "Error", description: "Email address already exists", variant: "destructive" });
+      return;
+    }
 
     const updatedRecipients = [...emailSettings.report_recipients, newEmailRecipient.trim()];
 
@@ -167,6 +238,7 @@ const Admin = () => {
       .eq('id', emailSettings.id);
 
     if (error) {
+      console.error('Email update error:', error);
       toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
     } else {
       toast({ title: "Success", description: "Email recipient added successfully" });
@@ -191,6 +263,10 @@ const Admin = () => {
       toast({ title: "Success", description: "Email recipient removed successfully" });
       fetchEmailSettings();
     }
+  };
+
+  const isAdminUser = (email: string) => {
+    return email === 'lewis.bedford@starlighthomes.com';
   };
 
   return (
@@ -278,17 +354,26 @@ const Admin = () => {
                 {users.map((user) => (
                   <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <p className="font-medium">{user.name}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium">{user.name}</p>
+                        {isAdminUser(user.email) && (
+                          <Badge variant="destructive" className="text-xs">
+                            ADMIN
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600">{user.email}</p>
                       <Badge variant="secondary">{user.role}</Badge>
                     </div>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={() => removeUser(user.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {!isAdminUser(user.email) && (
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={() => removeUser(user.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -308,6 +393,11 @@ const Admin = () => {
                   type="email"
                   value={newEmailRecipient}
                   onChange={(e) => setNewEmailRecipient(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      addEmailRecipient();
+                    }
+                  }}
                 />
                 <Button onClick={addEmailRecipient}>
                   <Mail className="h-4 w-4 mr-2" />
@@ -318,19 +408,23 @@ const Admin = () => {
               <div className="space-y-2">
                 <Label>Current Recipients:</Label>
                 <div className="flex flex-wrap gap-2">
-                  {emailSettings?.report_recipients.map((email) => (
-                    <div key={email} className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
-                      <span className="text-sm">{email}</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="h-4 w-4 p-0"
-                        onClick={() => removeEmailRecipient(email)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
+                  {emailSettings?.report_recipients?.length > 0 ? (
+                    emailSettings.report_recipients.map((email) => (
+                      <div key={email} className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
+                        <span className="text-sm">{email}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="h-4 w-4 p-0"
+                          onClick={() => removeEmailRecipient(email)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">No recipients added yet</p>
+                  )}
                 </div>
               </div>
             </CardContent>
