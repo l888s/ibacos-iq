@@ -35,4 +35,5 @@ export interface InspectionContextType {
   saveInspection: () => void;
   submitInspection: () => void;
   loadInspection: (inspectionId: string) => void;
+  deleteInspection: () => void;
 }

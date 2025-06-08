@@ -25,7 +25,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     savedInspections,
     saveInspectionToStorage,
     findExistingInspection,
-    getInspectionById
+    getInspectionById,
+    deleteInspectionFromStorage
   } = useInspectionStorage();
 
   const {
@@ -34,13 +35,15 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     updateItemScore,
     saveInspection,
     submitInspection,
-    loadInspection
+    loadInspection,
+    deleteInspection
   } = useInspectionActions({
     currentInspection,
     setCurrentInspection,
     saveInspectionToStorage,
     findExistingInspection,
-    getInspectionById
+    getInspectionById,
+    deleteInspectionFromStorage
   });
 
   const contextValue: InspectionContextType = {
@@ -51,7 +54,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     updateItemScore,
     saveInspection,
     submitInspection,
-    loadInspection
+    loadInspection,
+    deleteInspection
   };
 
   return (

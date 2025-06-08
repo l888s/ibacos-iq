@@ -26,11 +26,18 @@ export const useInspectionStorage = () => {
     return savedInspections.find(i => i.id === inspectionId);
   }, [savedInspections]);
 
+  const deleteInspectionFromStorage = useCallback((inspectionId: string) => {
+    const updatedInspections = savedInspections.filter(i => i.id !== inspectionId);
+    setSavedInspections(updatedInspections);
+    localStorage.setItem('ibacosiq_inspections', JSON.stringify(updatedInspections));
+  }, [savedInspections]);
+
   return {
     savedInspections,
     setSavedInspections,
     saveInspectionToStorage,
     findExistingInspection,
-    getInspectionById
+    getInspectionById,
+    deleteInspectionFromStorage
   };
 };

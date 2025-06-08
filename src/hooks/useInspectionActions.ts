@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { Inspection, InspectionItem } from '@/types/inspection';
 import { defaultInspectionItems } from '@/data/inspectionItems';
@@ -10,6 +9,7 @@ interface UseInspectionActionsProps {
   saveInspectionToStorage: (inspection: Inspection) => void;
   findExistingInspection: (neighborhood: string) => Inspection | undefined;
   getInspectionById: (inspectionId: string) => Inspection | undefined;
+  deleteInspectionFromStorage: (inspectionId: string) => void;
 }
 
 export const useInspectionActions = ({
@@ -17,7 +17,8 @@ export const useInspectionActions = ({
   setCurrentInspection,
   saveInspectionToStorage,
   findExistingInspection,
-  getInspectionById
+  getInspectionById,
+  deleteInspectionFromStorage
 }: UseInspectionActionsProps) => {
   
   const startNewInspection = useCallback((neighborhood: string, forceNew: boolean = false) => {
@@ -109,12 +110,20 @@ export const useInspectionActions = ({
     }
   }, [getInspectionById, setCurrentInspection]);
 
+  const deleteInspection = useCallback(() => {
+    if (!currentInspection) return;
+    
+    deleteInspectionFromStorage(currentInspection.id);
+    setCurrentInspection(null);
+  }, [currentInspection, deleteInspectionFromStorage, setCurrentInspection]);
+
   return {
     startNewInspection,
     continueExistingInspection,
     updateItemScore,
     saveInspection,
     submitInspection,
-    loadInspection
+    loadInspection,
+    deleteInspection
   };
 };

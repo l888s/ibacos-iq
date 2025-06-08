@@ -2,8 +2,19 @@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Save, Send, ArrowLeft } from 'lucide-react';
+import { Save, Send, ArrowLeft, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface InspectionHeaderProps {
   neighborhood: string;
@@ -12,6 +23,7 @@ interface InspectionHeaderProps {
   progress: number;
   onSave: () => void;
   onSubmit: () => void;
+  onDelete: () => void;
 }
 
 const InspectionHeader = ({ 
@@ -20,7 +32,8 @@ const InspectionHeader = ({
   status, 
   progress, 
   onSave, 
-  onSubmit 
+  onSubmit,
+  onDelete
 }: InspectionHeaderProps) => {
   const navigate = useNavigate();
 
@@ -71,6 +84,29 @@ const InspectionHeader = ({
           <Send className="h-4 w-4 mr-2" />
           Submit Inspection
         </Button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive">
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Inspection
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the inspection for {neighborhood}.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

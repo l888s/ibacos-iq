@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useInspection } from '@/contexts/InspectionContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,7 @@ import InspectionAccordion from '@/components/InspectionAccordion';
 
 const Inspection = () => {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
-  const { currentInspection, startNewInspection, saveInspection, submitInspection } = useInspection();
+  const { currentInspection, startNewInspection, saveInspection, submitInspection, deleteInspection } = useInspection();
   const navigate = useNavigate();
 
   // Auto-save functionality
@@ -54,6 +53,15 @@ const Inspection = () => {
     navigate('/reports');
   };
 
+  const handleDelete = () => {
+    deleteInspection();
+    toast({
+      title: "Inspection Deleted",
+      description: "The inspection has been permanently deleted",
+    });
+    navigate('/');
+  };
+
   const getProgress = () => {
     if (!currentInspection) return 0;
     const completedItems = currentInspection.items.filter(item => item.score !== null).length;
@@ -81,6 +89,7 @@ const Inspection = () => {
           progress={getProgress()}
           onSave={handleManualSave}
           onSubmit={handleSubmit}
+          onDelete={handleDelete}
         />
 
         <InspectionAccordion inspection={currentInspection} />
