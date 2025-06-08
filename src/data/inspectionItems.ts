@@ -12,6 +12,9 @@ import { roofingItems } from './categories/roofingItems';
 import { hvacItems } from './categories/hvacItems';
 import { plumbingElectricalItems } from './categories/plumbingElectricalItems';
 import { interiorItems } from './categories/interiorItems';
+import { exteriorItems } from './categories/exteriorItems';
+import { electricalItems } from './categories/electricalItems';
+import { plumbingItems } from './categories/plumbingItems';
 
 // Complete inspection criteria with all categories and items
 export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
@@ -26,7 +29,10 @@ export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   ...roofingItems,
   ...hvacItems,
   ...plumbingElectricalItems,
-  ...interiorItems
+  ...interiorItems,
+  ...exteriorItems,
+  ...electricalItems,
+  ...plumbingItems
 ];
 
 // Debug logging to verify all items are loaded
