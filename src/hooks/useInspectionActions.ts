@@ -44,7 +44,7 @@ export const useInspectionActions = ({
     setCurrentInspection(newInspection);
   }, [findExistingInspection, setCurrentInspection]);
 
-  const updateItemScore = useCallback((itemId: string, score: number) => {
+  const updateItemScore = useCallback((itemId: string, score: number | string) => {
     if (!currentInspection) return;
     
     const updatedItems = currentInspection.items.map(item =>

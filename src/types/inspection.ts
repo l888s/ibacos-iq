@@ -5,7 +5,7 @@ export interface InspectionItem {
   subcategory: string;
   item: string;
   weight: number;
-  score: number | null;
+  score: number | string | null;
   scoreDescriptions: {
     0: string;
     1: string;
@@ -30,7 +30,7 @@ export interface InspectionContextType {
   currentInspection: Inspection | null;
   savedInspections: Inspection[];
   startNewInspection: (neighborhood: string) => void;
-  updateItemScore: (itemId: string, score: number) => void;
+  updateItemScore: (itemId: string, score: number | string) => void;
   saveInspection: () => void;
   submitInspection: () => void;
   loadInspection: (inspectionId: string) => void;

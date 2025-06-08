@@ -6,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import NeighborhoodSelection from '@/components/NeighborhoodSelection';
 import InspectionHeader from '@/components/InspectionHeader';
-import InspectionTabs from '@/components/InspectionTabs';
+import InspectionAccordion from '@/components/InspectionAccordion';
 
 const Inspection = () => {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
@@ -83,7 +83,7 @@ const Inspection = () => {
           onSubmit={handleSubmit}
         />
 
-        <InspectionTabs inspection={currentInspection} />
+        <InspectionAccordion inspection={currentInspection} />
       </div>
     </div>
   );
