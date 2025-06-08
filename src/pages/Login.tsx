@@ -25,9 +25,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { login, signUp, isAuthenticated } = useAuth();
 
-  // Get hCaptcha site key from Supabase project settings
-  // You'll need to replace this with your actual hCaptcha site key
-  const HCAPTCHA_SITE_KEY = '10000000-ffff-ffff-ffff-000000000001'; // Replace with your actual site key
+  // TODO: Replace this with your actual hCaptcha site key from your hCaptcha dashboard
+  // You can find this at: https://dashboard.hcaptcha.com/sites
+  const HCAPTCHA_SITE_KEY = 'YOUR_ACTUAL_HCAPTCHA_SITE_KEY_HERE';
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -129,6 +129,28 @@ const Login = () => {
       captchaRef.current.reset();
     }
   };
+
+  // Show a warning if using placeholder site key
+  if (HCAPTCHA_SITE_KEY === 'YOUR_ACTUAL_HCAPTCHA_SITE_KEY_HERE') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl text-red-600">Configuration Required</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Alert variant="destructive">
+              <AlertDescription>
+                Please replace the placeholder hCaptcha site key in the Login component with your actual site key from your hCaptcha dashboard.
+                <br /><br />
+                You can find your site key at: <a href="https://dashboard.hcaptcha.com/sites" target="_blank" rel="noopener noreferrer" className="underline">https://dashboard.hcaptcha.com/sites</a>
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
