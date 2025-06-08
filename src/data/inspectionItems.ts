@@ -1,5 +1,5 @@
 
-import { InspectionItem } from '@/contexts/InspectionContext';
+import { InspectionItem } from '@/types/inspection';
 
 // Complete inspection criteria with all categories and items from the JSON data
 export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
@@ -217,6 +217,841 @@ export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
       4: 'All landscape enclosed by flatwork had a means for drainage.'
     }
   },
-  // Continue with all other categories - this file is getting very long
-  // I'll provide the complete implementation but need to split it across multiple parts due to length
+
+  // Foundation (7)
+  {
+    id: 'foundation-anchor-bolts',
+    category: 'Foundation',
+    subcategory: 'Foundation',
+    item: 'Anchor Bolts',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Anchor bolts were not placed consistently per code requirements.',
+      1: 'Anchor bolts were placed mostly per code requirements with minor deviations.',
+      2: 'Anchor bolts were placed per code requirements.',
+      3: 'No score',
+      4: 'Anchor bolts were placed better than code requirements.'
+    }
+  },
+  {
+    id: 'foundation-basement-walls',
+    category: 'Foundation',
+    subcategory: 'Foundation',
+    item: 'Basement Walls',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'There were observed structural cracks in basement walls.',
+      1: 'There were observed minor cracks in basement walls.',
+      2: 'Basement walls appeared structurally sound.',
+      3: 'No score',
+      4: 'Basement walls appeared to be constructed better than minimum standards.'
+    }
+  },
+  {
+    id: 'foundation-concrete-placement',
+    category: 'Foundation',
+    subcategory: 'Foundation',
+    item: 'Concrete Placement',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Cold joints and poor consolidation were frequently observed.',
+      1: 'Cold joints and poor consolidation were occasionally observed.',
+      2: 'Cold joints and poor consolidation were seldom observed.',
+      3: 'No score',
+      4: 'Cold joints and poor consolidation were not observed.'
+    }
+  },
+  {
+    id: 'foundation-foundation-walls',
+    category: 'Foundation',
+    subcategory: 'Foundation',
+    item: 'Foundation Walls',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'There were observed structural cracks in foundation walls.',
+      1: 'There were observed minor cracks in foundation walls.',
+      2: 'Foundation walls appeared structurally sound.',
+      3: 'No score',
+      4: 'Foundation walls appeared to be constructed better than minimum standards.'
+    }
+  },
+  {
+    id: 'foundation-rebar-placement',
+    category: 'Foundation',
+    subcategory: 'Foundation',
+    item: 'Rebar Placement',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Rebar was not placed consistently per the structural plans.',
+      1: 'Rebar was placed mostly per the structural plans with minor deviations.',
+      2: 'Rebar was placed per the structural plans.',
+      3: 'No score',
+      4: 'Rebar was placed better than the structural plans.'
+    }
+  },
+  {
+    id: 'foundation-slab-placement',
+    category: 'Foundation',
+    subcategory: 'Foundation',
+    item: 'Slab Placement',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Slab thickness was consistently under minimum requirements.',
+      1: 'Slab thickness was occasionally under minimum requirements.',
+      2: 'Slab thickness consistently met minimum requirements.',
+      3: 'No score',
+      4: 'Slab thickness was consistently greater than minimum requirements.'
+    }
+  },
+
+  // Framing (8)
+  {
+    id: 'framing-floor-framing',
+    category: 'Framing',
+    subcategory: 'Framing',
+    item: 'Floor Framing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Floor framing was not constructed per the structural plans.',
+      1: 'Floor framing was constructed mostly per the structural plans with minor deviations.',
+      2: 'Floor framing was constructed per the structural plans.',
+      3: 'No score',
+      4: 'Floor framing was constructed better than the structural plans.'
+    }
+  },
+  {
+    id: 'framing-roof-framing',
+    category: 'Framing',
+    subcategory: 'Framing',
+    item: 'Roof Framing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Roof framing was not constructed per the structural plans.',
+      1: 'Roof framing was constructed mostly per the structural plans with minor deviations.',
+      2: 'Roof framing was constructed per the structural plans.',
+      3: 'No score',
+      4: 'Roof framing was constructed better than the structural plans.'
+    }
+  },
+  {
+    id: 'framing-sheathing',
+    category: 'Framing',
+    subcategory: 'Framing',
+    item: 'Sheathing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Sheathing was not installed per the structural plans.',
+      1: 'Sheathing was installed mostly per the structural plans with minor deviations.',
+      2: 'Sheathing was installed per the structural plans.',
+      3: 'No score',
+      4: 'Sheathing was installed better than the structural plans.'
+    }
+  },
+  {
+    id: 'framing-wall-framing',
+    category: 'Framing',
+    subcategory: 'Framing',
+    item: 'Wall Framing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Wall framing was not constructed per the structural plans.',
+      1: 'Wall framing was constructed mostly per the structural plans with minor deviations.',
+      2: 'Wall framing was constructed per the structural plans.',
+      3: 'No score',
+      4: 'Wall framing was constructed better than the structural plans.'
+    }
+  },
+
+  // Roofing (6) - Flashing
+  {
+    id: 'roofing-flashing-chimney',
+    category: 'Roofing',
+    subcategory: 'Flashing',
+    item: 'Chimney Flashing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Chimney flashing was poorly installed.',
+      1: 'Chimney flashing was installed with minor deviations from best practices.',
+      2: 'Chimney flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Chimney flashing was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-flashing-pipe-boot',
+    category: 'Roofing',
+    subcategory: 'Flashing',
+    item: 'Pipe Boot Flashing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Pipe boot flashing was poorly installed.',
+      1: 'Pipe boot flashing was installed with minor deviations from best practices.',
+      2: 'Pipe boot flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Pipe boot flashing was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-flashing-roof-wall',
+    category: 'Roofing',
+    subcategory: 'Flashing',
+    item: 'Roof to Wall Flashing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Roof to wall flashing was poorly installed.',
+      1: 'Roof to wall flashing was installed with minor deviations from best practices.',
+      2: 'Roof to wall flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Roof to wall flashing was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-flashing-skylight',
+    category: 'Roofing',
+    subcategory: 'Flashing',
+    item: 'Skylight Flashing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Skylight flashing was poorly installed.',
+      1: 'Skylight flashing was installed with minor deviations from best practices.',
+      2: 'Skylight flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Skylight flashing was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-flashing-valley',
+    category: 'Roofing',
+    subcategory: 'Flashing',
+    item: 'Valley Flashing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Valley flashing was poorly installed.',
+      1: 'Valley flashing was installed with minor deviations from best practices.',
+      2: 'Valley flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Valley flashing was installed better than best practices.'
+    }
+  },
+  // Roofing (6) - Installation
+  {
+    id: 'roofing-installation-edge-metal',
+    category: 'Roofing',
+    subcategory: 'Installation',
+    item: 'Edge Metal',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Edge metal was poorly installed.',
+      1: 'Edge metal was installed with minor deviations from best practices.',
+      2: 'Edge metal was installed per best practices.',
+      3: 'No score',
+      4: 'Edge metal was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-installation-gutters',
+    category: 'Roofing',
+    subcategory: 'Installation',
+    item: 'Gutters',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Gutters were poorly installed.',
+      1: 'Gutters were installed with minor deviations from best practices.',
+      2: 'Gutters were installed per best practices.',
+      3: 'No score',
+      4: 'Gutters were installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-installation-ice-water-shield',
+    category: 'Roofing',
+    subcategory: 'Installation',
+    item: 'Ice & Water Shield',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Ice & water shield was poorly installed.',
+      1: 'Ice & water shield was installed with minor deviations from best practices.',
+      2: 'Ice & water shield was installed per best practices.',
+      3: 'No score',
+      4: 'Ice & water shield was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-installation-ridge-vent',
+    category: 'Roofing',
+    subcategory: 'Installation',
+    item: 'Ridge Vent',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Ridge vent was poorly installed.',
+      1: 'Ridge vent was installed with minor deviations from best practices.',
+      2: 'Ridge vent was installed per best practices.',
+      3: 'No score',
+      4: 'Ridge vent was installed better than best practices.'
+    }
+  },
+  {
+    id: 'roofing-installation-shingles',
+    category: 'Roofing',
+    subcategory: 'Installation',
+    item: 'Shingles',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Shingles were poorly installed.',
+      1: 'Shingles were installed with minor deviations from manufacturer specifications.',
+      2: 'Shingles were installed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Shingles were installed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'roofing-installation-underlayment',
+    category: 'Roofing',
+    subcategory: 'Installation',
+    item: 'Underlayment',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Underlayment was poorly installed.',
+      1: 'Underlayment was installed with minor deviations from best practices.',
+      2: 'Underlayment was installed per best practices.',
+      3: 'No score',
+      4: 'Underlayment was installed better than best practices.'
+    }
+  },
+
+  // Exterior (7) - Air Sealing
+  {
+    id: 'exterior-air-sealing-penetrations',
+    category: 'Exterior',
+    subcategory: 'Air Sealing',
+    item: 'Penetrations',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Penetrations were not properly sealed.',
+      1: 'Penetrations were sealed with minor gaps.',
+      2: 'Penetrations were properly sealed.',
+      3: 'No score',
+      4: 'Penetrations were sealed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'exterior-air-sealing-rim-joist',
+    category: 'Exterior',
+    subcategory: 'Air Sealing',
+    item: 'Rim Joist',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Rim joist was not properly sealed.',
+      1: 'Rim joist was sealed with minor gaps.',
+      2: 'Rim joist was properly sealed.',
+      3: 'No score',
+      4: 'Rim joist was sealed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'exterior-air-sealing-top-plates',
+    category: 'Exterior',
+    subcategory: 'Air Sealing',
+    item: 'Top Plates',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Top plates were not properly sealed.',
+      1: 'Top plates were sealed with minor gaps.',
+      2: 'Top plates were properly sealed.',
+      3: 'No score',
+      4: 'Top plates were sealed better than minimum requirements.'
+    }
+  },
+  // Exterior (7) - Cladding
+  {
+    id: 'exterior-cladding-brick',
+    category: 'Exterior',
+    subcategory: 'Cladding',
+    item: 'Brick',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Brick was poorly installed.',
+      1: 'Brick was installed with minor deviations from best practices.',
+      2: 'Brick was installed per best practices.',
+      3: 'No score',
+      4: 'Brick was installed better than best practices.'
+    }
+  },
+  {
+    id: 'exterior-cladding-fiber-cement',
+    category: 'Exterior',
+    subcategory: 'Cladding',
+    item: 'Fiber Cement',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Fiber cement was poorly installed.',
+      1: 'Fiber cement was installed with minor deviations from manufacturer specifications.',
+      2: 'Fiber cement was installed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Fiber cement was installed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'exterior-cladding-stone',
+    category: 'Exterior',
+    subcategory: 'Cladding',
+    item: 'Stone',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Stone was poorly installed.',
+      1: 'Stone was installed with minor deviations from best practices.',
+      2: 'Stone was installed per best practices.',
+      3: 'No score',
+      4: 'Stone was installed better than best practices.'
+    }
+  },
+  {
+    id: 'exterior-cladding-stucco',
+    category: 'Exterior',
+    subcategory: 'Cladding',
+    item: 'Stucco',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Stucco was poorly installed.',
+      1: 'Stucco was installed with minor deviations from best practices.',
+      2: 'Stucco was installed per best practices.',
+      3: 'No score',
+      4: 'Stucco was installed better than best practices.'
+    }
+  },
+  {
+    id: 'exterior-cladding-vinyl',
+    category: 'Exterior',
+    subcategory: 'Cladding',
+    item: 'Vinyl',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Vinyl was poorly installed.',
+      1: 'Vinyl was installed with minor deviations from manufacturer specifications.',
+      2: 'Vinyl was installed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Vinyl was installed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'exterior-cladding-wood',
+    category: 'Exterior',
+    subcategory: 'Cladding',
+    item: 'Wood',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Wood was poorly installed.',
+      1: 'Wood was installed with minor deviations from best practices.',
+      2: 'Wood was installed per best practices.',
+      3: 'No score',
+      4: 'Wood was installed better than best practices.'
+    }
+  },
+  // Exterior (7) - Flashing
+  {
+    id: 'exterior-flashing-deck-ledger',
+    category: 'Exterior',
+    subcategory: 'Flashing',
+    item: 'Deck Ledger Flashing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Deck ledger flashing was poorly installed.',
+      1: 'Deck ledger flashing was installed with minor deviations from best practices.',
+      2: 'Deck ledger flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Deck ledger flashing was installed better than best practices.'
+    }
+  },
+  {
+    id: 'exterior-flashing-door',
+    category: 'Exterior',
+    subcategory: 'Flashing',
+    item: 'Door Flashing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Door flashing was poorly installed.',
+      1: 'Door flashing was installed with minor deviations from best practices.',
+      2: 'Door flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Door flashing was installed better than best practices.'
+    }
+  },
+  {
+    id: 'exterior-flashing-window',
+    category: 'Exterior',
+    subcategory: 'Flashing',
+    item: 'Window Flashing',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Window flashing was poorly installed.',
+      1: 'Window flashing was installed with minor deviations from best practices.',
+      2: 'Window flashing was installed per best practices.',
+      3: 'No score',
+      4: 'Window flashing was installed better than best practices.'
+    }
+  },
+  // Exterior (7) - Insulation
+  {
+    id: 'exterior-insulation-basement-walls',
+    category: 'Exterior',
+    subcategory: 'Insulation',
+    item: 'Basement Walls',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Basement wall insulation was poorly installed.',
+      1: 'Basement wall insulation was installed with minor gaps.',
+      2: 'Basement wall insulation was properly installed.',
+      3: 'No score',
+      4: 'Basement wall insulation was installed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'exterior-insulation-band-joist',
+    category: 'Exterior',
+    subcategory: 'Insulation',
+    item: 'Band Joist',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Band joist insulation was poorly installed.',
+      1: 'Band joist insulation was installed with minor gaps.',
+      2: 'Band joist insulation was properly installed.',
+      3: 'No score',
+      4: 'Band joist insulation was installed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'exterior-insulation-exterior-walls',
+    category: 'Exterior',
+    subcategory: 'Insulation',
+    item: 'Exterior Walls',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Exterior wall insulation was poorly installed.',
+      1: 'Exterior wall insulation was installed with minor gaps.',
+      2: 'Exterior wall insulation was properly installed.',
+      3: 'No score',
+      4: 'Exterior wall insulation was installed better than minimum requirements.'
+    }
+  },
+  // Exterior (7) - Weather Barrier
+  {
+    id: 'exterior-weather-barrier-house-wrap',
+    category: 'Exterior',
+    subcategory: 'Weather Barrier',
+    item: 'House Wrap',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'House wrap was poorly installed.',
+      1: 'House wrap was installed with minor deviations from manufacturer specifications.',
+      2: 'House wrap was installed per manufacturer specifications.',
+      3: 'No score',
+      4: 'House wrap was installed better than manufacturer specifications.'
+    }
+  },
+
+  // HVAC (8)
+  {
+    id: 'hvac-duct-installation',
+    category: 'HVAC',
+    subcategory: 'HVAC',
+    item: 'Duct Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Duct installation was poorly executed.',
+      1: 'Duct installation was executed with minor deviations from best practices.',
+      2: 'Duct installation was executed per best practices.',
+      3: 'No score',
+      4: 'Duct installation was executed better than best practices.'
+    }
+  },
+  {
+    id: 'hvac-duct-sealing',
+    category: 'HVAC',
+    subcategory: 'HVAC',
+    item: 'Duct Sealing',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Duct sealing was poorly executed.',
+      1: 'Duct sealing was executed with minor gaps.',
+      2: 'Duct sealing was properly executed.',
+      3: 'No score',
+      4: 'Duct sealing was executed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'hvac-equipment-installation',
+    category: 'HVAC',
+    subcategory: 'HVAC',
+    item: 'Equipment Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'HVAC equipment installation was poorly executed.',
+      1: 'HVAC equipment installation was executed with minor deviations from manufacturer specifications.',
+      2: 'HVAC equipment installation was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'HVAC equipment installation was executed better than manufacturer specifications.'
+    }
+  },
+
+  // Plumbing (7)
+  {
+    id: 'plumbing-fixture-installation',
+    category: 'Plumbing',
+    subcategory: 'Plumbing',
+    item: 'Fixture Installation',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Plumbing fixture installation was poorly executed.',
+      1: 'Plumbing fixture installation was executed with minor deviations from code requirements.',
+      2: 'Plumbing fixture installation was executed per code requirements.',
+      3: 'No score',
+      4: 'Plumbing fixture installation was executed better than code requirements.'
+    }
+  },
+  {
+    id: 'plumbing-pipe-installation',
+    category: 'Plumbing',
+    subcategory: 'Plumbing',
+    item: 'Pipe Installation',
+    weight: 7,
+    scoreDescriptions: {
+      0: 'Plumbing pipe installation was poorly executed.',
+      1: 'Plumbing pipe installation was executed with minor deviations from code requirements.',
+      2: 'Plumbing pipe installation was executed per code requirements.',
+      3: 'No score',
+      4: 'Plumbing pipe installation was executed better than code requirements.'
+    }
+  },
+
+  // Electrical (8)
+  {
+    id: 'electrical-panel-installation',
+    category: 'Electrical',
+    subcategory: 'Electrical',
+    item: 'Panel Installation',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Electrical panel installation was poorly executed.',
+      1: 'Electrical panel installation was executed with minor deviations from code requirements.',
+      2: 'Electrical panel installation was executed per code requirements.',
+      3: 'No score',
+      4: 'Electrical panel installation was executed better than code requirements.'
+    }
+  },
+  {
+    id: 'electrical-rough-wiring',
+    category: 'Electrical',
+    subcategory: 'Electrical',
+    item: 'Rough Wiring',
+    weight: 8,
+    scoreDescriptions: {
+      0: 'Electrical rough wiring was poorly executed.',
+      1: 'Electrical rough wiring was executed with minor deviations from code requirements.',
+      2: 'Electrical rough wiring was executed per code requirements.',
+      3: 'No score',
+      4: 'Electrical rough wiring was executed better than code requirements.'
+    }
+  },
+
+  // Interior (6) - Drywall
+  {
+    id: 'interior-drywall-finishing',
+    category: 'Interior',
+    subcategory: 'Drywall',
+    item: 'Drywall Finishing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Drywall finishing was poorly executed.',
+      1: 'Drywall finishing was executed with minor deviations from industry standards.',
+      2: 'Drywall finishing was executed per industry standards.',
+      3: 'No score',
+      4: 'Drywall finishing was executed better than industry standards.'
+    }
+  },
+  {
+    id: 'interior-drywall-installation',
+    category: 'Interior',
+    subcategory: 'Drywall',
+    item: 'Drywall Installation',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Drywall installation was poorly executed.',
+      1: 'Drywall installation was executed with minor deviations from industry standards.',
+      2: 'Drywall installation was executed per industry standards.',
+      3: 'No score',
+      4: 'Drywall installation was executed better than industry standards.'
+    }
+  },
+  // Interior (6) - Flooring
+  {
+    id: 'interior-flooring-carpet',
+    category: 'Interior',
+    subcategory: 'Flooring',
+    item: 'Carpet',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Carpet installation was poorly executed.',
+      1: 'Carpet installation was executed with minor deviations from manufacturer specifications.',
+      2: 'Carpet installation was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Carpet installation was executed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'interior-flooring-hardwood',
+    category: 'Interior',
+    subcategory: 'Flooring',
+    item: 'Hardwood',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Hardwood installation was poorly executed.',
+      1: 'Hardwood installation was executed with minor deviations from manufacturer specifications.',
+      2: 'Hardwood installation was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Hardwood installation was executed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'interior-flooring-laminate',
+    category: 'Interior',
+    subcategory: 'Flooring',
+    item: 'Laminate',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Laminate installation was poorly executed.',
+      1: 'Laminate installation was executed with minor deviations from manufacturer specifications.',
+      2: 'Laminate installation was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Laminate installation was executed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'interior-flooring-tile',
+    category: 'Interior',
+    subcategory: 'Flooring',
+    item: 'Tile',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Tile installation was poorly executed.',
+      1: 'Tile installation was executed with minor deviations from industry standards.',
+      2: 'Tile installation was executed per industry standards.',
+      3: 'No score',
+      4: 'Tile installation was executed better than industry standards.'
+    }
+  },
+  {
+    id: 'interior-flooring-vinyl',
+    category: 'Interior',
+    subcategory: 'Flooring',
+    item: 'Vinyl',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Vinyl installation was poorly executed.',
+      1: 'Vinyl installation was executed with minor deviations from manufacturer specifications.',
+      2: 'Vinyl installation was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Vinyl installation was executed better than manufacturer specifications.'
+    }
+  },
+  // Interior (6) - Insulation
+  {
+    id: 'interior-insulation-attic',
+    category: 'Interior',
+    subcategory: 'Insulation',
+    item: 'Attic',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Attic insulation was poorly installed.',
+      1: 'Attic insulation was installed with minor gaps.',
+      2: 'Attic insulation was properly installed.',
+      3: 'No score',
+      4: 'Attic insulation was installed better than minimum requirements.'
+    }
+  },
+  {
+    id: 'interior-insulation-interior-walls',
+    category: 'Interior',
+    subcategory: 'Insulation',
+    item: 'Interior Walls',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Interior wall insulation was poorly installed.',
+      1: 'Interior wall insulation was installed with minor gaps.',
+      2: 'Interior wall insulation was properly installed.',
+      3: 'No score',
+      4: 'Interior wall insulation was installed better than minimum requirements.'
+    }
+  },
+  // Interior (6) - Paint
+  {
+    id: 'interior-paint-primer',
+    category: 'Interior',
+    subcategory: 'Paint',
+    item: 'Primer',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Primer application was poorly executed.',
+      1: 'Primer application was executed with minor deviations from manufacturer specifications.',
+      2: 'Primer application was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Primer application was executed better than manufacturer specifications.'
+    }
+  },
+  {
+    id: 'interior-paint-top-coat',
+    category: 'Interior',
+    subcategory: 'Paint',
+    item: 'Top Coat',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Top coat application was poorly executed.',
+      1: 'Top coat application was executed with minor deviations from manufacturer specifications.',
+      2: 'Top coat application was executed per manufacturer specifications.',
+      3: 'No score',
+      4: 'Top coat application was executed better than manufacturer specifications.'
+    }
+  },
+  // Interior (6) - Trim
+  {
+    id: 'interior-trim-base',
+    category: 'Interior',
+    subcategory: 'Trim',
+    item: 'Base',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Base trim installation was poorly executed.',
+      1: 'Base trim installation was executed with minor deviations from industry standards.',
+      2: 'Base trim installation was executed per industry standards.',
+      3: 'No score',
+      4: 'Base trim installation was executed better than industry standards.'
+    }
+  },
+  {
+    id: 'interior-trim-casing',
+    category: 'Interior',
+    subcategory: 'Trim',
+    item: 'Casing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Casing installation was poorly executed.',
+      1: 'Casing installation was executed with minor deviations from industry standards.',
+      2: 'Casing installation was executed per industry standards.',
+      3: 'No score',
+      4: 'Casing installation was executed better than industry standards.'
+    }
+  },
+  {
+    id: 'interior-trim-crown',
+    category: 'Interior',
+    subcategory: 'Trim',
+    item: 'Crown',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Crown trim installation was poorly executed.',
+      1: 'Crown trim installation was executed with minor deviations from industry standards.',
+      2: 'Crown trim installation was executed per industry standards.',
+      3: 'No score',
+      4: 'Crown trim installation was executed better than industry standards.'
+    }
+  }
 ];
