@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,6 +53,9 @@ const Admin = () => {
 
   const fetchNeighborhoods = async () => {
     console.log('Fetching neighborhoods...');
+    console.log('Current user profile:', profile);
+    console.log('Auth UID:', (await supabase.auth.getUser()).data.user?.id);
+    
     const { data, error } = await supabase
       .from('neighborhoods')
       .select('*')
@@ -61,6 +63,12 @@ const Admin = () => {
     
     if (error) {
       console.error('Error fetching neighborhoods:', error);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       toast({ title: "Error", description: "Failed to load neighborhoods", variant: "destructive" });
     } else {
       console.log('Neighborhoods fetched successfully:', data);
@@ -70,6 +78,7 @@ const Admin = () => {
 
   const fetchUsers = async () => {
     console.log('Fetching users...');
+    console.log('Current user profile:', profile);
     
     // Fetch from profiles table
     const { data: profilesData, error: profilesError } = await supabase
@@ -78,6 +87,14 @@ const Admin = () => {
       .order('name');
     
     console.log('Profiles data:', profilesData, 'Error:', profilesError);
+    if (profilesError) {
+      console.error('Profiles error details:', {
+        code: profilesError.code,
+        message: profilesError.message,
+        details: profilesError.details,
+        hint: profilesError.hint
+      });
+    }
     
     // Fetch from app_users table
     const { data: appUsersData, error: appUsersError } = await supabase
@@ -86,6 +103,14 @@ const Admin = () => {
       .order('name');
     
     console.log('App users data:', appUsersData, 'Error:', appUsersError);
+    if (appUsersError) {
+      console.error('App users error details:', {
+        code: appUsersError.code,
+        message: appUsersError.message,
+        details: appUsersError.details,
+        hint: appUsersError.hint
+      });
+    }
     
     if (profilesError && appUsersError) {
       console.error('Both queries failed:', { profilesError, appUsersError });
@@ -103,12 +128,23 @@ const Admin = () => {
 
   const fetchEmailSettings = async () => {
     console.log('Fetching email settings...');
+    console.log('Current user profile:', profile);
+    console.log('Auth UID:', (await supabase.auth.getUser()).data.user?.id);
+    
     const { data, error } = await supabase
       .from('email_settings')
       .select('*')
       .maybeSingle();
     
     console.log('Email settings response:', { data, error });
+    if (error) {
+      console.error('Email settings error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
+    }
     
     if (error && error.code !== 'PGRST116') {
       console.error('Failed to load email settings:', error);
@@ -131,6 +167,12 @@ const Admin = () => {
       
       if (createError) {
         console.error('Failed to create email settings:', createError);
+        console.error('Create error details:', {
+          code: createError.code,
+          message: createError.message,
+          details: createError.details,
+          hint: createError.hint
+        });
         toast({ title: "Error", description: "Failed to create email settings", variant: "destructive" });
       } else {
         console.log('Email settings created successfully:', newSettings);
@@ -159,6 +201,12 @@ const Admin = () => {
         
         if (updateError) {
           console.error('Failed to add required emails:', updateError);
+          console.error('Update error details:', {
+            code: updateError.code,
+            message: updateError.message,
+            details: updateError.details,
+            hint: updateError.hint
+          });
           toast({ title: "Error", description: "Failed to add required email recipients", variant: "destructive" });
         } else {
           setEmailSettings(updatedData);
@@ -173,12 +221,21 @@ const Admin = () => {
     if (!newNeighborhood.trim()) return;
 
     console.log('Adding neighborhood:', newNeighborhood.trim());
+    console.log('Current user profile:', profile);
+    console.log('Auth UID:', (await supabase.auth.getUser()).data.user?.id);
+    
     const { error } = await supabase
       .from('neighborhoods')
       .insert([{ name: newNeighborhood.trim() }]);
 
     if (error) {
       console.error('Error adding neighborhood:', error);
+      console.error('Add neighborhood error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       toast({ title: "Error", description: "Failed to add neighborhood", variant: "destructive" });
     } else {
       console.log('Neighborhood added successfully');
