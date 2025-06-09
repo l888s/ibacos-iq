@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +49,40 @@ const Admin = () => {
     fetchNeighborhoods();
     fetchUsers();
     fetchEmailSettings();
+    removeSpecificUsers();
   }, []);
+
+  const removeSpecificUsers = async () => {
+    const usersToRemove = [
+      'amalia.ibe@recodz.com',
+      'anja_volk@recodz.com'
+    ];
+
+    for (const email of usersToRemove) {
+      console.log(`Attempting to remove user with email: ${email}`);
+      
+      // Try to remove from both tables
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('email', email);
+
+      const { error: appUserError } = await supabase
+        .from('app_users')
+        .delete()
+        .eq('email', email);
+
+      if (!profileError || !appUserError) {
+        console.log(`Successfully removed user: ${email}`);
+        toast({ title: "Success", description: `Removed user: ${email}` });
+      } else {
+        console.log(`Failed to remove user: ${email}`, { profileError, appUserError });
+      }
+    }
+    
+    // Refresh the users list after removal
+    fetchUsers();
+  };
 
   const fetchNeighborhoods = async () => {
     const { data, error } = await supabase
