@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from '@/types/auth';
 
@@ -27,29 +28,6 @@ export const authService = {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      });
-      
-      if (error) {
-        return { error };
-      }
-      
-      return { error: null };
-    } catch (error) {
-      return { error };
-    }
-  },
-
-  async signUp(email: string, password: string, name: string) {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name,
-          },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
       });
       
       if (error) {

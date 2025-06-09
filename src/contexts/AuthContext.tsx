@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { AuthContextType, UserProfile } from '@/types/auth';
@@ -67,10 +68,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return await authService.login(email, password);
   };
 
-  const signUp = async (email: string, password: string, name: string) => {
-    return await authService.signUp(email, password, name);
-  };
-
   const logout = async () => {
     await authService.logout();
     setUser(null);
@@ -100,7 +97,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       profile, 
       session, 
       login, 
-      signUp, 
       logout, 
       updatePassword, 
       updateProfile, 
