@@ -113,7 +113,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_role: {
+      get_user_role_safe: {
         Args: { user_id: string }
         Returns: string
       }
