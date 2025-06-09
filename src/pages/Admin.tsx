@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,67 +50,45 @@ const Admin = () => {
     fetchNeighborhoods();
     fetchUsers();
     fetchEmailSettings();
-    removeSpecificUsers();
   }, []);
 
-  const removeSpecificUsers = async () => {
-    const usersToRemove = [
-      'amalia.ibe@recodz.com',
-      'anja_volk@recodz.com'
-    ];
-
-    for (const email of usersToRemove) {
-      console.log(`Attempting to remove user with email: ${email}`);
-      
-      // Try to remove from both tables
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('email', email);
-
-      const { error: appUserError } = await supabase
-        .from('app_users')
-        .delete()
-        .eq('email', email);
-
-      if (!profileError || !appUserError) {
-        console.log(`Successfully removed user: ${email}`);
-        toast({ title: "Success", description: `Removed user: ${email}` });
-      } else {
-        console.log(`Failed to remove user: ${email}`, { profileError, appUserError });
-      }
-    }
-    
-    // Refresh the users list after removal
-    fetchUsers();
-  };
-
   const fetchNeighborhoods = async () => {
+    console.log('Fetching neighborhoods...');
     const { data, error } = await supabase
       .from('neighborhoods')
       .select('*')
       .order('name');
     
     if (error) {
+      console.error('Error fetching neighborhoods:', error);
       toast({ title: "Error", description: "Failed to load neighborhoods", variant: "destructive" });
     } else {
+      console.log('Neighborhoods fetched successfully:', data);
       setNeighborhoods(data || []);
     }
   };
 
   const fetchUsers = async () => {
-    // Fetch from both profiles and app_users tables
+    console.log('Fetching users...');
+    
+    // Fetch from profiles table
     const { data: profilesData, error: profilesError } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, email, name, role')
       .order('name');
     
+    console.log('Profiles data:', profilesData, 'Error:', profilesError);
+    
+    // Fetch from app_users table
     const { data: appUsersData, error: appUsersError } = await supabase
       .from('app_users')
-      .select('*')
+      .select('id, email, name, role')
       .order('name');
     
+    console.log('App users data:', appUsersData, 'Error:', appUsersError);
+    
     if (profilesError && appUsersError) {
+      console.error('Both queries failed:', { profilesError, appUsersError });
       toast({ title: "Error", description: "Failed to load users", variant: "destructive" });
     } else {
       // Combine and deduplicate users
@@ -117,6 +96,7 @@ const Admin = () => {
       const uniqueUsers = allUsers.filter((user, index, self) => 
         index === self.findIndex(u => u.email === user.email)
       );
+      console.log('Combined unique users:', uniqueUsers);
       setUsers(uniqueUsers);
     }
   };
@@ -128,6 +108,8 @@ const Admin = () => {
       .select('*')
       .maybeSingle();
     
+    console.log('Email settings response:', { data, error });
+    
     if (error && error.code !== 'PGRST116') {
       console.error('Failed to load email settings:', error);
       toast({ title: "Error", description: "Failed to load email settings", variant: "destructive" });
@@ -137,7 +119,7 @@ const Admin = () => {
     const requiredEmails = ['jason.edwards@starlighthomes.com'];
     
     if (!data) {
-      console.log('No email settings found, creating with Jason Edwards...');
+      console.log('No email settings found, creating with required emails...');
       // Create default email settings if none exist
       const { data: newSettings, error: createError } = await supabase
         .from('email_settings')
@@ -151,9 +133,9 @@ const Admin = () => {
         console.error('Failed to create email settings:', createError);
         toast({ title: "Error", description: "Failed to create email settings", variant: "destructive" });
       } else {
+        console.log('Email settings created successfully:', newSettings);
         setEmailSettings(newSettings);
-        console.log('Email settings created successfully with Jason Edwards');
-        toast({ title: "Success", description: "Email settings created with Jason Edwards added" });
+        toast({ title: "Success", description: "Email settings created with required recipients" });
       }
     } else {
       console.log('Email settings found:', data);
@@ -190,13 +172,16 @@ const Admin = () => {
   const addNeighborhood = async () => {
     if (!newNeighborhood.trim()) return;
 
+    console.log('Adding neighborhood:', newNeighborhood.trim());
     const { error } = await supabase
       .from('neighborhoods')
       .insert([{ name: newNeighborhood.trim() }]);
 
     if (error) {
+      console.error('Error adding neighborhood:', error);
       toast({ title: "Error", description: "Failed to add neighborhood", variant: "destructive" });
     } else {
+      console.log('Neighborhood added successfully');
       toast({ title: "Success", description: "Neighborhood added successfully" });
       setNewNeighborhood('');
       fetchNeighborhoods();
@@ -204,23 +189,31 @@ const Admin = () => {
   };
 
   const removeNeighborhood = async (id: string) => {
+    console.log('Removing neighborhood:', id);
     const { error } = await supabase
       .from('neighborhoods')
       .delete()
       .eq('id', id);
 
     if (error) {
+      console.error('Error removing neighborhood:', error);
       toast({ title: "Error", description: "Failed to remove neighborhood", variant: "destructive" });
     } else {
+      console.log('Neighborhood removed successfully');
       toast({ title: "Success", description: "Neighborhood removed successfully" });
       fetchNeighborhoods();
     }
   };
 
   const addUser = async () => {
-    if (!newUserEmail.trim() || !newUserName.trim()) return;
+    if (!newUserEmail.trim() || !newUserName.trim()) {
+      toast({ title: "Error", description: "Please fill in both name and email", variant: "destructive" });
+      return;
+    }
 
-    // For now, just add to app_users table. In the future, this should create a Supabase auth user
+    console.log('Adding user:', { email: newUserEmail.trim(), name: newUserName.trim() });
+    
+    // Add to app_users table
     const { error } = await supabase
       .from('app_users')
       .insert([{ 
@@ -230,11 +223,13 @@ const Admin = () => {
       }]);
 
     if (error) {
-      toast({ title: "Error", description: "Failed to add user", variant: "destructive" });
+      console.error('Error adding user:', error);
+      toast({ title: "Error", description: `Failed to add user: ${error.message}`, variant: "destructive" });
     } else {
+      console.log('User added successfully');
       toast({ 
         title: "Success", 
-        description: "User added successfully. They can sign up with email: " + newUserEmail.trim() + " and password: starlighthomes" 
+        description: `User added successfully. They can sign up with email: ${newUserEmail.trim()} and password: starlighthomes` 
       });
       setNewUserEmail('');
       setNewUserName('');
@@ -243,22 +238,32 @@ const Admin = () => {
   };
 
   const removeUser = async (user: AppUser) => {
-    // Try to remove from both tables
+    console.log('Removing user:', user);
+    
+    // Try to remove from profiles table first
     const { error: profileError } = await supabase
       .from('profiles')
       .delete()
       .eq('email', user.email);
 
+    console.log('Profile deletion result:', profileError);
+
+    // Try to remove from app_users table
     const { error: appUserError } = await supabase
       .from('app_users')
       .delete()
       .eq('id', user.id);
 
-    if (profileError && appUserError) {
-      toast({ title: "Error", description: "Failed to remove user", variant: "destructive" });
-    } else {
+    console.log('App user deletion result:', appUserError);
+
+    // If at least one deletion succeeded, consider it successful
+    if (!profileError || !appUserError) {
+      console.log('User removed successfully');
       toast({ title: "Success", description: "User removed successfully" });
       fetchUsers();
+    } else {
+      console.error('Failed to remove user from both tables:', { profileError, appUserError });
+      toast({ title: "Error", description: "Failed to remove user", variant: "destructive" });
     }
   };
 
@@ -288,7 +293,7 @@ const Admin = () => {
 
       if (createError) {
         console.error('Error creating email settings:', createError);
-        toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
+        toast({ title: "Error", description: `Failed to add email recipient: ${createError.message}`, variant: "destructive" });
       } else {
         console.log('Email settings created with new recipient');
         toast({ title: "Success", description: "Email recipient added successfully" });
@@ -316,7 +321,7 @@ const Admin = () => {
 
     if (error) {
       console.error('Email update error:', error);
-      toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
+      toast({ title: "Error", description: `Failed to add email recipient: ${error.message}`, variant: "destructive" });
     } else {
       console.log('Email recipient added successfully');
       toast({ title: "Success", description: "Email recipient added successfully" });
@@ -347,7 +352,7 @@ const Admin = () => {
 
     if (error) {
       console.error('Error removing email recipient:', error);
-      toast({ title: "Error", description: "Failed to remove email recipient", variant: "destructive" });
+      toast({ title: "Error", description: `Failed to remove email recipient: ${error.message}`, variant: "destructive" });
     } else {
       console.log('Email recipient removed successfully');
       toast({ title: "Success", description: "Email recipient removed successfully" });
