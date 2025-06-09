@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -212,7 +213,7 @@ const Admin = () => {
 
     console.log('Adding user:', { email: newUserEmail.trim(), name: newUserName.trim() });
     
-    // Add to app_users table
+    // Add to app_users table only
     const { error } = await supabase
       .from('app_users')
       .insert([{ 
