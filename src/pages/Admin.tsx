@@ -29,7 +29,7 @@ interface EmailSettings {
 }
 
 const Admin = () => {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const navigate = useNavigate();
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
@@ -38,6 +38,59 @@ const Admin = () => {
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newEmailRecipient, setNewEmailRecipient] = useState('');
+
+  // Debug useEffect to check auth and profile details
+  useEffect(() => {
+    const debugAuth = async () => {
+      console.log('=== ADMIN DEBUG START ===');
+      
+      // Get auth user
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+      console.log('Auth UID →', authUser?.id);
+      console.log('Auth Error →', authError);
+      
+      if (authUser?.id) {
+        // Query profiles table directly
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, email, role')
+          .eq('id', authUser.id)
+          .single();
+        
+        console.log('Profile record →', profileData);
+        console.log('Profile error →', profileError);
+        
+        // Test the get_user_role_safe function
+        const { data: roleData, error: roleError } = await supabase
+          .rpc('get_user_role_safe', { user_id: authUser.id });
+        
+        console.log('get_user_role_safe result →', roleData);
+        console.log('get_user_role_safe error →', roleError);
+      }
+      
+      console.log('Profile from context →', profile);
+      console.log('User from context →', user);
+      console.log('=== ADMIN DEBUG END ===');
+    };
+
+    if (user) {
+      debugAuth();
+    }
+  }, [user, profile]);
+
+  // Loading state while profile is being fetched
+  if (profile === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-blue-600 rounded-lg mx-auto mb-4 flex items-center justify-center animate-pulse">
+            <span className="text-white font-bold text-xl">IQ</span>
+          </div>
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Check if user is admin
   if (profile?.role !== 'admin') {
@@ -220,9 +273,12 @@ const Admin = () => {
   const addNeighborhood = async () => {
     if (!newNeighborhood.trim()) return;
 
+    console.log('=== ADDING NEIGHBORHOOD DEBUG ===');
     console.log('Adding neighborhood:', newNeighborhood.trim());
     console.log('Current user profile:', profile);
-    console.log('Auth UID:', (await supabase.auth.getUser()).data.user?.id);
+    
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    console.log('Auth UID during insert:', authUser?.id);
     
     const { error } = await supabase
       .from('neighborhoods')
@@ -243,6 +299,7 @@ const Admin = () => {
       setNewNeighborhood('');
       fetchNeighborhoods();
     }
+    console.log('=== END ADDING NEIGHBORHOOD DEBUG ===');
   };
 
   const removeNeighborhood = async (id: string) => {
