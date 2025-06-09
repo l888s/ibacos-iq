@@ -1,51 +1,36 @@
-
--- Enable RLS on email_settings table if not already enabled
+-- Enable RLS
 ALTER TABLE public.email_settings ENABLE ROW LEVEL SECURITY;
 
--- Create policy to allow admins to select email settings
-CREATE POLICY "Admins can view email settings" 
-  ON public.email_settings 
-  FOR SELECT 
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles 
-      WHERE profiles.id = auth.uid() 
-      AND profiles.role = 'admin'
-    )
-  );
+-- Helper function
+CREATE OR REPLACE FUNCTION public.is_admin(user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE SECURITY DEFINER
+AS $$
+  SELECT role = 'admin'
+  FROM public.profiles
+  WHERE id = user_id
+$$;
 
--- Create policy to allow admins to insert email settings
-CREATE POLICY "Admins can create email settings" 
-  ON public.email_settings 
-  FOR INSERT 
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.profiles 
-      WHERE profiles.id = auth.uid() 
-      AND profiles.role = 'admin'
-    )
-  );
+ALTER FUNCTION public.is_admin(uuid) OWNER TO postgres;
 
--- Create policy to allow admins to update email settings
-CREATE POLICY "Admins can update email settings" 
-  ON public.email_settings 
-  FOR UPDATE 
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles 
-      WHERE profiles.id = auth.uid() 
-      AND profiles.role = 'admin'
-    )
-  );
+-- Policies
+CREATE POLICY "Admins can view email settings"
+  ON public.email_settings
+  FOR SELECT
+  USING (public.is_admin(auth.uid()));
 
--- Create policy to allow admins to delete email settings
-CREATE POLICY "Admins can delete email settings" 
-  ON public.email_settings 
-  FOR DELETE 
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles 
-      WHERE profiles.id = auth.uid() 
-      AND profiles.role = 'admin'
-    )
-  );
+CREATE POLICY "Admins can create email settings"
+  ON public.email_settings
+  FOR INSERT
+  WITH CHECK (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can update email settings"
+  ON public.email_settings
+  FOR UPDATE
+  USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can delete email settings"
+  ON public.email_settings
+  FOR DELETE
+  USING (public.is_admin(auth.uid()));
