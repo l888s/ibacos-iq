@@ -90,6 +90,7 @@ const Admin = () => {
   };
 
   const fetchEmailSettings = async () => {
+    console.log('Fetching email settings...');
     const { data, error } = await supabase
       .from('email_settings')
       .select('*')
@@ -98,12 +99,18 @@ const Admin = () => {
     if (error && error.code !== 'PGRST116') {
       console.error('Failed to load email settings:', error);
       toast({ title: "Error", description: "Failed to load email settings", variant: "destructive" });
-    } else if (!data) {
+      return;
+    }
+    
+    const requiredEmails = ['jason.edwards@starlighthomes.com'];
+    
+    if (!data) {
+      console.log('No email settings found, creating with Jason Edwards...');
       // Create default email settings if none exist
       const { data: newSettings, error: createError } = await supabase
         .from('email_settings')
         .insert([{ 
-          report_recipients: ['jason.edwards@starlighthomes.com'] 
+          report_recipients: requiredEmails 
         }])
         .select()
         .single();
@@ -113,25 +120,36 @@ const Admin = () => {
         toast({ title: "Error", description: "Failed to create email settings", variant: "destructive" });
       } else {
         setEmailSettings(newSettings);
-        toast({ title: "Success", description: "Email settings created with Jason Edwards added", });
+        console.log('Email settings created successfully with Jason Edwards');
+        toast({ title: "Success", description: "Email settings created with Jason Edwards added" });
       }
     } else {
+      console.log('Email settings found:', data);
       setEmailSettings(data);
       
-      // Check if Jason Edwards needs to be added
-      if (!data.report_recipients.includes('jason.edwards@starlighthomes.com')) {
-        const updatedRecipients = [...data.report_recipients, 'jason.edwards@starlighthomes.com'];
+      // Check if any required emails need to be added
+      const missingEmails = requiredEmails.filter(email => 
+        !data.report_recipients.includes(email)
+      );
+      
+      if (missingEmails.length > 0) {
+        console.log('Adding missing required emails:', missingEmails);
+        const updatedRecipients = [...data.report_recipients, ...missingEmails];
         
-        const { error: updateError } = await supabase
+        const { data: updatedData, error: updateError } = await supabase
           .from('email_settings')
           .update({ report_recipients: updatedRecipients })
-          .eq('id', data.id);
+          .eq('id', data.id)
+          .select()
+          .single();
         
         if (updateError) {
-          console.error('Failed to add Jason Edwards:', updateError);
+          console.error('Failed to add required emails:', updateError);
+          toast({ title: "Error", description: "Failed to add required email recipients", variant: "destructive" });
         } else {
-          setEmailSettings({ ...data, report_recipients: updatedRecipients });
-          toast({ title: "Success", description: "Jason Edwards added to email recipients", });
+          setEmailSettings(updatedData);
+          console.log('Required emails added successfully');
+          toast({ title: "Success", description: `Added ${missingEmails.join(', ')} to email recipients` });
         }
       }
     }
@@ -225,7 +243,10 @@ const Admin = () => {
       return;
     }
 
+    console.log('Adding email recipient:', newEmailRecipient.trim());
+
     if (!emailSettings) {
+      console.log('No email settings exist, creating new ones...');
       // Create email settings if it doesn't exist
       const { data: newSettings, error: createError } = await supabase
         .from('email_settings')
@@ -237,6 +258,7 @@ const Admin = () => {
         console.error('Error creating email settings:', createError);
         toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
       } else {
+        console.log('Email settings created with new recipient');
         toast({ title: "Success", description: "Email recipient added successfully" });
         setNewEmailRecipient('');
         setEmailSettings(newSettings);
@@ -251,42 +273,62 @@ const Admin = () => {
     }
 
     const updatedRecipients = [...emailSettings.report_recipients, newEmailRecipient.trim()];
+    console.log('Updating recipients to:', updatedRecipients);
 
-    const { error } = await supabase
+    const { data: updatedData, error } = await supabase
       .from('email_settings')
       .update({ report_recipients: updatedRecipients })
-      .eq('id', emailSettings.id);
+      .eq('id', emailSettings.id)
+      .select()
+      .single();
 
     if (error) {
       console.error('Email update error:', error);
       toast({ title: "Error", description: "Failed to add email recipient", variant: "destructive" });
     } else {
+      console.log('Email recipient added successfully');
       toast({ title: "Success", description: "Email recipient added successfully" });
       setNewEmailRecipient('');
-      fetchEmailSettings();
+      setEmailSettings(updatedData);
     }
   };
 
   const removeEmailRecipient = async (email: string) => {
     if (!emailSettings) return;
 
+    // Prevent removal of required emails
+    const requiredEmails = ['jason.edwards@starlighthomes.com'];
+    if (requiredEmails.includes(email)) {
+      toast({ title: "Error", description: "This email recipient is required and cannot be removed", variant: "destructive" });
+      return;
+    }
+
+    console.log('Removing email recipient:', email);
     const updatedRecipients = emailSettings.report_recipients.filter(e => e !== email);
 
-    const { error } = await supabase
+    const { data: updatedData, error } = await supabase
       .from('email_settings')
       .update({ report_recipients: updatedRecipients })
-      .eq('id', emailSettings.id);
+      .eq('id', emailSettings.id)
+      .select()
+      .single();
 
     if (error) {
+      console.error('Error removing email recipient:', error);
       toast({ title: "Error", description: "Failed to remove email recipient", variant: "destructive" });
     } else {
+      console.log('Email recipient removed successfully');
       toast({ title: "Success", description: "Email recipient removed successfully" });
-      fetchEmailSettings();
+      setEmailSettings(updatedData);
     }
   };
 
   const isAdminUser = (email: string) => {
     return email === 'lewis.bedford@starlighthomes.com';
+  };
+
+  const isRequiredEmail = (email: string) => {
+    return email === 'jason.edwards@starlighthomes.com';
   };
 
   return (
@@ -435,14 +477,21 @@ const Admin = () => {
                     emailSettings.report_recipients.map((email) => (
                       <div key={email} className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
                         <span className="text-sm">{email}</span>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className="h-4 w-4 p-0"
-                          onClick={() => removeEmailRecipient(email)}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
+                        {isRequiredEmail(email) && (
+                          <Badge variant="secondary" className="text-xs ml-1">
+                            Required
+                          </Badge>
+                        )}
+                        {!isRequiredEmail(email) && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            className="h-4 w-4 p-0"
+                            onClick={() => removeEmailRecipient(email)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
                       </div>
                     ))
                   ) : (
