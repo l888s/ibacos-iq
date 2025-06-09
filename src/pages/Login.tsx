@@ -55,7 +55,7 @@ const Login = () => {
             <span className="text-white font-bold text-xl">IQ</span>
           </div>
           <CardTitle className="text-2xl">IbacosIQ</CardTitle>
-          <CardDescription>Quality inspection management system</CardDescription>
+          <CardDescription>Rob Gumber prevention and deterrence system</CardDescription>
         </CardHeader>
         
         <CardContent>
