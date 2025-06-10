@@ -8,7 +8,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { Home, FileText, User, LogOut } from 'lucide-react';
+import { Home, FileText, User, LogOut, Shield } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
@@ -33,6 +33,16 @@ const Navigation = () => {
     { path: '/inspection', label: 'Inspection', icon: FileText, onClick: handleInspectionClick },
     { path: '/reports', label: 'Reports', icon: FileText, onClick: () => navigate('/reports') },
   ];
+
+  // Add admin link if user is admin
+  if (profile?.role === 'admin') {
+    navItems.push({
+      path: '/admin',
+      label: 'Admin',
+      icon: Shield,
+      onClick: () => navigate('/admin')
+    });
+  }
 
   return (
     <nav className="bg-white shadow-sm border-b">
