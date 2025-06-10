@@ -97,27 +97,34 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
                     <div className="space-y-4">
                       {/* Score Buttons */}
                       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                        {[0, 1, 2, 3, 4].map((score) => (
-                          <Button
-                            key={score}
-                            variant={inspectionItem.score === score ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => updateItemScore(inspectionItem.id, score)}
-                            className={`text-sm h-auto py-3 px-4 ${inspectionItem.score === score ? scoreColors[score as keyof typeof scoreColors] : ""}`}
-                            disabled={inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions] === 'No score'}
-                          >
-                            <div className="text-center">
-                              <div className="font-semibold">{scoreLabels[score as keyof typeof scoreLabels]}</div>
-                            </div>
-                          </Button>
-                        ))}
+                        {[0, 1, 2, 3, 4].map((score) => {
+                          const scoreKey = score as keyof typeof scoreColors;
+                          const colorClass = scoreColors[scoreKey] || '';
+                          const isDisabled = inspectionItem.scoreDescriptions?.[scoreKey] === 'No score';
+                          
+                          return (
+                            <Button
+                              key={score}
+                              variant={inspectionItem.score === score ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => updateItemScore(inspectionItem.id, score)}
+                              className={`text-sm h-auto py-3 px-4 ${inspectionItem.score === score ? colorClass : ""}`}
+                              disabled={isDisabled}
+                            >
+                              <div className="text-center">
+                                <div className="font-semibold">{scoreLabels[scoreKey]}</div>
+                              </div>
+                            </Button>
+                          );
+                        })}
                       </div>
                       
                       {/* Score Descriptions */}
                       <div className="space-y-2 text-sm">
                         {[0, 1, 2, 3, 4].map((score) => {
-                          const description = inspectionItem.scoreDescriptions[score as keyof typeof inspectionItem.scoreDescriptions];
-                          if (description === 'No score') return null;
+                          const scoreKey = score as keyof typeof inspectionItem.scoreDescriptions;
+                          const description = inspectionItem.scoreDescriptions?.[scoreKey];
+                          if (!description || description === 'No score') return null;
                           
                           return (
                             <div 
@@ -137,11 +144,11 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
                       </div>
                       
                       {/* Current Score Display */}
-                      {inspectionItem.score !== null && (
+                      {inspectionItem.score !== null && typeof inspectionItem.score === 'number' && (
                         <div className="mt-4">
                           <Badge 
                             variant="secondary"
-                            className={`${scoreColors[inspectionItem.score as keyof typeof scoreColors].replace('hover:', '')} text-white text-base px-4 py-2`}
+                            className={`${scoreColors[inspectionItem.score as keyof typeof scoreColors]?.replace('hover:', '') || 'bg-gray-500'} text-white text-base px-4 py-2`}
                           >
                             Score: {inspectionItem.score} - {scoreLabels[inspectionItem.score as keyof typeof scoreLabels]}
                           </Badge>
