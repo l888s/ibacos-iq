@@ -43,8 +43,6 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <DashboardHeader 
           userName={profile?.name || user?.email || 'User'}
-          isAdmin={isAdmin}
-          onAdminClick={handleAdminClick}
         />
 
         <DashboardStats 
