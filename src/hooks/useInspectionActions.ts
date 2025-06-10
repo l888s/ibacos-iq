@@ -1,9 +1,10 @@
-
 import { useCallback } from 'react';
 import { Inspection, InspectionItem } from '@/types/inspection';
 import { defaultInspectionItems } from '@/data/inspectionItems';
 import { calculateWeightedAverageScore, calculateTotalScore } from '@/utils/inspectionCalculations';
 import { downloadPDF } from '@/utils/pdfGenerator';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 interface UseInspectionActionsProps {
   currentInspection: Inspection | null;
@@ -108,6 +109,48 @@ export const useInspectionActions = ({
       await downloadPDF(completedInspection);
     } catch (error) {
       console.error('Error generating PDF:', error);
+      toast({
+        title: "PDF Error",
+        description: "Failed to generate PDF, but inspection was saved",
+        variant: "destructive"
+      });
+    }
+
+    // Send email report
+    try {
+      console.log('Sending inspection report email...');
+      const { data, error } = await supabase.functions.invoke('send-inspection-report', {
+        body: { inspection: completedInspection }
+      });
+
+      if (error) {
+        console.error('Error sending email:', error);
+        toast({
+          title: "Email Error",
+          description: "Inspection saved but failed to send email report",
+          variant: "destructive"
+        });
+      } else if (data?.success) {
+        console.log('Email sent successfully to', data.recipients, 'recipients');
+        toast({
+          title: "Email Sent",
+          description: `Report emailed to ${data.recipients} recipient(s)`,
+        });
+      } else {
+        console.log('No email recipients configured');
+        toast({
+          title: "No Email Recipients",
+          description: "Inspection saved but no email recipients are configured",
+          variant: "default"
+        });
+      }
+    } catch (error) {
+      console.error('Error calling email function:', error);
+      toast({
+        title: "Email Error",
+        description: "Inspection saved but failed to send email report",
+        variant: "destructive"
+      });
     }
     
     setCurrentInspection(null);
