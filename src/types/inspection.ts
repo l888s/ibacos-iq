@@ -1,8 +1,7 @@
 
-
 export interface InspectionItem {
   id: string;
-  name: string;
+  name?: string; // Make optional since we use 'item' instead
   category: string;
   subcategory: string;
   item: string;
@@ -45,4 +44,3 @@ export interface InspectionContextType {
   getAllInspections: () => Inspection[];
   getAllCompletedInspections: () => Inspection[];
 }
-

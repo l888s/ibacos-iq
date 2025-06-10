@@ -47,9 +47,15 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     deleteInspectionFromStorage
   });
 
+  // Get all completed inspections (status === 'completed')
+  const getAllCompletedInspections = () => {
+    return savedInspections.filter(inspection => inspection.status === 'completed');
+  };
+
   const contextValue: InspectionContextType = {
     currentInspection,
     savedInspections,
+    allCompletedInspections: getAllCompletedInspections(),
     setCurrentInspection,
     startNewInspection,
     continueExistingInspection,
@@ -58,7 +64,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     submitInspection,
     loadInspection,
     deleteInspection,
-    getAllInspections
+    getAllInspections,
+    getAllCompletedInspections
   };
 
   return (
