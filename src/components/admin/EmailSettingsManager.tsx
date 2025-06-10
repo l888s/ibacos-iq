@@ -26,6 +26,7 @@ const EmailSettingsManager = () => {
 
   const fetchEmailSettings = async () => {
     try {
+      console.log('Fetching email settings...');
       const { data, error } = await supabase
         .from('email_settings')
         .select('*')
@@ -33,9 +34,11 @@ const EmailSettingsManager = () => {
         .single();
 
       if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching email settings:', error);
         throw error;
       }
       
+      console.log('Email settings fetched:', data);
       setEmailSettings(data);
     } catch (error) {
       console.error('Error fetching email settings:', error);
@@ -51,6 +54,8 @@ const EmailSettingsManager = () => {
 
   const createOrUpdateSettings = async (recipients: string[]) => {
     try {
+      console.log('Updating email settings with recipients:', recipients);
+      
       if (emailSettings) {
         // Update existing
         const { error } = await supabase
@@ -58,14 +63,22 @@ const EmailSettingsManager = () => {
           .update({ report_recipients: recipients })
           .eq('id', emailSettings.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error updating email settings:', error);
+          throw error;
+        }
+        console.log('Email settings updated successfully');
       } else {
         // Create new
         const { error } = await supabase
           .from('email_settings')
           .insert([{ report_recipients: recipients }]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error creating email settings:', error);
+          throw error;
+        }
+        console.log('Email settings created successfully');
       }
 
       toast({
@@ -73,7 +86,8 @@ const EmailSettingsManager = () => {
         description: "Email settings updated successfully"
       });
       
-      fetchEmailSettings();
+      // Refresh the settings to show the updated list
+      await fetchEmailSettings();
     } catch (error) {
       console.error('Error updating email settings:', error);
       toast({
