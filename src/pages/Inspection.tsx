@@ -86,12 +86,14 @@ const Inspection = () => {
   const handlePreviousSection = () => {
     if (previousCategory) {
       setCurrentCategory(previousCategory);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleNextSection = () => {
     if (nextCategory) {
       setCurrentCategory(nextCategory);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
