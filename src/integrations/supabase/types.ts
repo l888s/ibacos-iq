@@ -114,7 +114,7 @@ export type Database = {
     }
     Functions: {
       get_user_role_safe: {
-        Args: { user_id: string }
+        Args: Record<PropertyKey, never> | { user_id: string }
         Returns: string
       }
     }
