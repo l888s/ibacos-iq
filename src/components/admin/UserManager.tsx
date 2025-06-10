@@ -1,13 +1,13 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit, Save, X, UserPlus, Copy } from 'lucide-react';
+import { Trash2, Edit, Save, X, UserPlus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface User {
@@ -20,11 +20,13 @@ interface User {
 }
 
 const UserManager = () => {
+  const { session } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [newUser, setNewUser] = useState({ email: '', name: '', role: 'inspector' });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState({ name: '', role: '' });
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -51,15 +53,6 @@ const UserManager = () => {
     }
   };
 
-  const generateTempPassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
-    let password = '';
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
-  };
-
   const createUser = async () => {
     if (!newUser.email.trim() || !newUser.name.trim()) {
       toast({
@@ -70,52 +63,63 @@ const UserManager = () => {
       return;
     }
 
-    const tempPassword = generateTempPassword();
+    if (!session?.access_token) {
+      toast({
+        title: "Error",
+        description: "Not authenticated",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setCreating(true);
     
     try {
-      // Use the regular signUp method instead of admin.createUser
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newUser.email.trim(),
-        password: tempPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            name: newUser.name.trim(),
-            role: newUser.role
-          }
+      const { data, error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: newUser.email.trim(),
+          name: newUser.name.trim(),
+          role: newUser.role
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
         }
       });
 
-      if (authError) {
-        console.error('Auth error:', authError);
-        throw authError;
+      if (error) {
+        console.error('Function error:', error);
+        throw new Error(error.message || 'Failed to create user');
       }
 
-      // The profile should be created automatically by the trigger
-      // Wait a moment and then refresh the users list
-      setTimeout(() => {
-        fetchUsers();
-      }, 1000);
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
-      // Copy password to clipboard
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(tempPassword);
+      // Copy password to clipboard if available
+      if (data.tempPassword && navigator.clipboard) {
+        await navigator.clipboard.writeText(data.tempPassword);
         toast({
           title: "Success",
-          description: `User created successfully! Temporary password copied to clipboard: ${tempPassword}`,
+          description: `User created successfully! Temporary password copied to clipboard: ${data.tempPassword}`,
         });
       } else {
         toast({
           title: "Success", 
-          description: `User created successfully! Temporary password: ${tempPassword} (Please save this password)`,
+          description: `User created successfully! Temporary password: ${data.tempPassword} (Please save this password)`,
         });
       }
       
       setNewUser({ email: '', name: '', role: 'inspector' });
+      
+      // Refresh the users list
+      setTimeout(() => {
+        fetchUsers();
+      }, 1000);
+      
     } catch (error: any) {
       console.error('Error creating user:', error);
-      let errorMessage = "Failed to create user";
       
+      let errorMessage = "Failed to create user";
       if (error.message?.includes('User already registered')) {
         errorMessage = "A user with this email already exists";
       } else if (error.message?.includes('Invalid email')) {
@@ -129,6 +133,8 @@ const UserManager = () => {
         description: errorMessage,
         variant: "destructive"
       });
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -229,6 +235,7 @@ const UserManager = () => {
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                   placeholder="user@example.com"
+                  disabled={creating}
                 />
               </div>
               
@@ -239,12 +246,17 @@ const UserManager = () => {
                   value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                   placeholder="Full Name"
+                  disabled={creating}
                 />
               </div>
               
               <div>
                 <Label htmlFor="new-role">Role</Label>
-                <Select value={newUser.role} onValueChange={(value) => setNewUser({ ...newUser, role: value })}>
+                <Select 
+                  value={newUser.role} 
+                  onValueChange={(value) => setNewUser({ ...newUser, role: value })}
+                  disabled={creating}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -258,11 +270,11 @@ const UserManager = () => {
               <div className="flex items-end">
                 <Button 
                   onClick={createUser} 
-                  disabled={!newUser.email.trim() || !newUser.name.trim()}
+                  disabled={!newUser.email.trim() || !newUser.name.trim() || creating}
                   className="w-full"
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Create User
+                  {creating ? 'Creating...' : 'Create User'}
                 </Button>
               </div>
             </div>
