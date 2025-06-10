@@ -8,12 +8,31 @@ import NeighborhoodSelection from '@/components/NeighborhoodSelection';
 import InspectionHeader from '@/components/InspectionHeader';
 import InspectionTabs from '@/components/InspectionTabs';
 import { Button } from '@/components/ui/button';
-import { Save, Send } from 'lucide-react';
+import { Save, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Inspection = () => {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  const [currentCategory, setCurrentCategory] = useState<string>('');
   const { currentInspection, startNewInspection, saveInspection, submitInspection, deleteInspection } = useInspection();
   const navigate = useNavigate();
+
+  // Get categories for navigation
+  const getCategories = () => {
+    if (!currentInspection) return [];
+    return [...new Set(currentInspection.items.map(item => item.category))];
+  };
+
+  const categories = getCategories();
+  const currentCategoryIndex = categories.indexOf(currentCategory);
+  const previousCategory = currentCategoryIndex > 0 ? categories[currentCategoryIndex - 1] : null;
+  const nextCategory = currentCategoryIndex < categories.length - 1 ? categories[currentCategoryIndex + 1] : null;
+
+  // Set initial category when inspection loads
+  useEffect(() => {
+    if (currentInspection && categories.length > 0 && !currentCategory) {
+      setCurrentCategory(categories[0]);
+    }
+  }, [currentInspection, categories.length, currentCategory]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -65,6 +84,18 @@ const Inspection = () => {
     navigate('/');
   };
 
+  const handlePreviousSection = () => {
+    if (previousCategory) {
+      setCurrentCategory(previousCategory);
+    }
+  };
+
+  const handleNextSection = () => {
+    if (nextCategory) {
+      setCurrentCategory(nextCategory);
+    }
+  };
+
   const getProgress = () => {
     if (!currentInspection) return 0;
     const completedItems = currentInspection.items.filter(item => item.score !== null).length;
@@ -101,25 +132,62 @@ const Inspection = () => {
           isComplete={isComplete()}
         />
 
-        <InspectionTabs inspection={currentInspection} />
+        <InspectionTabs 
+          inspection={currentInspection} 
+          currentCategory={currentCategory}
+          onCategoryChange={setCurrentCategory}
+        />
 
         {/* Bottom Action Buttons */}
         <div className="mt-8 pt-6 border-t bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button onClick={handleManualSave} variant="outline" size="lg">
-              <Save className="h-4 w-4 mr-2" />
-              Save Progress
-            </Button>
-            
-            <Button 
-              onClick={handleSubmit}
-              className={`${isComplete() ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
-              disabled={!isComplete() || currentInspection.status === 'completed'}
-              size="lg"
-            >
-              <Send className="h-4 w-4 mr-2" />
-              Submit Inspection
-            </Button>
+          <div className="flex flex-wrap gap-4 justify-between items-center">
+            {/* Previous Section Button */}
+            <div className="flex-1">
+              {previousCategory && (
+                <Button 
+                  onClick={handlePreviousSection}
+                  variant="outline" 
+                  size="lg"
+                  className="w-full sm:w-auto"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Previous Section: {previousCategory}
+                </Button>
+              )}
+            </div>
+
+            {/* Center Buttons */}
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button onClick={handleManualSave} variant="outline" size="lg">
+                <Save className="h-4 w-4 mr-2" />
+                Save Progress
+              </Button>
+              
+              <Button 
+                onClick={handleSubmit}
+                className={`${isComplete() ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                disabled={!isComplete() || currentInspection.status === 'completed'}
+                size="lg"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                Submit Inspection
+              </Button>
+            </div>
+
+            {/* Next Section Button */}
+            <div className="flex-1 flex justify-end">
+              {nextCategory && (
+                <Button 
+                  onClick={handleNextSection}
+                  variant="outline" 
+                  size="lg"
+                  className="w-full sm:w-auto"
+                >
+                  Next Section: {nextCategory}
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </Button>
+              )}
+            </div>
           </div>
           
           {!isComplete() && (

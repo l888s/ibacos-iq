@@ -5,19 +5,31 @@ import InspectionCategoryForm from './InspectionCategoryForm';
 
 interface InspectionTabsProps {
   inspection: Inspection;
+  currentCategory?: string;
+  onCategoryChange?: (category: string) => void;
 }
 
-const InspectionTabs = ({ inspection }: InspectionTabsProps) => {
+const InspectionTabs = ({ inspection, currentCategory, onCategoryChange }: InspectionTabsProps) => {
   console.log('=== INSPECTION TABS DEBUG ===');
   console.log('InspectionTabs rendering with inspection:', inspection);
   console.log('Total items in inspection:', inspection.items.length);
   
   const categories = [...new Set(inspection.items.map(item => item.category))];
   console.log('Categories found:', categories);
+  console.log('Current category:', currentCategory);
   console.log('=== END TABS DEBUG ===');
 
+  const activeCategory = currentCategory || categories[0];
+
+  const handleTabChange = (category: string) => {
+    console.log('Tab changed to:', category);
+    if (onCategoryChange) {
+      onCategoryChange(category);
+    }
+  };
+
   return (
-    <Tabs defaultValue={categories[0]} className="w-full">
+    <Tabs value={activeCategory} onValueChange={handleTabChange} className="w-full">
       <div className="mb-6 overflow-x-auto">
         <TabsList className="inline-flex h-auto bg-white border border-gray-200 rounded-lg p-1 min-w-full">
           {categories.map((category) => {
