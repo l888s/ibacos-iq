@@ -6,7 +6,7 @@ export interface InspectionItem {
   subcategory: string;
   item: string;
   weight: number;
-  score: number | string | null;
+  score: number | string | null; // Allow string for 'N/O'
   scoreDescriptions: {
     0: string;
     1: string;

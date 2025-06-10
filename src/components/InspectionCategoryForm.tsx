@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 const scoreLabels = {
+  'N/O': 'Not Observed',
   0: 'Poor (0)',
   1: 'Below Average (1)', 
   2: 'Average (2)',
@@ -13,6 +14,7 @@ const scoreLabels = {
 };
 
 const scoreColors = {
+  'N/O': 'bg-gray-500 hover:bg-gray-600',
   0: 'bg-red-500 hover:bg-red-600',
   1: 'bg-orange-500 hover:bg-orange-600',
   2: 'bg-yellow-500 hover:bg-yellow-600', 
@@ -95,12 +97,12 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
                     </div>
                     
                     <div className="space-y-4">
-                      {/* Score Buttons */}
-                      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                        {[0, 1, 2, 3, 4].map((score) => {
+                      {/* Score Buttons - Updated to include N/O */}
+                      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+                        {(['N/O', 0, 1, 2, 3, 4] as const).map((score) => {
                           const scoreKey = score as keyof typeof scoreColors;
                           const colorClass = scoreColors[scoreKey] || '';
-                          const isDisabled = inspectionItem.scoreDescriptions?.[scoreKey] === 'No score';
+                          const isDisabled = score !== 'N/O' && inspectionItem.scoreDescriptions?.[score as keyof typeof inspectionItem.scoreDescriptions] === 'No score';
                           
                           return (
                             <Button
@@ -119,8 +121,11 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
                         })}
                       </div>
                       
-                      {/* Score Descriptions */}
+                      {/* Score Descriptions - Updated to include N/O */}
                       <div className="space-y-2 text-sm">
+                        <div className="p-3 rounded border-l-4 border-gray-400 bg-gray-50">
+                          <span className="font-medium">N/O:</span> Not Observed - Use when item cannot be inspected
+                        </div>
                         {[0, 1, 2, 3, 4].map((score) => {
                           const scoreKey = score as keyof typeof inspectionItem.scoreDescriptions;
                           const description = inspectionItem.scoreDescriptions?.[scoreKey];
@@ -143,8 +148,8 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
                         })}
                       </div>
                       
-                      {/* Current Score Display */}
-                      {inspectionItem.score !== null && typeof inspectionItem.score === 'number' && (
+                      {/* Current Score Display - Updated to handle N/O */}
+                      {inspectionItem.score !== null && (
                         <div className="mt-4">
                           <Badge 
                             variant="secondary"
