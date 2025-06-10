@@ -1,10 +1,20 @@
 
+
 export interface InspectionItem {
   id: string;
   name: string;
   category: string;
+  subcategory: string;
+  item: string;
   weight: number;
   score: number | string | null;
+  scoreDescriptions: {
+    0: string;
+    1: string;
+    2: string;
+    3: string;
+    4: string;
+  };
 }
 
 export interface Inspection {
@@ -23,6 +33,7 @@ export interface Inspection {
 export interface InspectionContextType {
   currentInspection: Inspection | null;
   savedInspections: Inspection[];
+  allCompletedInspections: Inspection[];
   setCurrentInspection: (inspection: Inspection | null) => void;
   startNewInspection: (neighborhood: string, forceNew?: boolean) => { hasExisting: boolean; existingInspection?: Inspection; newInspection?: Inspection };
   continueExistingInspection: (neighborhood: string) => boolean;
@@ -32,4 +43,6 @@ export interface InspectionContextType {
   loadInspection: (inspectionId: string) => void;
   deleteInspection: () => void;
   getAllInspections: () => Inspection[];
+  getAllCompletedInspections: () => Inspection[];
 }
+
