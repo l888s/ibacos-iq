@@ -26,12 +26,17 @@ const NeighborhoodManager = () => {
 
   const fetchNeighborhoods = async () => {
     try {
+      console.log('Fetching neighborhoods...');
       const { data, error } = await supabase
         .from('neighborhoods')
         .select('*')
         .order('name');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching neighborhoods:', error);
+        throw error;
+      }
+      console.log('Neighborhoods fetched successfully:', data);
       setNeighborhoods(data || []);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
@@ -49,12 +54,49 @@ const NeighborhoodManager = () => {
     if (!newNeighborhood.trim()) return;
 
     try {
+      console.log('Attempting to add neighborhood:', newNeighborhood.trim());
+      
+      // First, let's check the current user and their role
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Current user:', user?.id);
+      
+      if (!user) {
+        console.error('No authenticated user found');
+        toast({
+          title: "Error",
+          description: "You must be logged in to add neighborhoods",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check user role
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      console.log('User profile:', profile, 'Profile error:', profileError);
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+      }
+
       const { error } = await supabase
         .from('neighborhoods')
         .insert([{ name: newNeighborhood.trim() }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding neighborhood - Full error object:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        console.error('Error details:', error.details);
+        console.error('Error hint:', error.hint);
+        throw error;
+      }
 
+      console.log('Neighborhood added successfully');
       toast({
         title: "Success",
         description: "Neighborhood added successfully"
@@ -66,7 +108,7 @@ const NeighborhoodManager = () => {
       console.error('Error adding neighborhood:', error);
       toast({
         title: "Error",
-        description: "Failed to add neighborhood",
+        description: `Failed to add neighborhood: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     }
