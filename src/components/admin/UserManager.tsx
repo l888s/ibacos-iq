@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Plus, Edit, Save, X, UserPlus } from 'lucide-react';
+import { Trash2, Edit, Save, X, UserPlus, Copy } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface User {
@@ -50,53 +51,82 @@ const UserManager = () => {
     }
   };
 
-  const createUser = async () => {
-    if (!newUser.email.trim() || !newUser.name.trim()) return;
+  const generateTempPassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  };
 
+  const createUser = async () => {
+    if (!newUser.email.trim() || !newUser.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const tempPassword = generateTempPassword();
+    
     try {
-      // Create auth user with temporary password
-      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!';
-      
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Use the regular signUp method instead of admin.createUser
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newUser.email.trim(),
         password: tempPassword,
-        email_confirm: true,
-        user_metadata: {
-          name: newUser.name.trim(),
-          role: newUser.role
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            name: newUser.name.trim(),
+            role: newUser.role
+          }
         }
       });
 
-      if (authError) throw authError;
-
-      // The profile should be created automatically by the trigger
-      // But let's also insert manually to ensure it exists
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([{
-          id: authData.user.id,
-          email: newUser.email.trim(),
-          name: newUser.name.trim(),
-          role: newUser.role,
-          first_login: true
-        }]);
-
-      if (profileError) {
-        console.log('Profile may already exist from trigger:', profileError);
+      if (authError) {
+        console.error('Auth error:', authError);
+        throw authError;
       }
 
-      toast({
-        title: "Success",
-        description: `User created successfully. Temporary password: ${tempPassword}`,
-      });
+      // The profile should be created automatically by the trigger
+      // Wait a moment and then refresh the users list
+      setTimeout(() => {
+        fetchUsers();
+      }, 1000);
+
+      // Copy password to clipboard
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(tempPassword);
+        toast({
+          title: "Success",
+          description: `User created successfully! Temporary password copied to clipboard: ${tempPassword}`,
+        });
+      } else {
+        toast({
+          title: "Success", 
+          description: `User created successfully! Temporary password: ${tempPassword} (Please save this password)`,
+        });
+      }
       
       setNewUser({ email: '', name: '', role: 'inspector' });
-      fetchUsers();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating user:', error);
+      let errorMessage = "Failed to create user";
+      
+      if (error.message?.includes('User already registered')) {
+        errorMessage = "A user with this email already exists";
+      } else if (error.message?.includes('Invalid email')) {
+        errorMessage = "Please enter a valid email address";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to create user",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -135,17 +165,20 @@ const UserManager = () => {
   };
 
   const deleteUser = async (id: string, email: string) => {
-    if (!confirm(`Are you sure you want to delete user "${email}"?`)) return;
+    if (!confirm(`Are you sure you want to delete user "${email}"? This action cannot be undone.`)) return;
 
     try {
-      // Delete from auth (this will cascade to profiles due to foreign key)
-      const { error: authError } = await supabase.auth.admin.deleteUser(id);
+      // We can only delete from profiles table, not from auth.users
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', id);
       
-      if (authError) throw authError;
+      if (error) throw error;
 
       toast({
         title: "Success",
-        description: "User deleted successfully"
+        description: "User profile deleted successfully"
       });
       
       fetchUsers();
@@ -183,6 +216,9 @@ const UserManager = () => {
               <UserPlus className="h-5 w-5" />
               <span>Create New User</span>
             </h3>
+            <p className="text-sm text-gray-600">
+              A temporary password will be generated and provided for the new user.
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
@@ -225,7 +261,7 @@ const UserManager = () => {
                   disabled={!newUser.email.trim() || !newUser.name.trim()}
                   className="w-full"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <UserPlus className="h-4 w-4 mr-2" />
                   Create User
                 </Button>
               </div>

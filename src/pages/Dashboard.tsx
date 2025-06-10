@@ -15,9 +15,6 @@ const Dashboard = () => {
   const { getAllInspections, setCurrentInspection } = useInspection();
   const navigate = useNavigate();
 
-  // Check if user is admin
-  const isAdmin = user?.email === 'lewis.bedford@starlighthomes.com';
-
   // Get all inspections from all users
   const allInspections = getAllInspections();
   const { neighborhoodData, recentInspections, totalInspections, avgScore } = useDashboardData(allInspections);
@@ -35,6 +32,10 @@ const Dashboard = () => {
   const handleAdminClick = () => {
     navigate('/admin');
   };
+
+  console.log('Dashboard - Current user:', user?.email);
+  console.log('Dashboard - Current profile:', profile);
+  console.log('Dashboard - Is admin?', profile?.role === 'admin');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
