@@ -3,7 +3,7 @@ import { useInspection } from '@/contexts/InspectionContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Download, Eye, Calendar, MapPin, FileText } from 'lucide-react';
+import { ArrowLeft, Download, Eye, Calendar, MapPin, FileText, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { toast } from '@/hooks/use-toast';
@@ -11,10 +11,12 @@ import { downloadPDF } from '@/utils/pdfGenerator';
 import { getCategoryWeightedScores } from '@/utils/inspectionCalculations';
 
 const Reports = () => {
-  const { savedInspections, loadInspection } = useInspection();
+  const { getAllInspections, loadInspection } = useInspection();
   const navigate = useNavigate();
 
-  const completedInspections = savedInspections.filter(i => i.status === 'completed');
+  // Get all completed inspections from all users
+  const allInspections = getAllInspections();
+  const completedInspections = allInspections.filter(i => i.status === 'completed');
 
   const handleViewReport = (inspectionId: string) => {
     loadInspection(inspectionId);
@@ -68,8 +70,8 @@ const Reports = () => {
             Back to Dashboard
           </Button>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Inspection Reports</h1>
-          <p className="text-gray-600">View and download your completed inspection reports</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">All Inspection Reports</h1>
+          <p className="text-gray-600">View and download completed inspection reports from all team members</p>
         </div>
 
         {completedInspections.length === 0 ? (
@@ -98,11 +100,17 @@ const Reports = () => {
                         {averageScore.toFixed(2)}
                       </Badge>
                     </div>
-                    <CardDescription className="flex items-center space-x-4 text-sm">
+                    <CardDescription className="flex flex-col space-y-1 text-sm">
                       <span className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
                         {new Date(inspection.date).toLocaleDateString()}
                       </span>
+                      {inspection.inspectorName && (
+                        <span className="flex items-center">
+                          <User className="h-4 w-4 mr-1" />
+                          {inspection.inspectorName}
+                        </span>
+                      )}
                     </CardDescription>
                   </CardHeader>
                   

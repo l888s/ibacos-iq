@@ -26,7 +26,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     saveInspectionToStorage,
     findExistingInspection,
     getInspectionById,
-    deleteInspectionFromStorage
+    deleteInspectionFromStorage,
+    getAllInspections
   } = useInspectionStorage();
 
   const {
@@ -56,7 +57,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     saveInspection,
     submitInspection,
     loadInspection,
-    deleteInspection
+    deleteInspection,
+    getAllInspections
   };
 
   return (

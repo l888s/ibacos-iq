@@ -12,13 +12,15 @@ import QuickActions from '@/components/dashboard/QuickActions';
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
-  const { savedInspections, setCurrentInspection } = useInspection();
+  const { getAllInspections, setCurrentInspection } = useInspection();
   const navigate = useNavigate();
 
   // Check if user is admin
   const isAdmin = user?.email === 'lewis.bedford@starlighthomes.com';
 
-  const { neighborhoodData, recentInspections, totalInspections, avgScore } = useDashboardData(savedInspections);
+  // Get all inspections from all users
+  const allInspections = getAllInspections();
+  const { neighborhoodData, recentInspections, totalInspections, avgScore } = useDashboardData(allInspections);
 
   const handleStartNewInspection = () => {
     // Clear any current inspection before navigating

@@ -1,18 +1,10 @@
 
 export interface InspectionItem {
   id: string;
+  name: string;
   category: string;
-  subcategory: string;
-  item: string;
   weight: number;
   score: number | string | null;
-  scoreDescriptions: {
-    0: string;
-    1: string;
-    2: string;
-    3: string;
-    4: string;
-  };
 }
 
 export interface Inspection {
@@ -24,17 +16,20 @@ export interface Inspection {
   totalScore: number;
   maxScore: number;
   averageScore: number;
+  inspectorName?: string;
+  inspectorEmail?: string;
 }
 
 export interface InspectionContextType {
   currentInspection: Inspection | null;
   savedInspections: Inspection[];
   setCurrentInspection: (inspection: Inspection | null) => void;
-  startNewInspection: (neighborhood: string, forceNew?: boolean) => any;
+  startNewInspection: (neighborhood: string, forceNew?: boolean) => { hasExisting: boolean; existingInspection?: Inspection; newInspection?: Inspection };
   continueExistingInspection: (neighborhood: string) => boolean;
   updateItemScore: (itemId: string, score: number | string) => void;
   saveInspection: () => void;
-  submitInspection: () => void;
+  submitInspection: () => Promise<void>;
   loadInspection: (inspectionId: string) => void;
   deleteInspection: () => void;
+  getAllInspections: () => Inspection[];
 }

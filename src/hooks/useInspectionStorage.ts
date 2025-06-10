@@ -32,12 +32,19 @@ export const useInspectionStorage = () => {
     localStorage.setItem('ibacosiq_inspections', JSON.stringify(updatedInspections));
   }, [savedInspections]);
 
+  const getAllInspections = useCallback(() => {
+    // For now, return all saved inspections since we're using localStorage
+    // In the future, this could be expanded to fetch from a shared database
+    return savedInspections;
+  }, [savedInspections]);
+
   return {
     savedInspections,
     setSavedInspections,
     saveInspectionToStorage,
     findExistingInspection,
     getInspectionById,
-    deleteInspectionFromStorage
+    deleteInspectionFromStorage,
+    getAllInspections
   };
 };

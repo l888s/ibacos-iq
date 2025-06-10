@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin } from 'lucide-react';
+import { MapPin, User } from 'lucide-react';
 import { Inspection } from '@/types/inspection';
 
 interface RecentInspectionsProps {
@@ -12,7 +12,7 @@ const RecentInspections = ({ inspections }: RecentInspectionsProps) => {
     <Card>
       <CardHeader>
         <CardTitle>Recent Inspections</CardTitle>
-        <CardDescription>Your latest completed audits</CardDescription>
+        <CardDescription>Latest completed audits from all team members</CardDescription>
       </CardHeader>
       <CardContent>
         {inspections.length > 0 ? (
@@ -23,9 +23,18 @@ const RecentInspections = ({ inspections }: RecentInspectionsProps) => {
                   <MapPin className="h-5 w-5 text-gray-500" />
                   <div>
                     <p className="font-medium">{inspection.neighborhood}</p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(inspection.date).toLocaleDateString()}
-                    </p>
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span>{new Date(inspection.date).toLocaleDateString()}</span>
+                      {inspection.inspectorName && (
+                        <>
+                          <span>•</span>
+                          <span className="flex items-center">
+                            <User className="h-3 w-3 mr-1" />
+                            {inspection.inspectorName}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
