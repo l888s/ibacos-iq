@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useInspection } from '@/contexts/InspectionContext';
 import { useNavigate } from 'react-router-dom';
@@ -150,8 +149,7 @@ const Inspection = () => {
                   size="lg"
                   className="w-full sm:w-auto"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  Previous Section: {previousCategory}
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
               )}
             </div>
@@ -183,8 +181,7 @@ const Inspection = () => {
                   size="lg"
                   className="w-full sm:w-auto"
                 >
-                  Next Section: {nextCategory}
-                  <ChevronRight className="h-4 w-4 ml-2" />
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               )}
             </div>
