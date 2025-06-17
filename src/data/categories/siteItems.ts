@@ -332,5 +332,47 @@ export const siteItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Wallboard was always stored indoors on sleepers (when on concrete) and kept dry.'
     }
   },  
-  
+// Site (6) - Building Assemblies
+  {
+    id: 'site-building-assemblies-concrete-floors',
+    category: 'Site',
+    subcategory: 'Building Assemblies',
+    item: 'Concrete Floors',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Concrete floors had visible long-term water exposure.',
+      1: 'No score',
+      2: 'Concrete floors were inconsistently found dry after dry-in was completed.',
+      3: 'No score',
+      4: 'Concrete floors were always found dry after dry-in was completed.'
+    }
+  },
+  {
+    id: 'site-building-assemblies-walls',
+    category: 'Site',
+    subcategory: 'Building Assemblies',
+    item: 'Walls',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wood frame walls had visible long-term water exposure.',
+      1: 'No score',
+      2: 'Wood frame walls were inconsistently found dry after dry-in was completed.',
+      3: 'No score',
+      4: 'Wood frame walls were always found dry after dry-in was completed.'
+    }
+  }, 
+  {
+    id: 'site-building-assemblies-wood-floors',
+    category: 'Site',
+    subcategory: 'Building Assemblies',
+    item: 'Wood Floors',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wood floors had visible long-term water exposure.',
+      1: 'No score',
+      2: 'Wood floors were inconsistently found dry after dry-in was completed.',
+      3: 'No score',
+      4: 'Wood floors were always found dry after dry-in was completed.'
+    }
+  }, 
 ];
