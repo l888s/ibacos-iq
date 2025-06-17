@@ -4,8 +4,8 @@ import { InspectionItem } from '@/types/inspection';
 export const electricalItems: Omit<InspectionItem, 'score'>[] = [
   {
     id: 'electrical-panel-installation',
-    category: 'Electrical',
-    subcategory: 'Electrical',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical Systems',
     item: 'Panel Installation',
     weight: 8,
     scoreDescriptions: {
@@ -18,8 +18,8 @@ export const electricalItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'electrical-rough-wiring',
-    category: 'Electrical',
-    subcategory: 'Electrical',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical Systems',
     item: 'Rough Wiring',
     weight: 8,
     scoreDescriptions: {
@@ -32,8 +32,8 @@ export const electricalItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'electrical-outlet-installation',
-    category: 'Electrical',
-    subcategory: 'Electrical',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical Systems',
     item: 'Outlet Installation',
     weight: 8,
     scoreDescriptions: {
@@ -46,8 +46,8 @@ export const electricalItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'electrical-switch-installation',
-    category: 'Electrical',
-    subcategory: 'Electrical',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical Systems',
     item: 'Switch Installation',
     weight: 8,
     scoreDescriptions: {
@@ -60,8 +60,8 @@ export const electricalItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'electrical-lighting-installation',
-    category: 'Electrical',
-    subcategory: 'Electrical',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical Systems',
     item: 'Lighting Installation',
     weight: 8,
     scoreDescriptions: {
@@ -74,8 +74,8 @@ export const electricalItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'electrical-grounding',
-    category: 'Electrical',
-    subcategory: 'Electrical',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Electrical Systems',
     item: 'Grounding',
     weight: 8,
     scoreDescriptions: {

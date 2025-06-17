@@ -4,8 +4,8 @@ import { InspectionItem } from '@/types/inspection';
 export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
   {
     id: 'plumbing-fixture-installation',
-    category: 'Plumbing',
-    subcategory: 'Plumbing',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing Systems',
     item: 'Fixture Installation',
     weight: 7,
     scoreDescriptions: {
@@ -18,8 +18,8 @@ export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'plumbing-pipe-installation',
-    category: 'Plumbing',
-    subcategory: 'Plumbing',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing Systems',
     item: 'Pipe Installation',
     weight: 7,
     scoreDescriptions: {
@@ -32,8 +32,8 @@ export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'plumbing-water-heater',
-    category: 'Plumbing',
-    subcategory: 'Plumbing',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing Systems',
     item: 'Water Heater Installation',
     weight: 7,
     scoreDescriptions: {
@@ -46,8 +46,8 @@ export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'plumbing-shut-off-valves',
-    category: 'Plumbing',
-    subcategory: 'Plumbing',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing Systems',
     item: 'Shut-off Valves',
     weight: 7,
     scoreDescriptions: {
@@ -60,8 +60,8 @@ export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'plumbing-pressure-testing',
-    category: 'Plumbing',
-    subcategory: 'Plumbing',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing Systems',
     item: 'Pressure Testing',
     weight: 7,
     scoreDescriptions: {
@@ -74,8 +74,8 @@ export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'plumbing-venting-system',
-    category: 'Plumbing',
-    subcategory: 'Plumbing',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing Systems',
     item: 'Venting System',
     weight: 7,
     scoreDescriptions: {

@@ -4,8 +4,8 @@ import { InspectionItem } from '@/types/inspection';
 export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
   {
     id: 'exterior-siding-installation',
-    category: 'Exterior',
-    subcategory: 'Exterior',
+    category: 'Wall Cladding',
+    subcategory: 'Exterior Finishes',
     item: 'Siding Installation',
     weight: 6,
     scoreDescriptions: {
@@ -18,8 +18,8 @@ export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'exterior-trim-installation',
-    category: 'Exterior',
-    subcategory: 'Exterior',
+    category: 'Wall Cladding',
+    subcategory: 'Exterior Finishes',
     item: 'Trim Installation',
     weight: 6,
     scoreDescriptions: {
@@ -32,8 +32,8 @@ export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'exterior-window-installation',
-    category: 'Exterior',
-    subcategory: 'Exterior',
+    category: 'Wall Cladding',
+    subcategory: 'Exterior Finishes',
     item: 'Window Installation',
     weight: 6,
     scoreDescriptions: {
@@ -46,8 +46,8 @@ export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'exterior-door-installation',
-    category: 'Exterior',
-    subcategory: 'Exterior',
+    category: 'Wall Cladding',
+    subcategory: 'Exterior Finishes',
     item: 'Door Installation',
     weight: 6,
     scoreDescriptions: {
@@ -60,8 +60,8 @@ export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'exterior-flashing-installation',
-    category: 'Exterior',
-    subcategory: 'Exterior',
+    category: 'Wall Cladding',
+    subcategory: 'Exterior Finishes',
     item: 'Flashing Installation',
     weight: 6,
     scoreDescriptions: {
@@ -74,8 +74,8 @@ export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'exterior-caulking-sealants',
-    category: 'Exterior',
-    subcategory: 'Exterior',
+    category: 'Wall Cladding',
+    subcategory: 'Exterior Finishes',
     item: 'Caulking and Sealants',
     weight: 6,
     scoreDescriptions: {

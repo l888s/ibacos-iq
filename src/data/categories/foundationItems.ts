@@ -2,10 +2,10 @@
 import { InspectionItem } from '@/types/inspection';
 
 export const foundationItems: Omit<InspectionItem, 'score'>[] = [
-  // Foundation (6) - Basement Waterproofing
+  // Foundations (6) - Basement Waterproofing
   {
     id: 'foundation-basement-waterproofing-membrane',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Basement Waterproofing',
     item: 'Waterproofing Membrane',
     weight: 6,
@@ -19,7 +19,7 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'foundation-basement-waterproofing-drainage',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Basement Waterproofing',
     item: 'Foundation Drainage',
     weight: 6,
@@ -31,10 +31,10 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Foundation drainage system was properly installed and connected to discharge.'
     }
   },
-  // Foundation (6) - Concrete Work
+  // Foundations (6) - Concrete Work
   {
     id: 'foundation-concrete-placement',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Concrete Work',
     item: 'Concrete Placement',
     weight: 6,
@@ -48,7 +48,7 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'foundation-concrete-finishing',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Concrete Work',
     item: 'Concrete Finishing',
     weight: 6,
@@ -60,10 +60,10 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Concrete finishing was executed better than specifications.'
     }
   },
-  // Foundation (6) - Slab on Grade
+  // Foundations (6) - Slab on Grade
   {
     id: 'foundation-slab-capillary-break',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Slab on Grade',
     item: 'Capillary Break (Under footer)',
     weight: 6,
@@ -77,7 +77,7 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'foundation-slab-vapor-barrier',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Slab on Grade',
     item: 'Vapor Barrier',
     weight: 6,
@@ -91,7 +91,7 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'foundation-slab-insulation',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Slab on Grade',
     item: 'Slab Insulation',
     weight: 6,
@@ -103,10 +103,10 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Slab insulation was properly installed per specifications.'
     }
   },
-  // Foundation (6) - Footings
+  // Foundations (6) - Footings
   {
     id: 'foundation-footings-depth',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Footings',
     item: 'Footing Depth',
     weight: 6,
@@ -120,7 +120,7 @@ export const foundationItems: Omit<InspectionItem, 'score'>[] = [
   },
   {
     id: 'foundation-footings-reinforcement',
-    category: 'Foundation',
+    category: 'Foundations',
     subcategory: 'Footings',
     item: 'Reinforcement',
     weight: 6,
