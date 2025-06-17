@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { BarChart as BarChartIcon } from 'lucide-react';
 
 interface NeighborhoodData {
@@ -14,6 +14,8 @@ interface NeighborhoodChartProps {
 }
 
 const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
+  const SCORE_THRESHOLD = 3.24;
+
   if (data.length === 0) {
     return (
       <Card className="mb-8">
@@ -46,7 +48,14 @@ const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
                 'Average Score'
               ]}
             />
-            <Bar dataKey="avgScore" fill="#3b82f6" name="avgScore" />
+            <Bar dataKey="avgScore" name="avgScore">
+              {data.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.avgScore < SCORE_THRESHOLD ? "#ef4444" : "#3b82f6"} 
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
