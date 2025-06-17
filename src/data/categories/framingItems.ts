@@ -4,7 +4,7 @@ import { InspectionItem } from '@/types/inspection';
 export const framingItems: Omit<InspectionItem, 'score'>[] = [
 // Framing (6) - Foundation Attachment
   {
-    id: 'framing-foundation-attachment',
+    id: 'framing-foundation-attachment-fastener-compliance',
     category: 'Framing',
     subcategory: 'Foundation Attachment',
     item: 'Fastener Compliance',
@@ -17,7 +17,20 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       4: 'All bolts had washers and nuts. All straps and hold downs were completley nailed off.'
     }
   },  
-  
+{
+    id: 'framing-foundation-attachment-hold-downs-and-anchor-bolts',
+    category: 'Framing',
+    subcategory: 'Foundation Attachment',
+    item: 'Hold Downs and Anchor Bolts',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'There were no hold downs or anchor bolts connecting the framing to the foundation.',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'Hold downs and anchor bolts were properly installed, based on industry standards.'
+    }
+  },  
   
   
   
