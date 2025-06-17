@@ -215,62 +215,122 @@ export const siteItems: Omit<InspectionItem, 'score'>[] = [
       4: 'All landscape enclosed by flatwork had a means for drainage.'
     }
   },
-  // Site (6) - Site Preparation
-  {
-    id: 'site-preparation-clearing',
-    category: 'Site',
-    subcategory: 'Site Preparation',
-    item: 'Site Clearing',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Site clearing was poorly executed.',
-      1: 'Site clearing was executed with minor issues.',
-      2: 'Site clearing was properly executed.',
-      3: 'No score',
-      4: 'Site clearing was executed better than minimum requirements.'
-    }
-  },
-  {
-    id: 'site-preparation-excavation',
-    category: 'Site',
-    subcategory: 'Site Preparation',
-    item: 'Excavation',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Excavation was poorly executed.',
-      1: 'Excavation was executed with minor deviations from specifications.',
-      2: 'Excavation was executed per specifications.',
-      3: 'No score',
-      4: 'Excavation was executed better than specifications.'
-    }
-  },
-  {
-    id: 'site-preparation-soil-compaction',
-    category: 'Site',
-    subcategory: 'Site Preparation',
-    item: 'Soil Compaction',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Soil compaction was not performed or was inadequate.',
-      1: 'Soil compaction was performed with minor issues.',
-      2: 'Soil compaction was properly performed per specifications.',
-      3: 'No score',
-      4: 'Soil compaction exceeded minimum specifications.'
-    }
-  },
+  
   // Site (6) - Housekeeping
   {
-    id: 'site-housekeeping-wallboard-moisture',
+    id: 'site-housekeeping-exterior-job-site-conditions',
     category: 'Site',
     subcategory: 'Housekeeping',
-    item: 'Wallboard Moisture',
+    item: 'Exterior Job Site Conditions',
     weight: 6,
     scoreDescriptions: {
-      0: 'Wallboard was visibly wet while it was being installed.',
+      0: 'Exterior was not clean, showing a lack of housekeeping practices.',
       1: 'No score',
-      2: 'Wallboard was inconsistently found wet while being installed.',
+      2: 'Exterior was inconsistently clean.',
       3: 'No score',
-      4: 'Wallboard was installed and kept dry throughout the finishing phase.'
+      4: 'Exterior was well cleaned, indicating good housekeeping to prevent tripping hazards.'
     }
-  }
+  },
+  {
+    id: 'site-housekeeping-interior-job-site-conditions',
+    category: 'Site',
+    subcategory: 'Housekeeping',
+    item: 'Interior Job Site Conditions',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Interior was not clean, showing a lack of housekeeping practices.',
+      1: 'No score',
+      2: 'Interior was inconsistently clean.',
+      3: 'No score',
+      4: 'Interior was swept clean at the end of the day, and garbage was disposed in the proper location.'
+    }
+  },
+  // Site (6) - Flatwork
+  {
+    id: 'site-flatwork-control-joints',
+    category: 'Site',
+    subcategory: 'Flatwork',
+    item: 'Control Joints',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'No control joints were observed in the flatwork.',
+      1: 'No score',
+      2: 'An adequate number of control joints were installed in the flatwor, with adequate depth in most cases.',
+      3: 'No score',
+      4: 'Adequate control joints were installed in the flatwork, with an appropriate cut depth that was 1/4 of the slab thickness, or were properly tooled.'
+    }
+  },
+  {
+    id: 'site-flatwork-flatwork-fall-from-house',
+    category: 'Site',
+    subcategory: 'Flatwork',
+    item: 'Flatwork Fall from House',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Flatwork was sloped toward the house.',
+      1: 'No score',
+      2: 'No score.',
+      3: 'No score',
+      4: 'Flatwork was sloped away from the house in all cases.'
+    }
+  },
+ // Site (6) - Landscaping
+  {
+    id: 'site-landscaping-finish-landscaping',
+    category: 'Site',
+    subcategory: 'Landscaping',
+    item: 'Finish Landscaping',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'The landscaping often was higher than the framed walls or weep holes on brick veneer walls.',
+      1: 'No score',
+      2: 'A minimum 4" separation between the landscaping and the wood frame or brick veneer weep holes was consistently maintained on all houses.',
+      3: 'No score',
+      4: 'A minimum 6" separation between the landscaping and the wood frame or brick veneer weep holes was consistently maintained on all houses.'
+    }
+  },
+  {
+    id: 'site-landscaping-sprinklers',
+    category: 'Site',
+    subcategory: 'Landscaping',
+    item: 'Sprinklers',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Irrigation sprinklers were spraying against the house.',
+      1: 'No score',
+      2: 'No score.',
+      3: 'No score',
+      4: 'Irrigation sprinklers were adjusted to never spray against the house or drip type irrigation was installed.'
+    }
+  },  
+// Site (6) - Material Storage
+  {
+    id: 'site-material-storage-lumber-packages',
+    category: 'Site',
+    subcategory: 'Material Storage',
+    item: 'Lumber Packages',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Lumber was stored on uneven ground and was uncovered.',
+      1: 'Lumber was stored on even ground and was uncovered in wet climate',
+      2: 'Lumber was stored on even ground and was uncovered in a dry climate. Or was covered in a wet climate.',
+      3: 'Lumber was stored on sleepers and was uncovered in a dry climate, or was covered in most cases in a wet climate',
+      4: 'Lumber was stored on sleepers and was covered in all cases.'
+    }
+  },
+  {
+    id: 'site-material-storage-wallboard',
+    category: 'Site',
+    subcategory: 'Material Storage',
+    item: 'Wallboard',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Wallboard was usually stored outside and was exposed to the elements.',
+      1: 'Wallboard was usually stored indoors on the floor but was uncovered, and the house was not dried in.',
+      2: 'Wallboard was usually stored indoors, directly on concrete but kept dry.',
+      3: 'Wallboard was usually stored indoors on sleepers (when on concrete) and kept dry.',
+      4: 'Wallboard was always stored indoors on sleepers (when on concrete) and kept dry.'
+    }
+  },  
+  
 ];
