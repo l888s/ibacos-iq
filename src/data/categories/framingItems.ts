@@ -2,6 +2,27 @@
 import { InspectionItem } from '@/types/inspection';
 
 export const framingItems: Omit<InspectionItem, 'score'>[] = [
+// Framing (6) - Foundation Attachment
+  {
+    id: 'framing-foundation-attachment',
+    category: 'Framing',
+    subcategory: 'Foundation Attachment',
+    item: 'Fastener Compliance',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Many foundation bolts were missing nuts and washers, or hold-down straps were not properly nailed off.',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'All bolts had washers and nuts. All straps and hold downs were completley nailed off.'
+    }
+  },  
+  
+  
+  
+  
+  
+  
   // Framing (6) - Floor Framing
   {
     id: 'framing-floor-joist-spacing',
