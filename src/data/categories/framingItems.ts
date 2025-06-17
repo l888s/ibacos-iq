@@ -31,63 +31,22 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Hold downs and anchor bolts were properly installed, based on industry standards.'
     }
   },  
-{
-    id: 'framing-foundation-attachment-onsite-engineered-schedule',
-    category: 'Framing',
-    subcategory: 'Foundation Attachment',
-    item: 'Onsite Engineered Schedule',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'There was no indication of an engineered framing schedule on site.',
-      1: 'No score',
-      2: 'No score',
-      3: 'No score',
-      4: 'An engineered structural framing schedule was included in the construction documents at the construction office for each home.'
-    }
-  },   
-  // Framing (6) - Floor Assembly
+  
+  // Framing (6) - Floor Framing
   {
-    id: 'framing-floor-assembly-beams',
+    id: 'framing-floor-joist-spacing',
     category: 'Framing',
-    subcategory: 'Floor Assembly',
-    item: 'Beams',
+    subcategory: 'Floor Framing',
+    item: 'Joist Spacing',
     weight: 6,
     scoreDescriptions: {
-      0: 'Beams were cut or notched and/or were not adequate for the span.',
-      1: 'No score.',
-      2: 'Beams were properly installed and were free of notching. Spans were adequate; however, they were not integrated with the mechanical layout.',
+      0: 'Floor joist spacing was not per structural plans.',
+      1: 'Floor joist spacing had minor deviations from structural plans.',
+      2: 'Floor joist spacing was per structural plans with minor inconsistencies.',
       3: 'No score',
-      4: 'Beams were properly engineered for spans and were free of cuts or notches. They were properly integrated with a mechanical plan.'
+      4: 'Floor joist spacing was per structural plans and properly supported.'
     }
   },
-  {
-    id: 'framing-floor-assembly-fastening-compliance',
-    category: 'Framing',
-    subcategory: 'Floor Assembly',
-    item: 'Fastening Compliance',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Fastening was not properly spaced at every 6" along the edges and every 8" in the field of the sheathing.',
-      1: 'No score.',
-      2: 'Fastening was properly spaced according to minimal manufacturers recommendation.',
-      3: 'No score',
-      4: 'Fastening was properly spaced at every 6" along the edges and every 8" in the field of the sheathing using screws with no misses.'
-    }
-  },
- {
-    id: 'framing-floor-assembly-parallel-chord-trusses',
-    category: 'Framing',
-    subcategory: 'Floor Assembly',
-    item: 'Parallel Chord Trusses',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Parallel chord trusses were improperly notched or cut. Spans were too long for the specific truss being used.',
-      1: 'No score.',
-      2: 'Parallel chord trusses were properly installed, and there was no notching. Spans were adequate; however, openings did not line up to provide and integrated mechanical layout.',
-      3: 'No score',
-      4: 'Parallel chord trusses were properly installed, and there was no notching. Spans were adequate, and all openings were arranged to accommodate and integrated mechanical layout.'
-    }
-  },  
   {
     id: 'framing-floor-joist-blocking',
     category: 'Framing',
@@ -202,4 +161,33 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Truss connections were executed better than manufacturer specifications.'
     }
   },
+  // Framing (6) - Conventional Roof Framing
+  {
+    id: 'framing-roof-rafter-spacing',
+    category: 'Framing',
+    subcategory: 'Conventional Roof Framing',
+    item: 'Rafter Spacing',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Rafter spacing was not per structural plans.',
+      1: 'Rafter spacing had minor deviations from structural plans.',
+      2: 'Rafter spacing was per structural plans with minor inconsistencies.',
+      3: 'No score',
+      4: 'Rafter spacing was per structural plans and properly supported.'
+    }
+  },
+  {
+    id: 'framing-roof-ridge-beam',
+    category: 'Framing',
+    subcategory: 'Conventional Roof Framing',
+    item: 'Ridge Beam',
+    weight: 6,
+    scoreDescriptions: {
+      0: 'Ridge beam was not sized or installed per structural plans.',
+      1: 'Ridge beam was installed with minor deviations from structural plans.',
+      2: 'Ridge beam was sized and installed per structural plans with minor issues.',
+      3: 'No score',
+      4: 'Ridge beam was sized and installed better than structural plans.'
+    }
+  }
 ];
