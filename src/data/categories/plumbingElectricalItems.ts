@@ -38,11 +38,11 @@ export const plumbingElectricalItems: Omit<InspectionItem, 'score'>[] = [
     item: 'Installation',
     weight: 5,
     scoreDescriptions: {
-      0: 'PEX fittings were frequently not installed according to manufacturer's specifications.',
+      0: 'PEX fittings were frequently not installed according to manufacturer\'s specifications.',
       1: 'No score',
-      2: 'Not all PEX fittings were installed according to manufacturer's specifications.',
+      2: 'Not all PEX fittings were installed according to manufacturer\'s specifications.',
       3: 'No score',
-      4: 'All PEX fittings were installed according to manufacturer's specifications.'
+      4: 'All PEX fittings were installed according to manufacturer\'s specifications.'
     }
   },
   {
@@ -158,17 +158,17 @@ export const plumbingElectricalItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: 'plumbing-electrical-supply-lines',
+    id: 'plumbing-electrical-shut-off-valves',
     category: 'Plumbing and Electrical Systems',
     subcategory: 'Supply Plumbing PEX',
     item: 'Shut Off Valves',
     weight: 5,
     scoreDescriptions: {
-      0: 'No score',
+      0: 'No shut off valves were provided for individual fixtures.',
       1: 'No score',
-      2: 'Hot and cold supply lines were bundled together.',
+      2: 'Shut off valves were provided for some fixtures.',
       3: 'No score',
-      4: 'There was adequate separation between hot and cold supply lines.'
+      4: 'Shut off valves were provided for all fixtures.'
     }
   },
   // Plumbing and Electrical Systems (5) - Electrical Systems
@@ -179,11 +179,11 @@ export const plumbingElectricalItems: Omit<InspectionItem, 'score'>[] = [
     item: 'GFCI Receptacles',
     weight: 5,
     scoreDescriptions: {
-      0: 'Exterior, garage, basement, bathroom, and kitchen receptacles within 6' of the kitchen sink were not GFCI receptacles.',
+      0: 'Exterior, garage, basement, bathroom, and kitchen receptacles within 6\' of the kitchen sink were not GFCI receptacles.',
       1: 'No score',
-      2: 'Exterior, garage, basement, bathroom, and kitchen receptacles within 6' of the kitchen sink were GFCI, while other ones farther away were standard receptacles.',
+      2: 'Exterior, garage, basement, bathroom, and kitchen receptacles within 6\' of the kitchen sink were GFCI, while other ones farther away were standard receptacles.',
       3: 'No score',
-      4: 'All exterior, garage, basement, bathroom, and kitchen receptacles within 6' of the kitchen sink were GFCI protected receptacles.'
+      4: 'All exterior, garage, basement, bathroom, and kitchen receptacles within 6\' of the kitchen sink were GFCI protected receptacles.'
     }
   },
   {
