@@ -85,7 +85,7 @@ export const airBarrierItems: Omit<InspectionItem, 'score'>[] = [
       0: 'No score',
       1: 'No score',
       2: 'CO monitors were installed inside of the home.',
-      3: 'CO monitors were installed in the ceiling within 3' of garage fire door.',
+      3: 'CO monitors were installed in the ceiling within 3\' of garage fire door.',
       4: 'CO monitors were installed near the floor by the garage man door.'
     }
   },

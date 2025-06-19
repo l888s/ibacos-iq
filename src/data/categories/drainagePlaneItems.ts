@@ -38,11 +38,11 @@ export const drainagePlaneItems: Omit<InspectionItem, 'score'>[] = [
     item: 'Structural Laminated Sheathing Fastening',
     weight: 14,
     scoreDescriptions: {
-      0: 'Structural laminated sheathing was not fastened per manufacturer's specifications, or unapproved fasteners were used.',
+      0: 'Structural laminated sheathing was not fastened per manufacturer\'s specifications, or unapproved fasteners were used.',
       1: 'No score',
-      2: 'Structural laminated sheathing was fastened per manufacturer's specifications, with correct fasteners, with minor inconsistencies.',
+      2: 'Structural laminated sheathing was fastened per manufacturer\'s specifications, with correct fasteners, with minor inconsistencies.',
       3: 'No score',
-      4: 'Structural laminated sheathing was fastened per manufacturer's specifications, with correct fasteners.'
+      4: 'Structural laminated sheathing was fastened per manufacturer\'s specifications, with correct fasteners.'
     }
   },
   {
@@ -80,7 +80,7 @@ export const drainagePlaneItems: Omit<InspectionItem, 'score'>[] = [
     item: 'Structural Laminated Sheathing Seams (Vertical and horizontal overlap)',
     weight: 14,
     scoreDescriptions: {
-      0: 'Structural laminated sheathing wasn't overlapped or taped at vertical or horizontal panel seams in compliance with manufacturer specifications.',
+      0: 'Structural laminated sheathing wasn\'t overlapped or taped at vertical or horizontal panel seams in compliance with manufacturer specifications.',
       1: 'No score',
       2: 'Vertical and horizontal seams were not always in compliance with manufacturer specifications.',
       3: 'No score',
