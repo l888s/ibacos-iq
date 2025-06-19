@@ -441,17 +441,244 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: 'hvac-systems-return-ductwork-location',
+    id: 'hvac-systems-return-ductwork-return-ductwork',
     category: 'HVAC Systems',
     subcategory: 'Return Ductwork',
-    item: 'Location (Conditioned/ Unconditioned)',
+    item: 'Return Boxes',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Filters did not fit within filter boxes allowing air to bypass the filter.',
+      1: 'No score',
+      2: 'No score',
+      3: 'No score',
+      4: 'Filters fit filter boxes properly.'
+    }
+  },
+  {
+    id: 'hvac-systems-return-ductwork-return-transitions',
+    category: 'HVAC Systems',
+    subcategory: 'Return Ductwork',
+    item: 'Return Transitions',
     weight: 10,
     scoreDescriptions: {
       0: 'No score',
-      1: 'No score',
-      2: 'Return ducts were located in unconditioned space.',
+      1: 'Return ductwork systems had irregular transitions.',
+      2: 'No score',
       3: 'No score',
-      4: 'All return ducts were located in conditioned space.'
+      4: 'All return duct transitions were smooth.'
+    }
+  },
+  {
+    id: 'hvac-systems-return-ductwork-vapor-jacket',
+    category: 'HVAC Systems',
+    subcategory: 'Return Ductwork',
+    item: 'Vapor Jacket Sealing',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'All vapor jackets were unsealed.',
+      1: 'Vapor jacket were sealed only with UL181 metal duct tape.',
+      2: 'Vapor jackets were sealed with a combination of UL181 metal duct tape and mastic.',
+      3: 'All vapor jackets were sealed with mastic except for flex duct.',
+      4: 'All vapor jackets were sealed only with mastic, including flex duct.'
+    }
+  },
+  // HVAC Systems (10) - Ventilation
+  {
+    id: 'hvac-systems-ventilation-air-tightness',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Air Tightness Testing',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'No whole-house airtightness testing was performed, and no ventilation strategy was present.',
+      1: 'Visual inspection for airtightness were made, and a ventilation strategy was present.',
+      2: 'A sampling of homes was tested for airtightness.',
+      3: 'A sampling of homes was tested for airtightness and had a ventilation strategy present to provide proper mechanical ventilation based on testing.',
+      4: 'All homes were tested for airtightness and had a ventilation strategy present to provide proper mechanical ventilation based on testing.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-bath-vent-exit',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Bath Venting: Duct Exit',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Bath ducts terminated in attics or at a ventilated soffit.',
+      1: 'No score',
+      2: 'Bath ducts terminated at a soffit and were not within 4' of a soffit vent.',
+      3: 'Bath ducts were exhausted either through the roof or on the gable end, with some quality control issues.',
+      4: 'Bath ducts were exhausted either through the roof or on the gable end.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-bath-vent-mat',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Bath Venting: Duct Material',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Bath ductwork was constructed of vinyl.',
+      1: 'No score',
+      2: 'Bath ductwork was constructed of foil accordion-type material.',
+      3: 'Bath ductwork was constructed of semi-rigid, aluminum accordion-type material and was insulated through unconditioned space (except in hot/dry climates).',
+      4: 'Bath ductwork was constructed of rigid metal duct, sealed, and was insulated through unconditioned space.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-bath-vent-duct-route',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Bath Venting: Duct Routing',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Bath ductwork was pinched and had many sharp bends.',
+      1: 'No score',
+      2: 'Bath ductwork was routed properly and directly without any sharp bends, with minor inconsistencies.',
+      3: 'No score',
+      4: 'Bath ductwork was routed properly and directly without any sharp bends.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-bath-vent-fan-type',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Bath Venting: Fan Type',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Bath fans were not installed.',
+      1: 'Bath fans were inconsistently installed.',
+      2: 'Standard (high sone) bath fans were installed in all baths.',
+      3: 'Low sone type bath fans were installed but did not have automatic controls.',
+      4: 'Low sone type bath fans were installed and had automatic controls.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-dryer-duct-length',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Dryer Venting: Duct Length',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'The dryers were not usually located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less.',
+      1: 'No score',
+      2: 'The dryers were usually located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less, with minor inconsistencies.',
+      3: 'No score',
+      4: 'The dryers were always located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-dryer-wall-box',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Dryer Venting: Wall Box',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'The dryer box was installed too high or in the wrong orientation.',
+      1: 'No score',
+      2: 'The dryer box was installed with the correct orientation and height, with some quality control issues.',
+      3: 'No score',
+      4: 'The dryer box was installed with the correct orientation and height.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-radon-venting',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Radon Venting',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'No radon or soil gas mitigation systems were installed and the Division is located in EPA Zone 1 for radon.',
+      1: 'No radon or soil gas mitigation systems were installed and the Division is located in EPA Zone 2 for radon.',
+      2: 'No radon or soil gas mitigation systems were installed and the Division is located in EPA Zone 3 for radon, or passive-type radon and soil gas systems were installed under the slab or basement floor or in the crawlspace.',
+      3: 'No score',
+      4: 'A passive venting system was installed and was pre-wired for fan, or a power venting system was installed.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-range-hood',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Range Hood Exhaust',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Recirculating or no range hoods were used.',
+      1: 'No score',
+      2: 'Some homes had range hoods that were ducted to the exterior, but some homes had recirculating range hoods.',
+      3: 'No score',
+      4: 'All homes had range hoods that were ducted to the exterior.'
+    }
+  },
+  {
+    id: 'hvac-systems-ventilation-whole-house',
+    category: 'HVAC Systems',
+    subcategory: 'Ventilation',
+    item: 'Whole-House Ventilation',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Ventilation was exhaust only.',
+      1: 'No whole-house ventilation strategy was employed.',
+      2: 'Ventilation was supply only on a timer (Air Cycler).',
+      3: 'Ventilation was supply only with an in-line ventilation dehumidifier.',
+      4: 'Whole-house ventilation was achieved by a dedicated ventilation system where a properly-sized ERV/HRV and associated ductwork distributed air directly to the rooms.'
+    }
+  },
+  // HVAC Systems (10) - Water Heating
+  {
+    id: 'hvac-systems-water-heating-electric-efficiency',
+    category: 'HVAC Systems',
+    subcategory: 'Water Heating',
+    item: 'Electric Efficiency',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'No score',
+      1: 'Visual inspection for airtightness were made, and a ventilation strategy was present.',
+      2: 'Standard-efficiency electric water heaters were installed (0.92 to 0.95 EF).',
+      3: 'High-efficiency electric water heater tanks were installed (greater than 0.95 EF).',
+      4: 'High-efficiency electric tankless water heaters were installed (greater than 0.95 EF).'
+    }
+  },
+  {
+    id: 'hvac-systems-water-heating-location',
+    category: 'HVAC Systems',
+    subcategory: 'Water Heating',
+    item: 'Location',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Tank-type water heaters were located in unconditioned space in CZ 4 or higher.',
+      1: 'Tank-type water heaters were located in unconditioned space (unless in climate zone 1 through 3).',
+      2: 'Tank-type water heaters were located in conditioned space (for climate zones 4 or higher) or were in unconditioned space (for climate zone 1 through 3).',
+      3: 'No score',
+      4: 'All water heaters were located in conditioned space, or were tankless.'
+    }
+  },
+  {
+    id: 'hvac-systems-water-heating-location-durability',
+    category: 'HVAC Systems',
+    subcategory: 'Water Heating',
+    item: 'Location (tank durability)',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Water heaters were located in attics.',
+      1: 'No score',
+      2: 'Water heaters were in finished space with pan and drain.',
+      3: 'No score',
+      4: 'Water heaters were located in garages or basements.'
+    }
+  },
+  // HVAC Systems (10) - Equipment Venting and Backdrafting Potential
+  {
+    id: 'hvac-systems-equipment-venting-and-backdrafting-potential',
+    category: 'HVAC Systems',
+    subcategory: 'Equipment Venting and Backdrafting Potential',
+    item: 'Airtightness & Equipment Compatibility',
+    weight: 10,
+    scoreDescriptions: {
+      0: 'Equipment specifications did not align with airtightness practices.',
+      1: 'No score',
+      2: 'There was an inconsistent airtightness and equipment strategy.',
+      3: 'No score',
+      4: 'Good air sealing practices were observed with direct vent or electric equipment.'
     }
   },
 ];
