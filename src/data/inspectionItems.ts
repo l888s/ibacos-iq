@@ -8,16 +8,15 @@ import { airBarrierItems } from './categories/airBarrierItems';
 import { drainagePlaneItems } from './categories/drainagePlaneItems';
 import { wallCladdingItems } from './categories/wallCladdingItems';
 import { showersAndTubsItems } from './categories/showersAndTubsItems';
-import { roofingItems } from './categories/roofingItems';
 import { hvacItems } from './categories/hvacItems';
 import { plumbingElectricalItems } from './categories/plumbingElectricalItems';
 import { interiorItems } from './categories/interiorItems';
+import { roofingItems } from './categories/roofingItems';
 import { exteriorItems } from './categories/exteriorItems';
 import { electricalItems } from './categories/electricalItems';
 import { plumbingItems } from './categories/plumbingItems';
 
-// Complete inspection criteria with all categories and items
-export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
+export const allInspectionItems: Omit<InspectionItem, 'score'>[] = [
   ...siteItems,
   ...foundationItems,
   ...framingItems,
@@ -25,43 +24,30 @@ export const defaultInspectionItems: Omit<InspectionItem, 'score'>[] = [
   ...airBarrierItems,
   ...drainagePlaneItems,
   ...wallCladdingItems,
+  ...exteriorItems, // These are now part of Wall Cladding
   ...showersAndTubsItems,
-  ...roofingItems,
   ...hvacItems,
   ...plumbingElectricalItems,
+  ...electricalItems, // These are now part of Plumbing and Electrical Systems
+  ...plumbingItems, // These are now part of Plumbing and Electrical Systems
   ...interiorItems,
-  ...exteriorItems,
-  ...electricalItems,
-  ...plumbingItems
+  ...roofingItems,
 ];
 
-// Debug logging to verify all items are loaded
-console.log('=== INSPECTION ITEMS DEBUG ===');
-console.log('Total inspection items loaded:', defaultInspectionItems.length);
+// Get unique categories for the inspection tabs
+export const getInspectionCategories = (): string[] => {
+  const categories = new Set(allInspectionItems.map(item => item.category));
+  return Array.from(categories).sort();
+};
 
-// Log items by category
-const categoryBreakdown = defaultInspectionItems.reduce((acc, item) => {
-  if (!acc[item.category]) acc[item.category] = [];
-  acc[item.category].push(item.item);
-  return acc;
-}, {} as Record<string, string[]>);
+// Get items for a specific category
+export const getItemsByCategory = (category: string): Omit<InspectionItem, 'score'>[] => {
+  return allInspectionItems.filter(item => item.category === category);
+};
 
-Object.entries(categoryBreakdown).forEach(([category, items]) => {
-  console.log(`${category}: ${items.length} items`);
-  console.log(`  Subcategories: ${[...new Set(defaultInspectionItems.filter(item => item.category === category).map(item => item.subcategory))].join(', ')}`);
-});
-
-// Log subcategory breakdown
-const subcategoryBreakdown = defaultInspectionItems.reduce((acc, item) => {
-  const key = `${item.category} > ${item.subcategory}`;
-  if (!acc[key]) acc[key] = 0;
-  acc[key]++;
-  return acc;
-}, {} as Record<string, number>);
-
-console.log('=== SUBCATEGORY BREAKDOWN ===');
-Object.entries(subcategoryBreakdown).forEach(([subcategory, count]) => {
-  console.log(`${subcategory}: ${count} items`);
-});
-
-console.log('=== END DEBUG ===');
+// Get subcategories for a specific category
+export const getSubcategoriesByCategory = (category: string): string[] => {
+  const items = getItemsByCategory(category);
+  const subcategories = new Set(items.map(item => item.subcategory));
+  return Array.from(subcategories).sort();
+};

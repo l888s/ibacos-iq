@@ -2,88 +2,47 @@
 import { InspectionItem } from '@/types/inspection';
 
 export const plumbingItems: Omit<InspectionItem, 'score'>[] = [
+  // Plumbing and Electrical Systems (4) - Plumbing
   {
-    id: 'plumbing-fixture-installation',
+    id: 'plumbing-electrical-pipe-support',
     category: 'Plumbing and Electrical Systems',
-    subcategory: 'Plumbing Systems',
+    subcategory: 'Plumbing',
+    item: 'Pipe Support and Hangers',
+    weight: 4,
+    scoreDescriptions: {
+      0: 'Plumbing pipes were not properly supported according to code requirements.',
+      1: 'No score',
+      2: 'Plumbing pipes were supported according to code requirements with minor inconsistencies.',
+      3: 'No score',
+      4: 'All plumbing pipes were properly supported according to code requirements.'
+    }
+  },
+  {
+    id: 'plumbing-electrical-water-pressure',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing',
+    item: 'Water Pressure Testing',
+    weight: 4,
+    scoreDescriptions: {
+      0: 'Water pressure testing was not performed or failed.',
+      1: 'No score',
+      2: 'Water pressure testing was performed with minor issues identified.',
+      3: 'No score',
+      4: 'Water pressure testing was performed and passed all requirements.'
+    }
+  },
+  {
+    id: 'plumbing-electrical-fixture-installation',
+    category: 'Plumbing and Electrical Systems',
+    subcategory: 'Plumbing',
     item: 'Fixture Installation',
-    weight: 7,
+    weight: 4,
     scoreDescriptions: {
-      0: 'Plumbing fixture installation was poorly executed.',
-      1: 'Plumbing fixture installation was executed with minor deviations from code requirements.',
-      2: 'Plumbing fixture installation was executed per code requirements.',
+      0: 'Plumbing fixtures were not installed according to manufacturer specifications.',
+      1: 'No score',
+      2: 'Plumbing fixtures were installed according to manufacturer specifications with minor inconsistencies.',
       3: 'No score',
-      4: 'Plumbing fixture installation was executed better than code requirements.'
-    }
-  },
-  {
-    id: 'plumbing-pipe-installation',
-    category: 'Plumbing and Electrical Systems',
-    subcategory: 'Plumbing Systems',
-    item: 'Pipe Installation',
-    weight: 7,
-    scoreDescriptions: {
-      0: 'Plumbing pipe installation was poorly executed.',
-      1: 'Plumbing pipe installation was executed with minor deviations from code requirements.',
-      2: 'Plumbing pipe installation was executed per code requirements.',
-      3: 'No score',
-      4: 'Plumbing pipe installation was executed better than code requirements.'
-    }
-  },
-  {
-    id: 'plumbing-water-heater',
-    category: 'Plumbing and Electrical Systems',
-    subcategory: 'Plumbing Systems',
-    item: 'Water Heater Installation',
-    weight: 7,
-    scoreDescriptions: {
-      0: 'Water heater installation was poorly executed.',
-      1: 'Water heater installation was executed with minor deviations from code requirements.',
-      2: 'Water heater installation was executed per code requirements.',
-      3: 'No score',
-      4: 'Water heater installation was executed better than code requirements.'
-    }
-  },
-  {
-    id: 'plumbing-shut-off-valves',
-    category: 'Plumbing and Electrical Systems',
-    subcategory: 'Plumbing Systems',
-    item: 'Shut-off Valves',
-    weight: 7,
-    scoreDescriptions: {
-      0: 'Shut-off valves were not installed where required.',
-      1: 'Shut-off valves were installed with minor issues.',
-      2: 'Shut-off valves were properly installed per code requirements.',
-      3: 'No score',
-      4: 'Shut-off valves were installed better than code requirements.'
-    }
-  },
-  {
-    id: 'plumbing-pressure-testing',
-    category: 'Plumbing and Electrical Systems',
-    subcategory: 'Plumbing Systems',
-    item: 'Pressure Testing',
-    weight: 7,
-    scoreDescriptions: {
-      0: 'Plumbing system failed pressure testing.',
-      1: 'Plumbing system passed pressure testing with minor leaks.',
-      2: 'Plumbing system passed pressure testing per code requirements.',
-      3: 'No score',
-      4: 'Plumbing system exceeded pressure testing requirements.'
-    }
-  },
-  {
-    id: 'plumbing-venting-system',
-    category: 'Plumbing and Electrical Systems',
-    subcategory: 'Plumbing Systems',
-    item: 'Venting System',
-    weight: 7,
-    scoreDescriptions: {
-      0: 'Plumbing venting system was inadequate or missing.',
-      1: 'Plumbing venting system was marginally adequate.',
-      2: 'Plumbing venting system met code requirements.',
-      3: 'No score',
-      4: 'Plumbing venting system exceeded code requirements.'
+      4: 'All plumbing fixtures were installed according to manufacturer specifications.'
     }
   }
 ];

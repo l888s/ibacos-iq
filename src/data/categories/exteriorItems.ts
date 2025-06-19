@@ -2,88 +2,62 @@
 import { InspectionItem } from '@/types/inspection';
 
 export const exteriorItems: Omit<InspectionItem, 'score'>[] = [
+  // Wall Cladding (4) - Siding
   {
-    id: 'exterior-siding-installation',
+    id: 'wall-cladding-siding-attachment',
     category: 'Wall Cladding',
-    subcategory: 'Exterior Finishes',
-    item: 'Siding Installation',
-    weight: 6,
+    subcategory: 'Siding',
+    item: 'Siding Attachment',
+    weight: 4,
     scoreDescriptions: {
-      0: 'Exterior siding installation was poorly executed.',
-      1: 'Exterior siding installation was executed with minor deviations from code requirements.',
-      2: 'Exterior siding installation was executed per code requirements.',
+      0: 'Siding was not attached according to manufacturer specifications.',
+      1: 'No score',
+      2: 'Siding was attached according to manufacturer specifications with minor inconsistencies.',
       3: 'No score',
-      4: 'Exterior siding installation was executed better than code requirements.'
+      4: 'Siding was attached according to manufacturer specifications.'
     }
   },
   {
-    id: 'exterior-trim-installation',
+    id: 'wall-cladding-siding-gaps',
     category: 'Wall Cladding',
-    subcategory: 'Exterior Finishes',
-    item: 'Trim Installation',
-    weight: 6,
+    subcategory: 'Siding',
+    item: 'Siding Gaps at Penetrations',
+    weight: 4,
     scoreDescriptions: {
-      0: 'Exterior trim installation was poorly executed.',
-      1: 'Exterior trim installation was executed with minor deviations from code requirements.',
-      2: 'Exterior trim installation was executed per code requirements.',
+      0: 'Gaps around siding at penetrations were not sealed.',
+      1: 'No score',
+      2: 'Gaps around siding at penetrations were sealed with minor inconsistencies.',
       3: 'No score',
-      4: 'Exterior trim installation was executed better than code requirements.'
+      4: 'All gaps around siding at penetrations were properly sealed.'
+    }
+  },
+  // Wall Cladding (4) - Windows and Doors
+  {
+    id: 'wall-cladding-windows-doors-flashing',
+    category: 'Wall Cladding',
+    subcategory: 'Windows and Doors',
+    item: 'Window and Door Flashing',
+    weight: 4,
+    scoreDescriptions: {
+      0: 'Window and door flashing was not installed according to manufacturer specifications.',
+      1: 'No score',
+      2: 'Window and door flashing was installed according to manufacturer specifications with minor inconsistencies.',
+      3: 'No score',
+      4: 'Window and door flashing was installed according to manufacturer specifications.'
     }
   },
   {
-    id: 'exterior-window-installation',
+    id: 'wall-cladding-windows-doors-integration',
     category: 'Wall Cladding',
-    subcategory: 'Exterior Finishes',
-    item: 'Window Installation',
-    weight: 6,
+    subcategory: 'Windows and Doors',
+    item: 'Window and Door Integration with Wall Cladding',
+    weight: 4,
     scoreDescriptions: {
-      0: 'Exterior window installation was poorly executed.',
-      1: 'Exterior window installation was executed with minor deviations from code requirements.',
-      2: 'Exterior window installation was executed per code requirements.',
+      0: 'Windows and doors were not properly integrated with wall cladding.',
+      1: 'No score',
+      2: 'Windows and doors were integrated with wall cladding with minor inconsistencies.',
       3: 'No score',
-      4: 'Exterior window installation was executed better than code requirements.'
-    }
-  },
-  {
-    id: 'exterior-door-installation',
-    category: 'Wall Cladding',
-    subcategory: 'Exterior Finishes',
-    item: 'Door Installation',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Exterior door installation was poorly executed.',
-      1: 'Exterior door installation was executed with minor deviations from code requirements.',
-      2: 'Exterior door installation was executed per code requirements.',
-      3: 'No score',
-      4: 'Exterior door installation was executed better than code requirements.'
-    }
-  },
-  {
-    id: 'exterior-flashing-installation',
-    category: 'Wall Cladding',
-    subcategory: 'Exterior Finishes',
-    item: 'Flashing Installation',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Exterior flashing installation was poorly executed.',
-      1: 'Exterior flashing installation was executed with minor deviations from code requirements.',
-      2: 'Exterior flashing installation was executed per code requirements.',
-      3: 'No score',
-      4: 'Exterior flashing installation was executed better than code requirements.'
-    }
-  },
-  {
-    id: 'exterior-caulking-sealants',
-    category: 'Wall Cladding',
-    subcategory: 'Exterior Finishes',
-    item: 'Caulking and Sealants',
-    weight: 6,
-    scoreDescriptions: {
-      0: 'Exterior caulking and sealants were poorly applied.',
-      1: 'Exterior caulking and sealants were applied with minor gaps.',
-      2: 'Exterior caulking and sealants were properly applied per code requirements.',
-      3: 'No score',
-      4: 'Exterior caulking and sealants were applied better than code requirements.'
+      4: 'Windows and doors were properly integrated with wall cladding.'
     }
   }
 ];
