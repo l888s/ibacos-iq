@@ -1,4 +1,3 @@
-
 import { InspectionItem } from '@/types/inspection';
 
 export const hvacItems: Omit<InspectionItem, 'score'>[] = [
@@ -33,7 +32,7 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
   },
   // HVAC Systems (10) - Cooling System
   {
-    id: 'hvac-systems-cooling-system-',
+    id: 'hvac-systems-cooling-system-efficiency',
     category: 'HVAC Systems',
     subcategory: 'Cooling System',
     item: 'Efficiency',
@@ -216,7 +215,7 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: 'hvac-systems-supply-ductwork-duct-ext-wall',
+    id: 'hvac-systems-supply-ductwork-duct-sealed',
     category: 'HVAC Systems',
     subcategory: 'Supply Ductwork',
     item: 'Ductwork Sealed for Tightness',
@@ -343,7 +342,7 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: 'hvac-systems-return-ductwork-duct-cleanliness',
+    id: 'hvac-systems-return-ductwork-ducts-contact',
     category: 'HVAC Systems',
     subcategory: 'Return Ductwork',
     item: 'Ducts in Contact',
@@ -506,7 +505,7 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
     scoreDescriptions: {
       0: 'Bath ducts terminated in attics or at a ventilated soffit.',
       1: 'No score',
-      2: 'Bath ducts terminated at a soffit and were not within 4' of a soffit vent.',
+      2: "Bath ducts terminated at a soffit and were not within 4' of a soffit vent.",
       3: 'Bath ducts were exhausted either through the roof or on the gable end, with some quality control issues.',
       4: 'Bath ducts were exhausted either through the roof or on the gable end.'
     }
@@ -560,11 +559,11 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
     item: 'Dryer Venting: Duct Length',
     weight: 10,
     scoreDescriptions: {
-      0: 'The dryers were not usually located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less.',
+      0: "The dryers were not usually located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less.",
       1: 'No score',
-      2: 'The dryers were usually located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less, with minor inconsistencies.',
+      2: "The dryers were usually located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less, with minor inconsistencies.",
       3: 'No score',
-      4: 'The dryers were always located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less.'
+      4: "The dryers were always located on exterior walls or other areas to permit short runs to ensure the equivalent duct lengths were 25' or less."
     }
   },
   {
@@ -680,5 +679,5 @@ export const hvacItems: Omit<InspectionItem, 'score'>[] = [
       3: 'No score',
       4: 'Good air sealing practices were observed with direct vent or electric equipment.'
     }
-  },
+  }
 ];

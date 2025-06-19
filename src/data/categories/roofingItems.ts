@@ -10,11 +10,11 @@ export const roofingItems: Omit<InspectionItem, 'score'>[] = [
     item: 'Shingle Installation Quality',
     weight: 8,
     scoreDescriptions: {
-      0: 'Shingles were not properly installed to the manufacturer's recommendations.',
+      0: "Shingles were not properly installed to the manufacturer's recommendations.",
       1: 'No score',
-      2: 'Shingles were installed in accordance with the manufacturer's recommendations, with some quality control issues.',
+      2: "Shingles were installed in accordance with the manufacturer's recommendations, with some quality control issues.",
       3: 'No score',
-      4: 'Shingles were installed in accordance with the manufacturer's recommendations.'
+      4: "Shingles were installed in accordance with the manufacturer's recommendations."
     }
   },
   {
@@ -118,20 +118,6 @@ export const roofingItems: Omit<InspectionItem, 'score'>[] = [
     }
   },
   {
-    id: 'roof-cladding-penetrations-pens-combined',
-    category: 'Roof Cladding and Drainage',
-    subcategory: 'Penetrations',
-    item: 'Penetrations Combined',
-    weight: 8,
-    scoreDescriptions: {
-      0: 'No score',
-      1: 'No score',
-      2: 'Adjacent penetrations (such as multiple bath fan vents) were not combined to create fewer penetrations.',
-      3: 'No score',
-      4: 'Adjacent penetrations (such as multiple bath fan vents) were combined where possible to create fewer penetrations.'
-    }
-  },
-  {
     id: 'roof-cladding-penetrations-ridge-vent',
     category: 'Roof Cladding and Drainage',
     subcategory: 'Penetrations',
@@ -202,7 +188,6 @@ export const roofingItems: Omit<InspectionItem, 'score'>[] = [
       4: 'Step flashings were at least 4" x 4" x 6" in dimension and were installed and properly integrated with the roofing shingles.'
     }
   },
-  
   {
     id: 'roof-cladding-roof-to-wall-underlayment-wrap-rake',
     category: 'Roof Cladding and Drainage',
@@ -254,15 +239,15 @@ export const roofingItems: Omit<InspectionItem, 'score'>[] = [
     weight: 8,
     scoreDescriptions: {
       0: 'Downspouts were inadequate to handle roof runoff events for the house in that region.',
-      1: 'Downspouts were properly spaced at a maximum of 40', with some quality control issues.',
-      2: 'Downspouts were properly spaced at a maximum of 40',
+      1: "Downspouts were properly spaced at a maximum of 40', with some quality control issues.",
+      2: "Downspouts were properly spaced at a maximum of 40'.",
       3: 'No score',
       4: 'Downspouts were more than adequate to handle roof runoff events for the house in that region.'
     }
   },
   // Roof Cladding and Drainage (8) - Valleys
   {
-    id: 'roof-cladding-roof-to-wall-flashing-apron',
+    id: 'roof-cladding-valleys-shingles',
     category: 'Roof Cladding and Drainage',
     subcategory: 'Valleys',
     item: 'Shingles',
@@ -274,5 +259,5 @@ export const roofingItems: Omit<InspectionItem, 'score'>[] = [
       3: 'Shingles were woven or closed cut at valleys, with the larger roof overlapping the smaller roof.',
       4: 'Open valleys were installed with exposed metal valley flashings.'
     }
-  },
+  }
 ];
