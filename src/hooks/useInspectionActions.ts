@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Inspection, InspectionItem } from '@/types/inspection';
-import { defaultInspectionItems } from '@/data/inspectionItems';
+import { allInspectionItems } from '@/data/inspectionItems';
 import { calculateWeightedAverageScore, calculateTotalScore } from '@/utils/inspectionCalculations';
 import { downloadPDF } from '@/utils/pdfGenerator';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,7 +26,7 @@ export const useInspectionActions = ({
   
   const startNewInspection = useCallback((neighborhood: string, forceNew: boolean = false) => {
     console.log('Starting inspection for neighborhood:', neighborhood, 'forceNew:', forceNew);
-    console.log('Default inspection items available:', defaultInspectionItems.length);
+    console.log('All inspection items available:', allInspectionItems.length);
     
     const existingInspection = findExistingInspection(neighborhood);
     
@@ -38,19 +38,19 @@ export const useInspectionActions = ({
     }
 
     // If forcing new or no existing inspection, create a new one
-    console.log('Creating new inspection with items from categories:', [...new Set(defaultInspectionItems.map(item => item.category))]);
+    console.log('Creating new inspection with items from categories:', [...new Set(allInspectionItems.map(item => item.category))]);
 
     const newInspection: Inspection = {
       id: Date.now().toString(),
       neighborhood,
       date: new Date().toISOString(),
       status: 'in-progress',
-      items: defaultInspectionItems.map(item => ({
+      items: allInspectionItems.map(item => ({
         ...item,
         score: null
       })),
       totalScore: 0,
-      maxScore: defaultInspectionItems.length * 4,
+      maxScore: allInspectionItems.length * 4,
       averageScore: 0
     };
     
