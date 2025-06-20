@@ -214,7 +214,7 @@ export const thermalEnclosureItems: Omit<InspectionItem, 'score'>[] = [
       1: 'No score',
       2: 'Bath vent ducts that penetrated the roof were inconsistently air sealed to prevent backdrafting. or Soffit vents occasionally terminated through vented soffits and were prone to backdrafting.',
       3: 'No score',
-      4: 'Bath vent ducts that penetrated the roof were air sealed to prevent backdrafting. or Soffit vents always passed through unvented soffits (2' to each side) to prevent backdrafting.'
+      4: 'Bath vent ducts that penetrated the roof were air sealed to prevent backdrafting. or Soffit vents always passed through unvented soffits (2ft to each side) to prevent backdrafting.'
     }
   },
   {
