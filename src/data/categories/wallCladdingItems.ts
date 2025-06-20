@@ -137,8 +137,8 @@ export const wallCladdingItems: Omit<InspectionItem, 'score'>[] = [
     weight: 10,
     scoreDescriptions: {
       0: 'Siding and trim had no reveal at the roof.',
-      1: 'Siding and trim reveal at the roof did not comply with manufacturer's minimum requirements.',
-      2: 'Siding and trim reveal at the roof complied with manufacturer's minimum requirements.',
+      1: 'Siding and trim reveal at the roof did not comply with manufacturers minimum requirements.',
+      2: 'Siding and trim reveal at the roof complied with manufacturers minimum requirements.',
       3: 'No score',
       4: 'Siding and trim had a continuous 2" reveal at the roof.'
     }
