@@ -110,7 +110,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
     weight: 6,
     scoreDescriptions: {
       0: 'No score.',
-      1: 'Floor sheathing was tongue and groove, but did not have 1/8" gap at the ends.',
+      1: 'Floor sheathing was tongue and groove, but did not have 1/8in gap at the ends.',
       2: 'Floor sheathing was inconsistently gapped on all sides.',
       3: 'Floor sheathing was usually properly gapped on all sides',
       4: 'All floor sheathing was properly gapped on all sides.'
@@ -339,7 +339,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       1: 'No score',
       2: 'No score',
       3: 'No score'
-      4: 'The fastening of the roof sheathing was compliant with the fastening schedule, and the sheathing panels had adequate spacing.'
+      4: 'The fastening of the roof sheathing was compliant with the fastening schedule and the sheathing panels had adequate spacing.'
     }
   },
   {
