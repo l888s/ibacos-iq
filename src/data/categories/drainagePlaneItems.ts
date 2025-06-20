@@ -324,9 +324,9 @@ export const drainagePlaneItems: Omit<InspectionItem, 'score'>[] = [
     scoreDescriptions: {
       0: 'Entry doors were not protected with a roof.',
       1: 'No score',
-      2: 'Most entry doors were protected under a roof that extended at least 4' in all directions.',
+      2: 'Most entry doors were protected under a roof that extended at least 4ft in all directions.',
       3: 'No score',
-      4: 'All entry doors were protected under a roof that extended at least 4' in all directions.'
+      4: 'All entry doors were protected under a roof that extended at least 4ft in all directions.'
     }
   },
   {
@@ -451,9 +451,9 @@ export const drainagePlaneItems: Omit<InspectionItem, 'score'>[] = [
     scoreDescriptions: {
       0: 'Patio doors were not protected with a roof.',
       1: 'No score',
-      2: 'Most patio doors were protected under a roof that extended at least 4' in all directions.',
+      2: 'Most patio doors were protected under a roof that extended at least 4ft in all directions.',
       3: 'No score',
-      4: 'All patio doors were protected under a roof that extended at least 4' in all directions.'
+      4: 'All patio doors were protected under a roof that extended at least 4ft in all directions.'
     }
   },
   {
