@@ -139,7 +139,7 @@ export const wallCladdingItems: Omit<InspectionItem, 'score'>[] = [
       1: 'Siding and trim reveal at the roof did not comply with manufacturers minimum requirements.',
       2: 'Siding and trim reveal at the roof complied with manufacturers minimum requirements.',
       3: 'No score',
-      4: 'Siding and trim had a continuous 2" reveal at the roof.'
+      4: 'Siding and trim had a continuous 2in reveal at the roof.'
     }
   },
   // Wall Cladding (10) - Brick/Stone Veneer
