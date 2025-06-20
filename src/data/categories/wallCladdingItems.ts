@@ -1,4 +1,3 @@
-
 import { InspectionItem } from '@/types/inspection';
 
 export const wallCladdingItems: Omit<InspectionItem, 'score'>[] = [

@@ -1,4 +1,3 @@
-
 import { InspectionItem } from '@/types/inspection';
 
 export const framingItems: Omit<InspectionItem, 'score'>[] = [
@@ -310,7 +309,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       0: 'Interior walls were fastened to the bottom chord of the truss with a toe nail, risking cracking drywall or stressing the roof trusses.',
       1: 'No score',
       2: 'Interior walls were not fastened to non-load-bearing walls or were fastened using floating truss clips. However there was insufficient clearance between the bottom chord of the truss and the non-load bearing wall.',
-      3: 'No score'
+      3: 'No score',
       4: 'Interior, non-load-bearing walls were attached to the trusses using properly installed floating clips or deflection screws to allow the trusses to move without damaging the walls.'
     }
   },
@@ -324,7 +323,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       0: 'Truss point loads were not properly transferred at the walls, or the bottom chords of the trusses were in contact with non-load-bearing walls.',
       1: 'No score',
       2: 'Point loads were properly transferred at the walls, appropriately using additional studs or other engineering, with some inconsistencies, and the trusses had proper clearance over non-load-bearing walls.',
-      3: 'No score'
+      3: 'No score',
       4: 'Point loads were properly transferred at the walls, appropriately using additional studs or other engineering, and the trusses had proper clearance over non-load-bearing walls.'
     }
   },
@@ -338,7 +337,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       0: 'The fastening of the roof sheathing was inadequate according the fastening schedule, and/or the sheathing panels did not have adequate spacing.',
       1: 'No score',
       2: 'No score',
-      3: 'No score'
+      3: 'No score',
       4: 'The fastening of the roof sheathing was compliant with the fastening schedule and the sheathing panels had adequate spacing.'
     }
   },
@@ -352,7 +351,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       0: 'Trusses were not properly aligned.',
       1: 'No score',
       2: 'Trusses were properly aligned with minor inconsistencies.',
-      3: 'No score'
+      3: 'No score',
       4: 'All trusses were properly aligned.'
     }
   },
@@ -366,7 +365,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       0: 'Trusses were not properly aligned or fastened with appropriate brackets or hangers at girder truss connections.',
       1: 'No score',
       2: 'Trusses were properly aligned or fastened with appropriate brackets or hangers at girder truss connections, with some inconsistencies.',
-      3: 'No score'
+      3: 'No score',
       4: 'All trusses were properly aligned or fastened with appropriate brackets or hangers at girder truss connections.'
     }
   },
@@ -380,7 +379,7 @@ export const framingItems: Omit<InspectionItem, 'score'>[] = [
       0: 'Truss plates were compromised or damaged by improper handling or other issues.',
       1: 'No score',
       2: 'Truss plates were in good condition, with some inconsistencies.',
-      3: 'No score'
+      3: 'No score',
       4: 'Truss plates were in good condition.'
     }
   },
