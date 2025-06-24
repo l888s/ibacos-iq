@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useInspection } from '@/contexts/InspectionContext';
 import { useNavigate } from 'react-router-dom';
@@ -83,18 +84,45 @@ const Inspection = () => {
     navigate('/');
   };
 
+  const scrollToTop = () => {
+    // Scroll to the very top of the page
+    window.scrollTo({ 
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+    });
+    
+    // Also try document body scroll in case window scroll doesn't work
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  };
+
   const handlePreviousSection = () => {
     if (previousCategory) {
       setCurrentCategory(previousCategory);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Use setTimeout to ensure the category change happens first
+      setTimeout(() => {
+        scrollToTop();
+      }, 100);
     }
   };
 
   const handleNextSection = () => {
     if (nextCategory) {
       setCurrentCategory(nextCategory);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Use setTimeout to ensure the category change happens first
+      setTimeout(() => {
+        scrollToTop();
+      }, 100);
     }
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setCurrentCategory(category);
+    // Scroll to top when category changes
+    setTimeout(() => {
+      scrollToTop();
+    }, 100);
   };
 
   const getProgress = () => {
@@ -136,7 +164,7 @@ const Inspection = () => {
         <InspectionTabs 
           inspection={currentInspection} 
           currentCategory={currentCategory}
-          onCategoryChange={setCurrentCategory}
+          onCategoryChange={handleCategoryChange}
         />
 
         {/* Bottom Action Buttons */}
