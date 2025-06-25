@@ -25,6 +25,7 @@ interface InspectionHeaderProps {
   onSubmit: () => void;
   onDelete: () => void;
   isComplete: boolean;
+  canDelete: boolean;
 }
 
 const InspectionHeader = ({ 
@@ -35,7 +36,8 @@ const InspectionHeader = ({
   onSave, 
   onSubmit,
   onDelete,
-  isComplete
+  isComplete,
+  canDelete
 }: InspectionHeaderProps) => {
   const navigate = useNavigate();
 
@@ -87,28 +89,37 @@ const InspectionHeader = ({
           Submit Inspection
         </Button>
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive">
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Inspection
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the inspection for {neighborhood}.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {canDelete && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Inspection
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the incomplete inspection for {neighborhood}.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+        
+        {!canDelete && status === 'completed' && (
+          <div className="flex items-center text-sm text-gray-500 bg-gray-100 px-3 py-2 rounded">
+            <Trash2 className="h-4 w-4 mr-2" />
+            Completed inspections cannot be deleted
+          </div>
+        )}
       </div>
     </div>
   );

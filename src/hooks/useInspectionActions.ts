@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { Inspection, InspectionItem } from '@/types/inspection';
 import { allInspectionItems } from '@/data/inspectionItems';
@@ -166,8 +167,23 @@ export const useInspectionActions = ({
   const deleteInspection = useCallback(() => {
     if (!currentInspection) return;
     
+    // Only allow deletion of in-progress inspections
+    if (currentInspection.status !== 'in-progress') {
+      toast({
+        title: "Cannot Delete",
+        description: "Completed inspections cannot be deleted to maintain data integrity.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     deleteInspectionFromStorage(currentInspection.id);
     setCurrentInspection(null);
+    
+    toast({
+      title: "Inspection Deleted",
+      description: "The incomplete inspection has been deleted.",
+    });
   }, [currentInspection, deleteInspectionFromStorage, setCurrentInspection]);
 
   return {

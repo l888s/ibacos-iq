@@ -52,6 +52,11 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     return savedInspections.filter(inspection => inspection.status === 'completed');
   };
 
+  // Check if current inspection can be deleted (only in-progress inspections)
+  const canDeleteCurrentInspection = () => {
+    return currentInspection?.status === 'in-progress';
+  };
+
   const contextValue: InspectionContextType = {
     currentInspection,
     savedInspections,
@@ -65,7 +70,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     loadInspection,
     deleteInspection,
     getAllInspections,
-    getAllCompletedInspections
+    getAllCompletedInspections,
+    canDeleteCurrentInspection
   };
 
   return (

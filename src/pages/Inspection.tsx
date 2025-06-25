@@ -13,7 +13,14 @@ import { Save, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 const Inspection = () => {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [currentCategory, setCurrentCategory] = useState<string>('');
-  const { currentInspection, startNewInspection, saveInspection, submitInspection, deleteInspection } = useInspection();
+  const { 
+    currentInspection, 
+    startNewInspection, 
+    saveInspection, 
+    submitInspection, 
+    deleteInspection,
+    canDeleteCurrentInspection 
+  } = useInspection();
   const navigate = useNavigate();
 
   // Get categories for navigation
@@ -77,10 +84,6 @@ const Inspection = () => {
 
   const handleDelete = () => {
     deleteInspection();
-    toast({
-      title: "Inspection Deleted",
-      description: "The inspection has been permanently deleted",
-    });
     navigate('/');
   };
 
@@ -159,6 +162,7 @@ const Inspection = () => {
           onSubmit={handleSubmit}
           onDelete={handleDelete}
           isComplete={isComplete()}
+          canDelete={canDeleteCurrentInspection()}
         />
 
         <InspectionTabs 
