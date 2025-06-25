@@ -13,6 +13,48 @@ interface NeighborhoodChartProps {
   data: NeighborhoodData[];
 }
 
+// Custom component for the ghost bar with diagonal lines
+const GhostBar = (props: any) => {
+  const { payload, x, y, width, height } = props;
+  const SCORE_THRESHOLD = 3.24;
+  
+  // Only show ghost bar if the actual score is below threshold
+  if (payload.avgScore >= SCORE_THRESHOLD) {
+    return null;
+  }
+  
+  // Calculate the height for the 3.24 threshold
+  const maxScore = 3.52;
+  const thresholdHeight = (SCORE_THRESHOLD / maxScore) * height;
+  const thresholdY = y + height - thresholdHeight;
+  
+  // Create unique pattern ID for each bar
+  const patternId = `diagonalPattern-${payload.neighborhood}`;
+  
+  return (
+    <g>
+      <defs>
+        <pattern id={patternId} patternUnits="userSpaceOnUse" width="8" height="8">
+          <rect width="8" height="8" fill="none" />
+          <path d="M0,8 L8,0" stroke="#3b82f6" strokeWidth="1" opacity="0.6" />
+          <path d="M-2,2 L2,-2" stroke="#3b82f6" strokeWidth="1" opacity="0.6" />
+          <path d="M6,10 L10,6" stroke="#3b82f6" strokeWidth="1" opacity="0.6" />
+        </pattern>
+      </defs>
+      <rect
+        x={x}
+        y={thresholdY}
+        width={width}
+        height={thresholdHeight}
+        fill={`url(#${patternId})`}
+        stroke="#3b82f6"
+        strokeWidth="1"
+        opacity="0.4"
+      />
+    </g>
+  );
+};
+
 const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
   const SCORE_THRESHOLD = 3.24;
 
@@ -33,7 +75,7 @@ const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
       <CardHeader>
         <CardTitle>Neighborhood Performance</CardTitle>
         <CardDescription>
-          Average scores across neighborhoods (completed inspections) - Scale: 0-3.52
+          Average scores across neighborhoods (completed inspections) - Scale: 0-3.52 | Target: 3.24+
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -48,11 +90,14 @@ const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
                 'Average Score'
               ]}
             />
+            {/* Ghost bars - render first so they appear behind actual bars */}
+            <Bar dataKey="avgScore" shape={GhostBar} />
+            {/* Actual bars */}
             <Bar dataKey="avgScore" name="avgScore">
               {data.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.avgScore < SCORE_THRESHOLD ? "#ef4444" : "#3b82f6"} 
+                  fill={entry.avgScore >= SCORE_THRESHOLD ? "#22c55e" : "#ef4444"} 
                 />
               ))}
             </Bar>
