@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { InspectionContextType, Inspection } from '@/types/inspection';
 import { useInspectionStorage } from '@/hooks/useInspectionStorage';
 import { useInspectionActions } from '@/hooks/useInspectionActions';
+import { useAuth } from '@/contexts/AuthContext';
 
 const InspectionContext = createContext<InspectionContextType | undefined>(undefined);
 
@@ -20,6 +21,7 @@ interface InspectionProviderProps {
 
 export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children }) => {
   const [currentInspection, setCurrentInspection] = useState<Inspection | null>(null);
+  const { user } = useAuth();
   
   const {
     savedInspections,
@@ -52,9 +54,24 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     return savedInspections.filter(inspection => inspection.status === 'completed');
   };
 
-  // Check if current inspection can be deleted (only in-progress inspections)
+  // Check if current inspection can be deleted
   const canDeleteCurrentInspection = () => {
-    return currentInspection?.status === 'in-progress';
+    if (!currentInspection) return false;
+    
+    // Allow lewis.bedford@starlighthomes.com to delete any inspection
+    if (user?.email === 'lewis.bedford@starlighthomes.com') {
+      return true;
+    }
+    
+    // For everyone else, only allow deletion of in-progress inspections
+    return currentInspection.status === 'in-progress';
+  };
+
+  // Check if a neighborhood has an in-progress inspection
+  const hasInProgressInspection = (neighborhood: string) => {
+    return savedInspections.some(
+      inspection => inspection.neighborhood === neighborhood && inspection.status === 'in-progress'
+    );
   };
 
   const contextValue: InspectionContextType = {
@@ -71,7 +88,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     deleteInspection,
     getAllInspections,
     getAllCompletedInspections,
-    canDeleteCurrentInspection
+    canDeleteCurrentInspection,
+    hasInProgressInspection
   };
 
   return (

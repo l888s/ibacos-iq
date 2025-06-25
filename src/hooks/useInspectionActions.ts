@@ -6,6 +6,7 @@ import { calculateWeightedAverageScore, calculateTotalScore } from '@/utils/insp
 import { downloadPDF } from '@/utils/pdfGenerator';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UseInspectionActionsProps {
   currentInspection: Inspection | null;
@@ -24,6 +25,7 @@ export const useInspectionActions = ({
   getInspectionById,
   deleteInspectionFromStorage
 }: UseInspectionActionsProps) => {
+  const { user } = useAuth();
   
   const startNewInspection = useCallback((neighborhood: string, forceNew: boolean = false) => {
     console.log('Starting inspection for neighborhood:', neighborhood, 'forceNew:', forceNew);
@@ -167,7 +169,19 @@ export const useInspectionActions = ({
   const deleteInspection = useCallback(() => {
     if (!currentInspection) return;
     
-    // Only allow deletion of in-progress inspections
+    // Allow lewis.bedford@starlighthomes.com to delete any inspection
+    if (user?.email === 'lewis.bedford@starlighthomes.com') {
+      deleteInspectionFromStorage(currentInspection.id);
+      setCurrentInspection(null);
+      
+      toast({
+        title: "Inspection Deleted",
+        description: "The inspection has been deleted (admin override).",
+      });
+      return;
+    }
+    
+    // For everyone else, only allow deletion of in-progress inspections
     if (currentInspection.status !== 'in-progress') {
       toast({
         title: "Cannot Delete",
@@ -184,7 +198,7 @@ export const useInspectionActions = ({
       title: "Inspection Deleted",
       description: "The incomplete inspection has been deleted.",
     });
-  }, [currentInspection, deleteInspectionFromStorage, setCurrentInspection]);
+  }, [currentInspection, deleteInspectionFromStorage, setCurrentInspection, user?.email]);
 
   return {
     startNewInspection,

@@ -22,7 +22,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
   const navigate = useNavigate();
-  const { savedInspections, continueExistingInspection } = useInspection();
+  const { savedInspections, continueExistingInspection, hasInProgressInspection, deleteInspection } = useInspection();
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -68,10 +68,17 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
       return;
     }
 
-    const status = getNeighborhoodStatus(selectedNeighborhood);
-    console.log('Starting new inspection for neighborhood status:', status);
-    
-    // Always start a new inspection, regardless of existing ones
+    // Check if there's already an in-progress inspection
+    if (hasInProgressInspection(selectedNeighborhood)) {
+      toast({
+        title: "Inspection Already In Progress",
+        description: "This neighborhood has an active inspection. Please continue or delete the existing inspection first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Start new inspection
     const result = onStartInspection(selectedNeighborhood, true);
     
     toast({
@@ -103,6 +110,25 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
         description: "No existing inspection found for this neighborhood",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleDeleteExistingInspection = () => {
+    if (!selectedNeighborhood) return;
+    
+    const existingInspection = savedInspections.find(
+      inspection => inspection.neighborhood === selectedNeighborhood && inspection.status === 'in-progress'
+    );
+    
+    if (existingInspection) {
+      // Load the inspection temporarily to delete it
+      const result = onStartInspection(selectedNeighborhood, false);
+      if (result.existingInspection) {
+        // This will trigger the delete through the inspection actions
+        setTimeout(() => {
+          deleteInspection();
+        }, 100);
+      }
     }
   };
 
@@ -165,7 +191,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
                     <span className="text-sm font-medium">Existing Inspection Found</span>
                   </div>
                   <p className="text-sm text-orange-700 mt-1">
-                    This neighborhood has an unfinished inspection. You can continue the existing inspection or start a new one.
+                    This neighborhood has an unfinished inspection. You must continue the existing inspection or delete it before starting a new one.
                   </p>
                 </div>
               )}
@@ -182,12 +208,12 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
                     Continue Existing Inspection
                   </Button>
                   <Button 
-                    onClick={handleStartNewInspection}
-                    variant="outline"
+                    onClick={handleDeleteExistingInspection}
+                    variant="destructive"
                     className="w-full"
                     size="lg"
                   >
-                    Start New Inspection
+                    Delete Existing Inspection
                   </Button>
                 </>
               ) : (

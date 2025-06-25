@@ -44,4 +44,5 @@ export interface InspectionContextType {
   getAllInspections: () => Inspection[];
   getAllCompletedInspections: () => Inspection[];
   canDeleteCurrentInspection: () => boolean;
+  hasInProgressInspection: (neighborhood: string) => boolean;
 }
