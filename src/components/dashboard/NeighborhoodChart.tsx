@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { BarChart as BarChartIcon } from 'lucide-react';
@@ -17,11 +16,6 @@ interface NeighborhoodChartProps {
 const GhostBar = (props: any) => {
   const { payload, x, y, width, height } = props;
   const SCORE_THRESHOLD = 3.24;
-  
-  // Only show ghost bar if the actual score is below threshold
-  if (payload.avgScore >= SCORE_THRESHOLD) {
-    return null;
-  }
   
   // Calculate the height for the 3.24 threshold
   const maxScore = 3.52;
@@ -48,8 +42,8 @@ const GhostBar = (props: any) => {
         height={thresholdHeight}
         fill={`url(#${patternId})`}
         stroke="#3b82f6"
-        strokeWidth="1"
-        opacity="0.4"
+        strokeWidth="2"
+        opacity="0.7"
       />
     </g>
   );
