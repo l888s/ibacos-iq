@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { BarChart as BarChartIcon } from 'lucide-react';
@@ -11,43 +12,6 @@ interface NeighborhoodData {
 interface NeighborhoodChartProps {
   data: NeighborhoodData[];
 }
-
-// Custom component for the ghost bar with diagonal lines
-const GhostBar = (props: any) => {
-  const { payload, x, y, width, height } = props;
-  const SCORE_THRESHOLD = 3.24;
-  
-  // Calculate the height for the 3.24 threshold
-  const maxScore = 3.52;
-  const thresholdHeight = (SCORE_THRESHOLD / maxScore) * height;
-  const thresholdY = y + height - thresholdHeight;
-  
-  // Create unique pattern ID for each bar
-  const patternId = `diagonalPattern-${payload.neighborhood}`;
-  
-  return (
-    <g>
-      <defs>
-        <pattern id={patternId} patternUnits="userSpaceOnUse" width="8" height="8">
-          <rect width="8" height="8" fill="none" />
-          <path d="M0,8 L8,0" stroke="#3b82f6" strokeWidth="1" opacity="0.6" />
-          <path d="M-2,2 L2,-2" stroke="#3b82f6" strokeWidth="1" opacity="0.6" />
-          <path d="M6,10 L10,6" stroke="#3b82f6" strokeWidth="1" opacity="0.6" />
-        </pattern>
-      </defs>
-      <rect
-        x={x}
-        y={thresholdY}
-        width={width}
-        height={thresholdHeight}
-        fill={`url(#${patternId})`}
-        stroke="#3b82f6"
-        strokeWidth="2"
-        opacity="0.7"
-      />
-    </g>
-  );
-};
 
 const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
   const SCORE_THRESHOLD = 3.24;
@@ -84,9 +48,6 @@ const NeighborhoodChart = ({ data }: NeighborhoodChartProps) => {
                 'Average Score'
               ]}
             />
-            {/* Ghost bars - render first so they appear behind actual bars */}
-            <Bar dataKey="avgScore" shape={GhostBar} />
-            {/* Actual bars */}
             <Bar dataKey="avgScore" name="avgScore">
               {data.map((entry, index) => (
                 <Cell 
