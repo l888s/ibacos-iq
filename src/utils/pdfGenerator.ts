@@ -1,12 +1,38 @@
 
 import { Inspection } from '@/types/inspection';
 import { getCategoryWeightedScores } from './inspectionCalculations';
+import { supabase } from '@/integrations/supabase/client';
+
+const getInspectionPhotos = async (inspectionId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('inspection_item_photos')
+      .select('item_id, photo_url')
+      .eq('inspection_id', inspectionId);
+
+    if (error) {
+      console.error('Error fetching photos:', error);
+      return {};
+    }
+
+    const photosByItem: Record<string, string[]> = {};
+    data?.forEach((photo) => {
+      if (!photosByItem[photo.item_id]) {
+        photosByItem[photo.item_id] = [];
+      }
+      photosByItem[photo.item_id].push(photo.photo_url);
+    });
+
+    return photosByItem;
+  } catch (error) {
+    console.error('Error fetching photos:', error);
+    return {};
+  }
+};
 
 export const generateInspectionPDF = async (inspection: Inspection): Promise<Blob> => {
-  // For now, we'll create a simple HTML-based PDF using the browser's print functionality
-  // In a real implementation, you would use a library like jsPDF or PDFKit
-  
   const categoryScores = getCategoryWeightedScores(inspection.items);
+  const photosByItem = await getInspectionPhotos(inspection.id);
   
   const htmlContent = `
     <html>
@@ -17,12 +43,17 @@ export const generateInspectionPDF = async (inspection: Inspection): Promise<Blo
           .header { text-align: center; margin-bottom: 30px; }
           .section { margin-bottom: 20px; }
           .category { margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; }
-          .item { margin-left: 20px; margin-bottom: 10px; }
+          .item { margin-left: 20px; margin-bottom: 15px; padding: 10px; border-left: 3px solid #e0e0e0; }
           .score { font-weight: bold; color: #2563eb; }
           .summary { background-color: #f8f9fa; padding: 15px; border-radius: 5px; }
+          .photos { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+          .photo { max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; }
           table { width: 100%; border-collapse: collapse; }
           th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
           th { background-color: #f2f2f2; }
+          @media print {
+            .photo { max-width: 150px; max-height: 100px; }
+          }
         </style>
       </head>
       <body>
@@ -31,6 +62,7 @@ export const generateInspectionPDF = async (inspection: Inspection): Promise<Blo
           <h2>${inspection.neighborhood}</h2>
           <p>Date: ${new Date(inspection.date).toLocaleDateString()}</p>
           <p>Status: ${inspection.status}</p>
+          ${inspection.inspectorName ? `<p>Inspector: ${inspection.inspectorName}</p>` : ''}
         </div>
         
         <div class="summary">
@@ -82,6 +114,13 @@ export const generateInspectionPDF = async (inspection: Inspection): Promise<Blo
                   ${item.score !== null && item.score !== 'N/O' ? 
                     ` - ${item.scoreDescriptions[item.score as keyof typeof item.scoreDescriptions]}` : 
                     ''}
+                  ${photosByItem[item.id] && photosByItem[item.id].length > 0 ? `
+                    <div class="photos">
+                      ${photosByItem[item.id].map((photoUrl, index) => `
+                        <img src="${photoUrl}" alt="Inspection photo ${index + 1}" class="photo" />
+                      `).join('')}
+                    </div>
+                  ` : ''}
                 </div>
               `).join('')}
             </div>

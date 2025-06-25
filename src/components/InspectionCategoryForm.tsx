@@ -3,6 +3,8 @@ import { useInspection } from '@/contexts/InspectionContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import InspectionItemPhoto from './InspectionItemPhoto';
+import { useInspectionPhotos } from '@/hooks/useInspectionPhotos';
 
 const scoreLabels = {
   'N/O': 'Not Observed',
@@ -28,6 +30,7 @@ interface InspectionCategoryFormProps {
 
 const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
   const { currentInspection, updateItemScore } = useInspection();
+  const { addPhoto, removePhoto, getPhotosForItem } = useInspectionPhotos(currentInspection?.id || null);
 
   if (!currentInspection) return null;
 
@@ -159,6 +162,15 @@ const InspectionCategoryForm = ({ category }: InspectionCategoryFormProps) => {
                           </Badge>
                         </div>
                       )}
+
+                      {/* Photo Upload Section */}
+                      <InspectionItemPhoto
+                        inspectionId={currentInspection.id}
+                        itemId={inspectionItem.id}
+                        photos={getPhotosForItem(inspectionItem.id)}
+                        onPhotoAdded={(photoUrl) => addPhoto(inspectionItem.id, photoUrl)}
+                        onPhotoRemoved={(photoUrl) => removePhoto(inspectionItem.id, photoUrl)}
+                      />
                     </div>
                   </div>
                 ))}

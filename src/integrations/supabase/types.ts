@@ -57,6 +57,36 @@ export type Database = {
         }
         Relationships: []
       }
+      inspection_item_photos: {
+        Row: {
+          created_at: string
+          id: string
+          inspection_id: string
+          item_id: string
+          photo_path: string
+          photo_url: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inspection_id: string
+          item_id: string
+          photo_path: string
+          photo_url: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inspection_id?: string
+          item_id?: string
+          photo_path?: string
+          photo_url?: string
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
       neighborhoods: {
         Row: {
           created_at: string

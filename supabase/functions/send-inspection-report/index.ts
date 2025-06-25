@@ -32,8 +32,36 @@ interface InspectionReportRequest {
   };
 }
 
-const generateEmailHTML = (inspection: any) => {
+const getInspectionPhotos = async (supabaseClient: any, inspectionId: string) => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('inspection_item_photos')
+      .select('item_id, photo_url')
+      .eq('inspection_id', inspectionId);
+
+    if (error) {
+      console.error('Error fetching photos:', error);
+      return {};
+    }
+
+    const photosByItem: Record<string, string[]> = {};
+    data?.forEach((photo: any) => {
+      if (!photosByItem[photo.item_id]) {
+        photosByItem[photo.item_id] = [];
+      }
+      photosByItem[photo.item_id].push(photo.photo_url);
+    });
+
+    return photosByItem;
+  } catch (error) {
+    console.error('Error fetching photos:', error);
+    return {};
+  }
+};
+
+const generateEmailHTML = async (inspection: any, supabaseClient: any) => {
   const categoryScores: Record<string, { score: number; weight: number; itemCount: number }> = {};
+  const photosByItem = await getInspectionPhotos(supabaseClient, inspection.id);
   
   // Calculate category scores
   inspection.items.forEach((item: any) => {
@@ -63,9 +91,11 @@ const generateEmailHTML = (inspection: any) => {
           .header { text-align: center; margin-bottom: 30px; background-color: #f8f9fa; padding: 20px; border-radius: 8px; }
           .section { margin-bottom: 25px; }
           .category { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #fafafa; }
-          .item { margin-left: 20px; margin-bottom: 12px; padding: 8px; background-color: white; border-radius: 4px; }
+          .item { margin-left: 20px; margin-bottom: 15px; padding: 12px; background-color: white; border-radius: 4px; border-left: 3px solid #e0e0e0; }
           .score { font-weight: bold; color: #2563eb; }
           .summary { background-color: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3; }
+          .photos { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+          .photo { max-width: 150px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px; object-fit: cover; }
           table { width: 100%; border-collapse: collapse; margin-top: 15px; }
           th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
           th { background-color: #f2f2f2; font-weight: bold; }
@@ -87,6 +117,7 @@ const generateEmailHTML = (inspection: any) => {
           <h3>📊 Summary</h3>
           <p><strong>Overall Weighted Average Score:</strong> <span class="score">${inspection.averageScore.toFixed(2)}/3.52</span></p>
           <p><strong>Total Items Inspected:</strong> ${inspection.items.filter((item: any) => item.score !== null).length} of ${inspection.items.length}</p>
+          <p><strong>Photos Captured:</strong> ${Object.values(photosByItem).flat().length}</p>
           <p><strong>Report Generated:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
         </div>
         
@@ -132,6 +163,14 @@ const generateEmailHTML = (inspection: any) => {
                   ${item.score !== null && item.score !== 'N/O' && item.scoreDescriptions[item.score] ? 
                     ` - ${item.scoreDescriptions[item.score]}` : 
                     ''}
+                  ${photosByItem[item.id] && photosByItem[item.id].length > 0 ? `
+                    <div class="photos">
+                      <strong>📷 Photos (${photosByItem[item.id].length}):</strong><br>
+                      ${photosByItem[item.id].map((photoUrl: string, index: number) => `
+                        <img src="${photoUrl}" alt="Inspection photo ${index + 1}" class="photo" />
+                      `).join('')}
+                    </div>
+                  ` : ''}
                 </div>
               `).join('')}
             </div>
@@ -195,8 +234,8 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Generate email content
-    const emailHTML = generateEmailHTML(inspection);
+    // Generate email content with photos
+    const emailHTML = await generateEmailHTML(inspection, supabaseClient);
     const subject = `Inspection Report - ${inspection.neighborhood} - ${new Date(inspection.date).toLocaleDateString()}`;
 
     console.log('Sending email to recipients:', recipients);
