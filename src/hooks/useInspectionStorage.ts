@@ -1,40 +1,56 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Inspection } from '@/types/inspection';
+import { inspectionService } from '@/services/inspectionService';
 
 export const useInspectionStorage = () => {
-  const [savedInspections, setSavedInspections] = useState<Inspection[]>(() => {
-    const saved = localStorage.getItem('ibacosiq_inspections');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [savedInspections, setSavedInspections] = useState<Inspection[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const saveInspectionToStorage = useCallback((inspection: Inspection) => {
-    const updatedInspections = savedInspections.filter(i => i.id !== inspection.id);
-    updatedInspections.push(inspection);
-    
-    setSavedInspections(updatedInspections);
-    localStorage.setItem('ibacosiq_inspections', JSON.stringify(updatedInspections));
-  }, [savedInspections]);
+  // Load inspections from database on mount
+  useEffect(() => {
+    loadInspections();
+  }, []);
 
-  const findExistingInspection = useCallback((neighborhood: string) => {
-    return savedInspections.find(
-      inspection => inspection.neighborhood === neighborhood && inspection.status === 'in-progress'
-    );
-  }, [savedInspections]);
+  const loadInspections = async () => {
+    setLoading(true);
+    try {
+      const inspections = await inspectionService.getAllInspections();
+      setSavedInspections(inspections);
+    } catch (error) {
+      console.error('Error loading inspections:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveInspectionToStorage = useCallback(async (inspection: Inspection) => {
+    const success = await inspectionService.saveInspection(inspection);
+    if (success) {
+      // Reload inspections to get the latest data
+      await loadInspections();
+    }
+    return success;
+  }, []);
+
+  const findExistingInspection = useCallback(async (neighborhood: string) => {
+    return await inspectionService.findExistingInProgressInspection(neighborhood);
+  }, []);
 
   const getInspectionById = useCallback((inspectionId: string) => {
     return savedInspections.find(i => i.id === inspectionId);
   }, [savedInspections]);
 
-  const deleteInspectionFromStorage = useCallback((inspectionId: string) => {
-    const updatedInspections = savedInspections.filter(i => i.id !== inspectionId);
-    setSavedInspections(updatedInspections);
-    localStorage.setItem('ibacosiq_inspections', JSON.stringify(updatedInspections));
-  }, [savedInspections]);
+  const deleteInspectionFromStorage = useCallback(async (inspectionId: string) => {
+    const success = await inspectionService.deleteInspection(inspectionId);
+    if (success) {
+      // Reload inspections to get the latest data
+      await loadInspections();
+    }
+    return success;
+  }, []);
 
   const getAllInspections = useCallback(() => {
-    // For now, return all saved inspections since we're using localStorage
-    // In the future, this could be expanded to fetch from a shared database
     return savedInspections;
   }, [savedInspections]);
 
@@ -45,6 +61,7 @@ export const useInspectionStorage = () => {
     findExistingInspection,
     getInspectionById,
     deleteInspectionFromStorage,
-    getAllInspections
+    getAllInspections,
+    loading
   };
 };

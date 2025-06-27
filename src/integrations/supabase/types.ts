@@ -87,6 +87,101 @@ export type Database = {
         }
         Relationships: []
       }
+      inspection_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          inspection_id: string
+          item_id: string
+          item_name: string
+          score: string | null
+          score_descriptions: Json | null
+          subcategory: string
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          inspection_id: string
+          item_id: string
+          item_name: string
+          score?: string | null
+          score_descriptions?: Json | null
+          subcategory: string
+          updated_at?: string
+          weight: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          inspection_id?: string
+          item_id?: string
+          item_name?: string
+          score?: string | null
+          score_descriptions?: Json | null
+          subcategory?: string
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspection_items_inspection_id_fkey"
+            columns: ["inspection_id"]
+            isOneToOne: false
+            referencedRelation: "inspections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inspections: {
+        Row: {
+          average_score: number | null
+          created_at: string
+          date: string
+          id: string
+          inspector_email: string | null
+          inspector_id: string | null
+          inspector_name: string | null
+          max_score: number | null
+          neighborhood: string
+          status: string
+          total_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_score?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          inspector_email?: string | null
+          inspector_id?: string | null
+          inspector_name?: string | null
+          max_score?: number | null
+          neighborhood: string
+          status: string
+          total_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_score?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          inspector_email?: string | null
+          inspector_id?: string | null
+          inspector_name?: string | null
+          max_score?: number | null
+          neighborhood?: string
+          status?: string
+          total_score?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       neighborhoods: {
         Row: {
           created_at: string

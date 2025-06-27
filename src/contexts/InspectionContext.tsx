@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { InspectionContextType, Inspection } from '@/types/inspection';
 import { useInspectionStorage } from '@/hooks/useInspectionStorage';
 import { useInspectionActions } from '@/hooks/useInspectionActions';
@@ -29,7 +29,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     findExistingInspection,
     getInspectionById,
     deleteInspectionFromStorage,
-    getAllInspections
+    getAllInspections,
+    loading
   } = useInspectionStorage();
 
   const {

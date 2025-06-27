@@ -11,10 +11,10 @@ import { useAuth } from '@/contexts/AuthContext';
 interface UseInspectionActionsProps {
   currentInspection: Inspection | null;
   setCurrentInspection: (inspection: Inspection | null) => void;
-  saveInspectionToStorage: (inspection: Inspection) => void;
-  findExistingInspection: (neighborhood: string) => Inspection | undefined;
+  saveInspectionToStorage: (inspection: Inspection) => Promise<boolean>;
+  findExistingInspection: (neighborhood: string) => Promise<Inspection | null>;
   getInspectionById: (inspectionId: string) => Inspection | undefined;
-  deleteInspectionFromStorage: (inspectionId: string) => void;
+  deleteInspectionFromStorage: (inspectionId: string) => Promise<boolean>;
 }
 
 export const useInspectionActions = ({
@@ -25,13 +25,13 @@ export const useInspectionActions = ({
   getInspectionById,
   deleteInspectionFromStorage
 }: UseInspectionActionsProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   
-  const startNewInspection = useCallback((neighborhood: string, forceNew: boolean = false) => {
+  const startNewInspection = useCallback(async (neighborhood: string, forceNew: boolean = false) => {
     console.log('Starting inspection for neighborhood:', neighborhood, 'forceNew:', forceNew);
     console.log('All inspection items available:', allInspectionItems.length);
     
-    const existingInspection = findExistingInspection(neighborhood);
+    const existingInspection = await findExistingInspection(neighborhood);
     
     // If there's an existing inspection and we're not forcing a new one, don't automatically load it
     if (existingInspection && !forceNew) {
@@ -54,7 +54,9 @@ export const useInspectionActions = ({
       })),
       totalScore: 0,
       maxScore: allInspectionItems.length * 4,
-      averageScore: 0
+      averageScore: 0,
+      inspectorName: profile?.name || user?.email || 'Unknown',
+      inspectorEmail: user?.email || 'unknown@email.com'
     };
     
     console.log('New inspection created with items:', newInspection.items.length);
@@ -62,10 +64,10 @@ export const useInspectionActions = ({
     
     setCurrentInspection(newInspection);
     return { hasExisting: false, newInspection };
-  }, [findExistingInspection, setCurrentInspection]);
+  }, [findExistingInspection, setCurrentInspection, user, profile]);
 
-  const continueExistingInspection = useCallback((neighborhood: string) => {
-    const existingInspection = findExistingInspection(neighborhood);
+  const continueExistingInspection = useCallback(async (neighborhood: string) => {
+    const existingInspection = await findExistingInspection(neighborhood);
     if (existingInspection) {
       console.log('Loading existing inspection:', existingInspection);
       setCurrentInspection(existingInspection);
@@ -92,9 +94,9 @@ export const useInspectionActions = ({
     });
   }, [currentInspection, setCurrentInspection]);
 
-  const saveInspection = useCallback(() => {
-    if (!currentInspection) return;
-    saveInspectionToStorage(currentInspection);
+  const saveInspection = useCallback(async () => {
+    if (!currentInspection) return false;
+    return await saveInspectionToStorage(currentInspection);
   }, [currentInspection, saveInspectionToStorage]);
 
   const submitInspection = useCallback(async () => {
@@ -105,7 +107,16 @@ export const useInspectionActions = ({
       status: 'completed' as const
     };
     
-    saveInspectionToStorage(completedInspection);
+    const success = await saveInspectionToStorage(completedInspection);
+    
+    if (!success) {
+      toast({
+        title: "Error",
+        description: "Failed to save inspection",
+        variant: "destructive"
+      });
+      return;
+    }
     
     // Generate and download PDF
     try {
@@ -166,18 +177,19 @@ export const useInspectionActions = ({
     }
   }, [getInspectionById, setCurrentInspection]);
 
-  const deleteInspection = useCallback(() => {
+  const deleteInspection = useCallback(async () => {
     if (!currentInspection) return;
     
     // Allow lewis.bedford@starlighthomes.com to delete any inspection
     if (user?.email === 'lewis.bedford@starlighthomes.com') {
-      deleteInspectionFromStorage(currentInspection.id);
-      setCurrentInspection(null);
-      
-      toast({
-        title: "Inspection Deleted",
-        description: "The inspection has been deleted (admin override).",
-      });
+      const success = await deleteInspectionFromStorage(currentInspection.id);
+      if (success) {
+        setCurrentInspection(null);
+        toast({
+          title: "Inspection Deleted",
+          description: "The inspection has been deleted (admin override).",
+        });
+      }
       return;
     }
     
@@ -191,13 +203,14 @@ export const useInspectionActions = ({
       return;
     }
     
-    deleteInspectionFromStorage(currentInspection.id);
-    setCurrentInspection(null);
-    
-    toast({
-      title: "Inspection Deleted",
-      description: "The incomplete inspection has been deleted.",
-    });
+    const success = await deleteInspectionFromStorage(currentInspection.id);
+    if (success) {
+      setCurrentInspection(null);
+      toast({
+        title: "Inspection Deleted",
+        description: "The incomplete inspection has been deleted.",
+      });
+    }
   }, [currentInspection, deleteInspectionFromStorage, setCurrentInspection, user?.email]);
 
   return {
