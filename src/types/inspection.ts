@@ -34,13 +34,13 @@ export interface InspectionContextType {
   savedInspections: Inspection[];
   allCompletedInspections: Inspection[];
   setCurrentInspection: (inspection: Inspection | null) => void;
-  startNewInspection: (neighborhood: string, forceNew?: boolean) => { hasExisting: boolean; existingInspection?: Inspection; newInspection?: Inspection };
-  continueExistingInspection: (neighborhood: string) => boolean;
+  startNewInspection: (neighborhood: string, forceNew?: boolean) => Promise<{ hasExisting: boolean; existingInspection?: Inspection; newInspection?: Inspection }>;
+  continueExistingInspection: (neighborhood: string) => Promise<boolean>;
   updateItemScore: (itemId: string, score: number | string) => void;
-  saveInspection: () => void;
+  saveInspection: () => Promise<boolean>;
   submitInspection: () => Promise<void>;
   loadInspection: (inspectionId: string) => void;
-  deleteInspection: () => void;
+  deleteInspection: () => Promise<void>;
   getAllInspections: () => Inspection[];
   getAllCompletedInspections: () => Inspection[];
   canDeleteCurrentInspection: () => boolean;

@@ -58,7 +58,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     return existingInspection ? 'in-progress' : 'available';
   };
 
-  const handleStartNewInspection = () => {
+  const handleStartNewInspection = async () => {
     if (!selectedNeighborhood) {
       toast({
         title: "Error",
@@ -79,7 +79,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     }
 
     // Start new inspection
-    const result = onStartInspection(selectedNeighborhood, true);
+    const result = await onStartInspection(selectedNeighborhood, true);
     
     toast({
       title: "New Inspection Started",
@@ -87,7 +87,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     });
   };
 
-  const handleContinueInspection = () => {
+  const handleContinueInspection = async () => {
     if (!selectedNeighborhood) {
       toast({
         title: "Error",
@@ -97,7 +97,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
       return;
     }
 
-    const success = continueExistingInspection(selectedNeighborhood);
+    const success = await continueExistingInspection(selectedNeighborhood);
     
     if (success) {
       toast({
@@ -113,7 +113,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     }
   };
 
-  const handleDeleteExistingInspection = () => {
+  const handleDeleteExistingInspection = async () => {
     if (!selectedNeighborhood) return;
     
     const existingInspection = savedInspections.find(
@@ -122,11 +122,11 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     
     if (existingInspection) {
       // Load the inspection temporarily to delete it
-      const result = onStartInspection(selectedNeighborhood, false);
+      const result = await onStartInspection(selectedNeighborhood, false);
       if (result.existingInspection) {
         // This will trigger the delete through the inspection actions
-        setTimeout(() => {
-          deleteInspection();
+        setTimeout(async () => {
+          await deleteInspection();
         }, 100);
       }
     }
