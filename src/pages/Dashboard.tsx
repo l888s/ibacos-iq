@@ -6,7 +6,6 @@ import DashboardStats from '@/components/dashboard/DashboardStats';
 import QuickActions from '@/components/dashboard/QuickActions';
 import RecentInspections from '@/components/dashboard/RecentInspections';
 import NeighborhoodChart from '@/components/dashboard/NeighborhoodChart';
-import FileUploadMigration from '@/components/FileUploadMigration';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useInspection } from '@/contexts/InspectionContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,11 +16,6 @@ const Dashboard = () => {
   const { getAllCompletedInspections } = useInspection();
   const { profile } = useAuth();
   const navigate = useNavigate();
-  const [showMigrationButton, setShowMigrationButton] = useState(true);
-
-  const handleMigrationSuccess = () => {
-    setShowMigrationButton(false);
-  };
 
   const handleStartNewInspection = () => {
     navigate('/inspection');
@@ -58,20 +52,6 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <DashboardHeader userName={profile?.name || 'User'} />
         
-        {showMigrationButton && (
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-medium text-blue-800">Upload Inspection Files</h3>
-                <p className="text-sm text-blue-600">
-                  Upload your completed Chapel Run and Spring Creek Trails inspection files (JSON format) to the shared database.
-                </p>
-              </div>
-              <FileUploadMigration onSuccess={handleMigrationSuccess} />
-            </div>
-          </div>
-        )}
-
         <DashboardStats 
           totalInspections={totalInspections}
           avgScore={avgScore}
