@@ -45,4 +45,5 @@ export interface InspectionContextType {
   getAllCompletedInspections: () => Inspection[];
   canDeleteCurrentInspection: () => boolean;
   hasInProgressInspection: (neighborhood: string) => boolean;
+  clearCurrentInspection: () => void;
 }

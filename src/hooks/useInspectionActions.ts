@@ -33,10 +33,10 @@ export const useInspectionActions = ({
     
     const existingInspection = await findExistingInspection(neighborhood);
     
-    // If there's an existing inspection and we're not forcing a new one, don't automatically load it
+    // If there's an existing inspection and we're not forcing a new one, return info but don't load it
     if (existingInspection && !forceNew) {
-      console.log('Found existing inspection, but not auto-loading:', existingInspection);
-      // Don't automatically load - let the user choose
+      console.log('Found existing inspection, returning info without loading:', existingInspection);
+      // Don't automatically load - let the user choose in NeighborhoodSelection
       return { hasExisting: true, existingInspection };
     }
 

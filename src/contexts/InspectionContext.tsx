@@ -75,6 +75,11 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     );
   };
 
+  // Clear current inspection when starting fresh (e.g., from dashboard)
+  const clearCurrentInspection = () => {
+    setCurrentInspection(null);
+  };
+
   const contextValue: InspectionContextType = {
     currentInspection,
     savedInspections,
@@ -90,7 +95,8 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     getAllInspections,
     getAllCompletedInspections,
     canDeleteCurrentInspection,
-    hasInProgressInspection
+    hasInProgressInspection,
+    clearCurrentInspection
   };
 
   return (

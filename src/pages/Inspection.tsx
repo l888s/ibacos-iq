@@ -53,15 +53,15 @@ const Inspection = () => {
     return () => clearInterval(autoSaveInterval);
   }, [currentInspection, autoSaveEnabled, saveInspection]);
 
-  const handleManualSave = () => {
-    saveInspection();
+  const handleManualSave = async () => {
+    await saveInspection();
     toast({
       title: "Saved",
       description: "Inspection progress has been saved",
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!currentInspection) return;
     
     const incompleteItems = currentInspection.items.filter(item => item.score === null);
@@ -74,7 +74,7 @@ const Inspection = () => {
       return;
     }
 
-    submitInspection();
+    await submitInspection();
     toast({
       title: "Inspection Submitted",
       description: "Report has been generated and emailed to stakeholders",
@@ -82,8 +82,8 @@ const Inspection = () => {
     navigate('/reports');
   };
 
-  const handleDelete = () => {
-    deleteInspection();
+  const handleDelete = async () => {
+    await deleteInspection();
     navigate('/');
   };
 
@@ -139,6 +139,7 @@ const Inspection = () => {
     return currentInspection.items.every(item => item.score !== null);
   };
 
+  // Always show neighborhood selection if no current inspection
   if (!currentInspection) {
     return (
       <>
