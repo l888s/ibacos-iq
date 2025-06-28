@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { Inspection, InspectionItem } from '@/types/inspection';
 import { allInspectionItems } from '@/data/inspectionItems';
@@ -44,7 +43,7 @@ export const useInspectionActions = ({
     console.log('Creating new inspection with items from categories:', [...new Set(allInspectionItems.map(item => item.category))]);
 
     const newInspection: Inspection = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(), // Use proper UUID instead of timestamp
       neighborhood,
       date: new Date().toISOString(),
       status: 'in-progress',
@@ -59,6 +58,7 @@ export const useInspectionActions = ({
       inspectorEmail: user?.email || 'unknown@email.com'
     };
     
+    console.log('New inspection created with UUID:', newInspection.id);
     console.log('New inspection created with items:', newInspection.items.length);
     console.log('Categories in new inspection:', [...new Set(newInspection.items.map(item => item.category))]);
     
