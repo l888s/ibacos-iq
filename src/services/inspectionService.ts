@@ -169,5 +169,35 @@ export const inspectionService = {
       console.error('Error finding existing inspection:', error);
       return null;
     }
+  },
+
+  // Helper method to upload completed inspections from local storage
+  async uploadCompletedInspection(inspectionData: any): Promise<boolean> {
+    try {
+      console.log('Uploading completed inspection:', inspectionData);
+      
+      // Create the inspection with a new UUID but preserve the original data
+      const inspection: Inspection = {
+        id: crypto.randomUUID(), // Generate new UUID for database
+        neighborhood: inspectionData.neighborhood,
+        date: inspectionData.date,
+        status: 'completed',
+        totalScore: inspectionData.totalScore || 0,
+        maxScore: inspectionData.maxScore || 0,
+        averageScore: inspectionData.averageScore || 0,
+        inspectorName: inspectionData.inspectorName,
+        inspectorEmail: inspectionData.inspectorEmail,
+        items: inspectionData.items || []
+      };
+
+      const success = await this.saveInspection(inspection);
+      if (success) {
+        console.log('Successfully uploaded completed inspection for', inspectionData.neighborhood);
+      }
+      return success;
+    } catch (error) {
+      console.error('Error uploading completed inspection:', error);
+      return false;
+    }
   }
 };

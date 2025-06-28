@@ -1,66 +1,83 @@
 
-import { useAuth } from '@/contexts/AuthContext';
-import { useInspection } from '@/contexts/InspectionContext';
-import { useNavigate } from 'react-router-dom';
-import { useDashboardData } from '@/hooks/useDashboardData';
+import { useEffect, useState } from 'react';
 import Navigation from '@/components/Navigation';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardStats from '@/components/dashboard/DashboardStats';
-import NeighborhoodChart from '@/components/dashboard/NeighborhoodChart';
-import RecentInspections from '@/components/dashboard/RecentInspections';
 import QuickActions from '@/components/dashboard/QuickActions';
+import RecentInspections from '@/components/dashboard/RecentInspections';
+import NeighborhoodChart from '@/components/dashboard/NeighborhoodChart';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import { useInspection } from '@/contexts/InspectionContext';
+import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
+import { uploadCompletedInspections } from '@/utils/migrationHelper';
 
 const Dashboard = () => {
-  const { user, profile } = useAuth();
-  const { getAllInspections, setCurrentInspection } = useInspection();
-  const navigate = useNavigate();
+  const { inspections, neighborhoods, loading } = useDashboardData();
+  const { getAllCompletedInspections } = useInspection();
+  const [showMigrationButton, setShowMigrationButton] = useState(true);
 
-  // Get all inspections from all users
-  const allInspections = getAllInspections();
-  const { neighborhoodData, recentInspections, totalInspections, avgScore } = useDashboardData(allInspections);
-
-  const handleStartNewInspection = () => {
-    // Clear any current inspection before navigating
-    setCurrentInspection(null);
-    navigate('/inspection');
+  const handleMigration = async () => {
+    await uploadCompletedInspections();
+    setShowMigrationButton(false);
   };
 
-  const handleViewReports = () => {
-    navigate('/reports');
+  const stats = {
+    totalInspections: inspections.length,
+    completedInspections: getAllCompletedInspections().length,
+    inProgressInspections: inspections.filter(i => i.status === 'in-progress').length,
+    averageScore: inspections.length > 0 
+      ? inspections.reduce((sum, inspection) => sum + (inspection.averageScore || 0), 0) / inspections.length 
+      : 0
   };
 
-  const handleAdminClick = () => {
-    navigate('/admin');
-  };
-
-  console.log('Dashboard - Current user:', user?.email);
-  console.log('Dashboard - Current profile:', profile);
-  console.log('Dashboard - Is admin?', profile?.role === 'admin');
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
+        <Navigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
       <Navigation />
       
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <DashboardHeader 
-          userName={profile?.name || user?.email || 'User'}
-        />
+        <DashboardHeader />
+        
+        {showMigrationButton && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-blue-800">Migration Available</h3>
+                <p className="text-sm text-blue-600">
+                  Upload your completed Chapel Run and Spring Creek Trails inspections from local storage to the shared database.
+                </p>
+              </div>
+              <Button onClick={handleMigration} className="bg-blue-600 hover:bg-blue-700">
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Inspections
+              </Button>
+            </div>
+          </div>
+        )}
 
-        <DashboardStats 
-          totalInspections={totalInspections}
-          avgScore={avgScore}
-          recentInspectionsCount={recentInspections.length}
-        />
-
-        <NeighborhoodChart data={neighborhoodData} />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <RecentInspections inspections={recentInspections} />
-          <QuickActions 
-            onStartNewInspection={handleStartNewInspection}
-            onViewReports={handleViewReports}
-          />
+        <DashboardStats stats={stats} />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <NeighborhoodChart inspections={inspections} />
+          </div>
+          <div>
+            <QuickActions />
+          </div>
         </div>
+        
+        <RecentInspections inspections={inspections.slice(0, 5)} />
       </div>
     </div>
   );

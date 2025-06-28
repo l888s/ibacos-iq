@@ -15,17 +15,19 @@ interface Neighborhood {
 }
 
 interface NeighborhoodSelectionProps {
-  onStartInspection: (neighborhood: string, forceNew?: boolean) => any;
+  onStartInspection: (neighborhood: string, forceNew?: boolean) => Promise<{ hasExisting: boolean; existingInspection?: any; newInspection?: any }>;
 }
 
 const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps) => {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [neighborhoods, setNeighborhoods] = useState<Neighborhood[]>([]);
+  const [inProgressNeighborhoods, setInProgressNeighborhoods] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
-  const { savedInspections, continueExistingInspection, hasInProgressInspection, deleteInspection } = useInspection();
+  const { continueExistingInspection, deleteInspection } = useInspection();
 
   useEffect(() => {
     fetchNeighborhoods();
+    fetchInProgressInspections();
   }, []);
 
   const fetchNeighborhoods = async () => {
@@ -46,16 +48,21 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     }
   };
 
+  const fetchInProgressInspections = async () => {
+    const { data, error } = await supabase
+      .from('inspections')
+      .select('neighborhood')
+      .eq('status', 'in-progress');
+    
+    if (!error && data) {
+      const neighborhoods = new Set(data.map(inspection => inspection.neighborhood));
+      setInProgressNeighborhoods(neighborhoods);
+      console.log('In-progress neighborhoods:', neighborhoods);
+    }
+  };
+
   const getNeighborhoodStatus = (neighborhood: string) => {
-    console.log('Checking status for neighborhood:', neighborhood);
-    console.log('Saved inspections:', savedInspections);
-    
-    const existingInspection = savedInspections.find(
-      inspection => inspection.neighborhood === neighborhood && inspection.status === 'in-progress'
-    );
-    
-    console.log('Existing in-progress inspection found:', existingInspection);
-    return existingInspection ? 'in-progress' : 'available';
+    return inProgressNeighborhoods.has(neighborhood) ? 'in-progress' : 'available';
   };
 
   const handleStartNewInspection = async () => {
@@ -69,7 +76,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     }
 
     // Check if there's already an in-progress inspection
-    if (hasInProgressInspection(selectedNeighborhood)) {
+    if (getNeighborhoodStatus(selectedNeighborhood) === 'in-progress') {
       toast({
         title: "Inspection Already In Progress",
         description: "This neighborhood has an active inspection. Please continue or delete the existing inspection first.",
@@ -78,13 +85,25 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
       return;
     }
 
-    // Start new inspection
-    const result = await onStartInspection(selectedNeighborhood, true);
-    
-    toast({
-      title: "New Inspection Started",
-      description: `New inspection for ${selectedNeighborhood} has been created`,
-    });
+    try {
+      // Start new inspection
+      const result = await onStartInspection(selectedNeighborhood, true);
+      
+      toast({
+        title: "New Inspection Started",
+        description: `New inspection for ${selectedNeighborhood} has been created`,
+      });
+      
+      // Refresh the in-progress list
+      await fetchInProgressInspections();
+    } catch (error) {
+      console.error('Error starting new inspection:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start new inspection",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleContinueInspection = async () => {
@@ -97,17 +116,26 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
       return;
     }
 
-    const success = await continueExistingInspection(selectedNeighborhood);
-    
-    if (success) {
-      toast({
-        title: "Inspection Resumed",
-        description: `Continuing existing inspection for ${selectedNeighborhood}`,
-      });
-    } else {
+    try {
+      const success = await continueExistingInspection(selectedNeighborhood);
+      
+      if (success) {
+        toast({
+          title: "Inspection Resumed",
+          description: `Continuing existing inspection for ${selectedNeighborhood}`,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "No existing inspection found for this neighborhood",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error continuing inspection:', error);
       toast({
         title: "Error",
-        description: "No existing inspection found for this neighborhood",
+        description: "Failed to continue inspection",
         variant: "destructive",
       });
     }
@@ -116,19 +144,28 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
   const handleDeleteExistingInspection = async () => {
     if (!selectedNeighborhood) return;
     
-    const existingInspection = savedInspections.find(
-      inspection => inspection.neighborhood === selectedNeighborhood && inspection.status === 'in-progress'
-    );
-    
-    if (existingInspection) {
-      // Load the inspection temporarily to delete it
+    try {
+      // Load the existing inspection to delete it
       const result = await onStartInspection(selectedNeighborhood, false);
       if (result.existingInspection) {
-        // This will trigger the delete through the inspection actions
-        setTimeout(async () => {
-          await deleteInspection();
-        }, 100);
+        // Delete the inspection
+        await deleteInspection();
+        
+        // Refresh the in-progress list
+        await fetchInProgressInspections();
+        
+        toast({
+          title: "Inspection Deleted",
+          description: `Deleted in-progress inspection for ${selectedNeighborhood}`,
+        });
       }
+    } catch (error) {
+      console.error('Error deleting inspection:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete inspection",
+        variant: "destructive",
+      });
     }
   };
 
