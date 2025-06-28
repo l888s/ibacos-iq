@@ -221,15 +221,26 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
                 </SelectContent>
               </Select>
               
+              {/* Warning text when a neighborhood with in-progress inspection is selected */}
               {selectedNeighborhood && getNeighborhoodStatus(selectedNeighborhood) === 'in-progress' && (
-                <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
-                  <div className="flex items-center gap-2 text-orange-800">
-                    <AlertTriangle className="h-4 w-4" />
-                    <span className="text-sm font-medium">Existing Inspection Found</span>
+                <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-md">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-orange-800 mb-1">
+                        Inspection In Progress
+                      </h4>
+                      <p className="text-sm text-orange-700 mb-3">
+                        This neighborhood has an unfinished inspection that was started earlier. 
+                        You must either continue working on the existing inspection or delete it 
+                        before starting a new one.
+                      </p>
+                      <p className="text-xs text-orange-600">
+                        <strong>Note:</strong> Deleting an in-progress inspection will permanently 
+                        remove all work that has been completed so far.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-orange-700 mt-1">
-                    This neighborhood has an unfinished inspection. You must continue the existing inspection or delete it before starting a new one.
-                  </p>
                 </div>
               )}
             </div>
