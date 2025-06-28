@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Inspection, InspectionItem } from '@/types/inspection';
 
@@ -49,6 +50,16 @@ export const inspectionService = {
     try {
       console.log('=== SAVING INSPECTION ===');
       console.log('Inspection data:', inspection);
+      console.log('Inspection ID type:', typeof inspection.id);
+      console.log('Inspection ID value:', inspection.id);
+      console.log('Is UUID format?', /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(inspection.id));
+      
+      // Check if the ID looks like a timestamp and regenerate if needed
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(inspection.id)) {
+        console.log('Invalid UUID detected, generating new one...');
+        inspection.id = crypto.randomUUID();
+        console.log('New UUID generated:', inspection.id);
+      }
       
       const { data: user } = await supabase.auth.getUser();
       console.log('Current user:', user.user?.id, user.user?.email);

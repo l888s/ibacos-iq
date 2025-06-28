@@ -50,6 +50,18 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
     deleteInspectionFromStorage
   });
 
+  // Debug current inspection when it changes
+  useEffect(() => {
+    if (currentInspection) {
+      console.log('=== CURRENT INSPECTION DEBUG ===');
+      console.log('Current inspection ID:', currentInspection.id);
+      console.log('Current inspection ID type:', typeof currentInspection.id);
+      console.log('Is valid UUID?', /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(currentInspection.id));
+      console.log('Current inspection:', currentInspection);
+      console.log('=== END CURRENT INSPECTION DEBUG ===');
+    }
+  }, [currentInspection]);
+
   // Get all completed inspections (status === 'completed')
   const getAllCompletedInspections = () => {
     return savedInspections.filter(inspection => inspection.status === 'completed');
@@ -77,6 +89,7 @@ export const InspectionProvider: React.FC<InspectionProviderProps> = ({ children
 
   // Clear current inspection when starting fresh (e.g., from dashboard)
   const clearCurrentInspection = () => {
+    console.log('Clearing current inspection');
     setCurrentInspection(null);
   };
 
