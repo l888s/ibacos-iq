@@ -31,6 +31,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
   }, []);
 
   const fetchNeighborhoods = async () => {
+    console.log('Fetching neighborhoods from Supabase...');
     const { data, error } = await supabase
       .from('neighborhoods')
       .select('*')
@@ -44,25 +45,32 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
         variant: "destructive",
       });
     } else {
+      console.log('Neighborhoods loaded:', data);
       setNeighborhoods(data || []);
     }
   };
 
   const fetchInProgressInspections = async () => {
+    console.log('Fetching in-progress inspections from Supabase...');
     const { data, error } = await supabase
       .from('inspections')
-      .select('neighborhood')
+      .select('neighborhood, status, id')
       .eq('status', 'in-progress');
     
-    if (!error && data) {
-      const neighborhoods = new Set(data.map(inspection => inspection.neighborhood));
+    if (error) {
+      console.error('Error fetching in-progress inspections:', error);
+    } else {
+      console.log('In-progress inspections found:', data);
+      const neighborhoods = new Set(data?.map(inspection => inspection.neighborhood) || []);
       setInProgressNeighborhoods(neighborhoods);
-      console.log('In-progress neighborhoods:', neighborhoods);
+      console.log('In-progress neighborhoods set:', Array.from(neighborhoods));
     }
   };
 
   const getNeighborhoodStatus = (neighborhood: string) => {
-    return inProgressNeighborhoods.has(neighborhood) ? 'in-progress' : 'available';
+    const status = inProgressNeighborhoods.has(neighborhood) ? 'in-progress' : 'available';
+    console.log(`Status for ${neighborhood}:`, status, 'In-progress set:', Array.from(inProgressNeighborhoods));
+    return status;
   };
 
   const handleStartNewInspection = async () => {
@@ -74,6 +82,9 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
       });
       return;
     }
+
+    console.log('Starting new inspection for:', selectedNeighborhood);
+    console.log('Current status:', getNeighborhoodStatus(selectedNeighborhood));
 
     // Check if there's already an in-progress inspection
     if (getNeighborhoodStatus(selectedNeighborhood) === 'in-progress') {
@@ -88,6 +99,7 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     try {
       // Start new inspection
       const result = await onStartInspection(selectedNeighborhood, true);
+      console.log('New inspection result:', result);
       
       toast({
         title: "New Inspection Started",
@@ -116,6 +128,8 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
       return;
     }
 
+    console.log('Continuing inspection for:', selectedNeighborhood);
+
     try {
       const success = await continueExistingInspection(selectedNeighborhood);
       
@@ -125,6 +139,9 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
           description: `Continuing existing inspection for ${selectedNeighborhood}`,
         });
       } else {
+        console.log('No existing inspection found, refreshing list...');
+        // Refresh the list in case the data is stale
+        await fetchInProgressInspections();
         toast({
           title: "Error",
           description: "No existing inspection found for this neighborhood",
@@ -144,9 +161,13 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
   const handleDeleteExistingInspection = async () => {
     if (!selectedNeighborhood) return;
     
+    console.log('Deleting existing inspection for:', selectedNeighborhood);
+    
     try {
       // Load the existing inspection to delete it
       const result = await onStartInspection(selectedNeighborhood, false);
+      console.log('Existing inspection to delete:', result);
+      
       if (result.existingInspection) {
         // Delete the inspection
         await deleteInspection();
@@ -158,6 +179,10 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
           title: "Inspection Deleted",
           description: `Deleted in-progress inspection for ${selectedNeighborhood}`,
         });
+      } else {
+        console.log('No existing inspection found to delete');
+        // Refresh the list anyway
+        await fetchInProgressInspections();
       }
     } catch (error) {
       console.error('Error deleting inspection:', error);
@@ -167,6 +192,12 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
         variant: "destructive",
       });
     }
+  };
+
+  // Add a debug button to manually refresh the in-progress list
+  const handleRefreshInProgress = async () => {
+    console.log('Manually refreshing in-progress inspections...');
+    await fetchInProgressInspections();
   };
 
   return (
@@ -220,6 +251,16 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
                   })}
                 </SelectContent>
               </Select>
+              
+              {/* Debug button to refresh in-progress list */}
+              <Button 
+                onClick={handleRefreshInProgress}
+                variant="outline"
+                size="sm"
+                className="mt-2"
+              >
+                Refresh Status
+              </Button>
               
               {/* Warning text when a neighborhood with in-progress inspection is selected */}
               {selectedNeighborhood && getNeighborhoodStatus(selectedNeighborhood) === 'in-progress' && (
