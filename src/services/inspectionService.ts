@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Inspection, InspectionItem } from '@/types/inspection';
 
@@ -48,62 +47,100 @@ export const inspectionService = {
 
   async saveInspection(inspection: Inspection): Promise<boolean> {
     try {
-      const { data: user } = await supabase.auth.getUser();
+      console.log('=== SAVING INSPECTION ===');
+      console.log('Inspection data:', inspection);
       
+      const { data: user } = await supabase.auth.getUser();
+      console.log('Current user:', user.user?.id, user.user?.email);
+      
+      // Prepare inspection data for database
+      const inspectionData = {
+        id: inspection.id,
+        neighborhood: inspection.neighborhood,
+        date: inspection.date,
+        status: inspection.status,
+        total_score: inspection.totalScore,
+        max_score: inspection.maxScore,
+        average_score: inspection.averageScore,
+        inspector_name: inspection.inspectorName,
+        inspector_email: inspection.inspectorEmail,
+        inspector_id: user.user?.id,
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log('Prepared inspection data for DB:', inspectionData);
+
       // Upsert the inspection
       const { data: savedInspection, error: inspectionError } = await supabase
         .from('inspections')
-        .upsert({
-          id: inspection.id,
-          neighborhood: inspection.neighborhood,
-          date: inspection.date,
-          status: inspection.status,
-          total_score: inspection.totalScore,
-          max_score: inspection.maxScore,
-          average_score: inspection.averageScore,
-          inspector_name: inspection.inspectorName,
-          inspector_email: inspection.inspectorEmail,
-          inspector_id: user.user?.id,
-          updated_at: new Date().toISOString()
-        })
+        .upsert(inspectionData)
         .select()
         .single();
 
       if (inspectionError) {
-        console.error('Error saving inspection:', inspectionError);
+        console.error('Error saving inspection - Details:', {
+          error: inspectionError,
+          code: inspectionError.code,
+          message: inspectionError.message,
+          details: inspectionError.details,
+          hint: inspectionError.hint
+        });
         return false;
       }
+      
+      console.log('Inspection saved successfully:', savedInspection);
 
       // Delete existing items for this inspection
-      await supabase
+      console.log('Deleting existing inspection items for inspection:', inspection.id);
+      const { error: deleteError } = await supabase
         .from('inspection_items')
         .delete()
         .eq('inspection_id', inspection.id);
+        
+      if (deleteError) {
+        console.error('Error deleting existing inspection items:', deleteError);
+      }
+
+      // Prepare items data for database
+      const itemsToInsert = inspection.items.map(item => {
+        const itemData = {
+          inspection_id: inspection.id,
+          item_id: item.id,
+          category: item.category,
+          subcategory: item.subcategory,
+          item_name: item.item,
+          weight: item.weight,
+          score: item.score?.toString() || 'null',
+          score_descriptions: item.scoreDescriptions
+        };
+        console.log('Prepared item data:', itemData);
+        return itemData;
+      });
+
+      console.log('Inserting', itemsToInsert.length, 'inspection items');
 
       // Insert all items
-      const itemsToInsert = inspection.items.map(item => ({
-        inspection_id: inspection.id,
-        item_id: item.id,
-        category: item.category,
-        subcategory: item.subcategory,
-        item_name: item.item,
-        weight: item.weight,
-        score: item.score?.toString() || 'null',
-        score_descriptions: item.scoreDescriptions
-      }));
-
       const { error: itemsError } = await supabase
         .from('inspection_items')
         .insert(itemsToInsert);
 
       if (itemsError) {
-        console.error('Error saving inspection items:', itemsError);
+        console.error('Error saving inspection items - Details:', {
+          error: itemsError,
+          code: itemsError.code,
+          message: itemsError.message,
+          details: itemsError.details,
+          hint: itemsError.hint,
+          itemsCount: itemsToInsert.length
+        });
         return false;
       }
 
+      console.log('All inspection items saved successfully');
+      console.log('=== INSPECTION SAVE COMPLETE ===');
       return true;
     } catch (error) {
-      console.error('Error saving inspection:', error);
+      console.error('Error saving inspection - Caught exception:', error);
       return false;
     }
   },
