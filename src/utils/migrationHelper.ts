@@ -1,14 +1,30 @@
 
 import { inspectionService } from '@/services/inspectionService';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 // Helper function to upload completed inspections from local storage
 export const uploadCompletedInspections = async () => {
   try {
+    // Check if user is authenticated first
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to upload inspections",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Check for completed inspections in localStorage
     const savedInspections = localStorage.getItem('inspections');
     if (!savedInspections) {
       console.log('No local inspections found');
+      toast({
+        title: "No Local Inspections Found",
+        description: "No inspections found in local storage",
+      });
       return;
     }
 
@@ -29,18 +45,27 @@ export const uploadCompletedInspections = async () => {
     }
 
     let uploadedCount = 0;
+    let failedCount = 0;
+    
     for (const inspection of completedInspections) {
       console.log('Uploading inspection for:', inspection.neighborhood);
-      const success = await inspectionService.uploadCompletedInspection(inspection);
-      if (success) {
-        uploadedCount++;
+      try {
+        const success = await inspectionService.uploadCompletedInspection(inspection);
+        if (success) {
+          uploadedCount++;
+        } else {
+          failedCount++;
+        }
+      } catch (error) {
+        console.error('Error uploading inspection:', error);
+        failedCount++;
       }
     }
 
     if (uploadedCount > 0) {
       toast({
         title: "Inspections Uploaded",
-        description: `Successfully uploaded ${uploadedCount} completed inspection(s) to the database`,
+        description: `Successfully uploaded ${uploadedCount} completed inspection(s) to the database${failedCount > 0 ? `. ${failedCount} failed to upload.` : ''}`,
       });
     } else {
       toast({
