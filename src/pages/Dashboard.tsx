@@ -8,18 +8,30 @@ import RecentInspections from '@/components/dashboard/RecentInspections';
 import NeighborhoodChart from '@/components/dashboard/NeighborhoodChart';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useInspection } from '@/contexts/InspectionContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Upload } from 'lucide-react';
 import { uploadCompletedInspections } from '@/utils/migrationHelper';
 
 const Dashboard = () => {
-  const { inspections, neighborhoods, loading } = useDashboardData();
+  const { inspections, loading, neighborhoodData, recentInspections, totalInspections, avgScore } = useDashboardData();
   const { getAllCompletedInspections } = useInspection();
+  const { profile } = useAuth();
+  const navigate = useNavigate();
   const [showMigrationButton, setShowMigrationButton] = useState(true);
 
   const handleMigration = async () => {
     await uploadCompletedInspections();
     setShowMigrationButton(false);
+  };
+
+  const handleStartNewInspection = () => {
+    navigate('/inspection');
+  };
+
+  const handleViewReports = () => {
+    navigate('/reports');
   };
 
   const stats = {
@@ -47,7 +59,7 @@ const Dashboard = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <DashboardHeader />
+        <DashboardHeader userName={profile?.name || 'User'} />
         
         {showMigrationButton && (
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -66,18 +78,25 @@ const Dashboard = () => {
           </div>
         )}
 
-        <DashboardStats stats={stats} />
+        <DashboardStats 
+          totalInspections={totalInspections}
+          avgScore={avgScore}
+          recentInspectionsCount={recentInspections.length}
+        />
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
-            <NeighborhoodChart inspections={inspections} />
+            <NeighborhoodChart data={neighborhoodData} />
           </div>
           <div>
-            <QuickActions />
+            <QuickActions 
+              onStartNewInspection={handleStartNewInspection}
+              onViewReports={handleViewReports}
+            />
           </div>
         </div>
         
-        <RecentInspections inspections={inspections.slice(0, 5)} />
+        <RecentInspections inspections={recentInspections} />
       </div>
     </div>
   );

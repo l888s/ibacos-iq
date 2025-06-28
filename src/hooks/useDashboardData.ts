@@ -1,8 +1,11 @@
 
 import { useMemo } from 'react';
 import { Inspection } from '@/types/inspection';
+import { useInspectionStorage } from '@/hooks/useInspectionStorage';
 
-export const useDashboardData = (savedInspections: Inspection[]) => {
+export const useDashboardData = () => {
+  const { savedInspections, loading } = useInspectionStorage();
+
   const { neighborhoodData, recentInspections, totalInspections, avgScore } = useMemo(() => {
     // Generate neighborhood data from actual completed inspections
     const neighborhoodData = savedInspections
@@ -44,6 +47,9 @@ export const useDashboardData = (savedInspections: Inspection[]) => {
   }, [savedInspections]);
 
   return {
+    inspections: savedInspections,
+    neighborhoods: [], // This can be removed or populated from a neighborhoods service if needed
+    loading,
     neighborhoodData,
     recentInspections,
     totalInspections,
