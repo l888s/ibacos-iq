@@ -111,6 +111,18 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (createError) {
       console.error('User creation error:', createError);
+      
+      // Handle user already exists error more gracefully
+      if (createError.message.includes('already been registered')) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'User with this email already exists. Please check the Users section in Supabase Auth to manage existing users.',
+            code: 'user_exists'
+          }),
+          { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
       return new Response(
         JSON.stringify({ error: createError.message }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
