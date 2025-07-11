@@ -164,12 +164,11 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
     console.log('Deleting existing inspection for:', selectedNeighborhood);
     
     try {
-      // Load the existing inspection to delete it
-      const result = await onStartInspection(selectedNeighborhood, false);
-      console.log('Existing inspection to delete:', result);
+      // First, continue the existing inspection to load it into context
+      const success = await continueExistingInspection(selectedNeighborhood);
       
-      if (result.existingInspection) {
-        // Delete the inspection
+      if (success) {
+        // Now delete the inspection (it's loaded in context)
         await deleteInspection();
         
         // Refresh the in-progress list
@@ -183,6 +182,12 @@ const NeighborhoodSelection = ({ onStartInspection }: NeighborhoodSelectionProps
         console.log('No existing inspection found to delete');
         // Refresh the list anyway
         await fetchInProgressInspections();
+        
+        toast({
+          title: "No Inspection Found",
+          description: "No in-progress inspection found for this neighborhood",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Error deleting inspection:', error);
