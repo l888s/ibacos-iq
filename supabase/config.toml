@@ -1,1 +1,7 @@
 project_id = "eyiiprxgkzxfelsmowjd"
+
+[functions.create-user]
+verify_jwt = false
+
+[functions.send-inspection-report]
+verify_jwt = false
